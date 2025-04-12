@@ -47,10 +47,10 @@ export function NavSidebar({ user }: { user: User | undefined }) {
               className="flex flex-row gap-3 items-center"
             >
               <span className="text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer">
-                Knowledge App
+                Knowledge Base
               </span>
             </Link>
-            <Tooltip>
+            {/* <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   variant="ghost"
@@ -66,7 +66,7 @@ export function NavSidebar({ user }: { user: User | undefined }) {
                 </Button>
               </TooltipTrigger>
               <TooltipContent align="end">New Chat</TooltipContent>
-            </Tooltip>
+            </Tooltip> */}
           </div>
         </SidebarMenu>
       </SidebarHeader>

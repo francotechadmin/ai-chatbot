@@ -17,6 +17,26 @@ export const BotIcon = () => {
   );
 };
 
+// search icon
+export const SearchIcon = () => {
+  return (
+    <svg
+      height="16"
+      strokeLinejoin="round"
+      viewBox="0 0 16 16"
+      width="16"
+      style={{ color: 'currentcolor' }}
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M8.5 1C4.91015 1 1.5 4.41015 1.5 8C1.5 11.5899 4.91015 15 8.5 15C12.0899 15 15.5 11.5899 15.5 8C15.5 4.41015 12.0899 1 8.5 1ZM0.5 8C0.5 3.58172 3.58172 0.5 8 0.5C12.4183 0.5 15.5 3.58172 15.5 8C15.5 12.4183 12.4183 15.5 8 15.5C3.58172 15.5 0.5 12.4183 0.5 8ZM11.7071 10L10.7071 11L9.70711 10L7.70711 12L670711L7L10L9L11L10L11L10Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+};
+
 export const UserIcon = () => {
   return (
     <svg

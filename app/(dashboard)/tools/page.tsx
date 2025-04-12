@@ -369,7 +369,7 @@ export default function ToolsPage() {
 
               <div className="border rounded-lg p-4 space-y-3">
                 <div className="flex justify-between items-start">
-                  <h3 className="font-medium text-sm">knowledge_export_06152023.json</h3>
+                  <h3 className="font-medium text-sm">export_06152023.json</h3>
                   <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800">
                     Complete
                   </span>

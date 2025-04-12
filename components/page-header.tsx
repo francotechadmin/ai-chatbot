@@ -15,7 +15,7 @@ export function PageHeader({ title, children }: PageHeaderProps) {
 
   return (
     <div className="flex flex-col justify-between items-center gap-8 md:flex-row mb-4">
-      <h1 className="text-3xl font-bold flex self-start items-center gap-2 cursor-pointer" onClick={toggleSidebar}>
+      <h1 className="text-2xl font-bold flex self-start items-center gap-2 cursor-pointer" onClick={toggleSidebar}>
         <span 
           className="text-muted-foreground " 
 

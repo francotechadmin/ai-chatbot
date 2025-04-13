@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 import { 
-  PlusIcon,
   HomeIcon,
   MessageIcon,
   FileIcon,
@@ -14,12 +13,11 @@ import {
   UserIcon,
   LineChartIcon,
   UploadIcon,
-  DownloadIcon,
-  TerminalIcon
+  TerminalIcon,
+  NetworkIcon
 } from '@/components/icons';
 import { SidebarHistory } from '@/components/sidebar-history';
 import { SidebarUserNav } from '@/components/sidebar-user-nav';
-import { Button } from '@/components/ui/button';
 import {
   Sidebar,
   SidebarContent,
@@ -38,7 +36,7 @@ export function NavSidebar({ user }: { user: User | undefined }) {
     <Sidebar className="group-data-[side=left]:border-r-0">
       <SidebarHeader>
         <SidebarMenu>
-          <div className="flex flex-row justify-between items-center">
+          <div className="w-full flex flex-row justify-center items-center">
             <Link
               href="/"
               onClick={() => {
@@ -46,27 +44,11 @@ export function NavSidebar({ user }: { user: User | undefined }) {
               }}
               className="flex flex-row gap-3 items-center"
             >
-              <span className="text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer">
-                Knowledge Base
+              <span className="flex gap-1 text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer">
+                <NetworkIcon size={24} />
+                Knowledge Hub
               </span>
             </Link>
-            {/* <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  type="button"
-                  className="p-2 h-fit"
-                  onClick={() => {
-                    setOpenMobile(false);
-                    router.push('/');
-                    router.refresh();
-                  }}
-                >
-                  <PlusIcon />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent align="end">New Chat</TooltipContent>
-            </Tooltip> */}
           </div>
         </SidebarMenu>
       </SidebarHeader>

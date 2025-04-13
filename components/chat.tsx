@@ -76,7 +76,7 @@ export function Chat({
           chatId={id}
           status={status}
           votes={votes}
-          messages={messages}
+          messages={messages as any}
           setMessages={setMessages}
           reload={reload}
           isReadonly={isReadonly}
@@ -94,7 +94,7 @@ export function Chat({
               stop={stop}
               attachments={attachments}
               setAttachments={setAttachments}
-              messages={messages}
+              messages={messages as any}
               setMessages={setMessages}
               append={append}
             />
@@ -112,7 +112,7 @@ export function Chat({
         attachments={attachments}
         setAttachments={setAttachments}
         append={append}
-        messages={messages}
+        messages={messages as any}
         setMessages={setMessages}
         reload={reload}
         votes={votes}

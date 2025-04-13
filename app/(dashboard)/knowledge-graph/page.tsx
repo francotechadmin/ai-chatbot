@@ -148,10 +148,10 @@ export default function KnowledgeGraphPage() {
                   </div>
                   
                   {/* Connecting lines - simplified mock */}
-                  <div className="absolute top-[20%] left-[20%] w-[30%] h-px bg-gray-300 rotate-45 origin-bottom-left"></div>
-                  <div className="absolute top-[20%] right-[20%] w-[30%] h-px bg-gray-300 -rotate-45 origin-bottom-right"></div>
-                  <div className="absolute bottom-[20%] left-[20%] w-[30%] h-px bg-gray-300 -rotate-45 origin-top-left"></div>
-                  <div className="absolute bottom-[20%] right-[20%] w-[30%] h-px bg-gray-300 rotate-45 origin-top-right"></div>
+                  <div className="absolute top-[20%] left-[20%] w-[30%] h-px bg-gray-300 rotate-45 origin-bottom-left" />
+                  <div className="absolute top-[20%] right-[20%] w-[30%] h-px bg-gray-300 -rotate-45 origin-bottom-right" />
+                  <div className="absolute bottom-[20%] left-[20%] w-[30%] h-px bg-gray-300 -rotate-45 origin-top-left" />
+                  <div className="absolute bottom-[20%] right-[20%] w-[30%] h-px bg-gray-300 rotate-45 origin-top-right" />
                   
                   {/* Satellite nodes - would be actual nodes in real graph */}
                   <div className="absolute top-[5%] left-[5%] size-10 md:size-12 rounded-full bg-blue-400 flex items-center justify-center text-white shadow-md cursor-pointer">

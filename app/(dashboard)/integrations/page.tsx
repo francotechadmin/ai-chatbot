@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { GlobeIcon, PlusIcon, FileIcon } from '@/components/icons';
+import { PlusIcon, } from '@/components/icons';
 import { PageHeader } from '@/components/page-header';
 
 interface Integration {

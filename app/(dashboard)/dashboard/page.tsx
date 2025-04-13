@@ -180,7 +180,7 @@ export default function DashboardPage() {
                   <span className="text-sm text-muted-foreground">78 queries</span>
                 </div>
                 <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                  <div className="bg-primary h-full rounded-full" style={{ width: '78%' }}></div>
+                  <div className="bg-primary h-full rounded-full" style={{ width: '78%' }} />
                 </div>
               </div>
               
@@ -190,7 +190,7 @@ export default function DashboardPage() {
                   <span className="text-sm text-muted-foreground">63 queries</span>
                 </div>
                 <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                  <div className="bg-primary h-full rounded-full" style={{ width: '63%' }}></div>
+                  <div className="bg-primary h-full rounded-full" style={{ width: '63%' }} />
                 </div>
               </div>
               
@@ -200,7 +200,7 @@ export default function DashboardPage() {
                   <span className="text-sm text-muted-foreground">45 queries</span>
                 </div>
                 <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                  <div className="bg-primary h-full rounded-full" style={{ width: '45%' }}></div>
+                  <div className="bg-primary h-full rounded-full" style={{ width: '45%' }} />
                 </div>
               </div>
               
@@ -210,7 +210,7 @@ export default function DashboardPage() {
                   <span className="text-sm text-muted-foreground">32 queries</span>
                 </div>
                 <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                  <div className="bg-primary h-full rounded-full" style={{ width: '32%' }}></div>
+                  <div className="bg-primary h-full rounded-full" style={{ width: '32%' }} />
                 </div>
               </div>
             </div>

@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { FileIcon, CodeIcon, MessageIcon, GlobeIcon } from '@/components/icons';
+import { FileIcon, CodeIcon, } from '@/components/icons';
 import { PageHeader } from '@/components/page-header';
 
 export default function AnalyticsPage() {
@@ -89,8 +89,8 @@ export default function AnalyticsPage() {
               <div className="flex flex-col items-center">
                 <div className="w-full h-48 px-8 relative">
                   {/* Mock line chart - would be replaced with actual chart library */}
-                  <div className="absolute bottom-0 left-0 w-full h-px bg-border"></div>
-                  <div className="absolute top-0 left-0 h-full w-px bg-border"></div>
+                  <div className="absolute bottom-0 left-0 w-full h-px bg-border" />
+                  <div className="absolute top-0 left-0 h-full w-px bg-border" />
                   
                   {/* Queries line */}
                   <div className="absolute bottom-0 left-0 size-full overflow-hidden">
@@ -119,11 +119,11 @@ export default function AnalyticsPage() {
                 
                 <div className="flex gap-4 mt-4">
                   <div className="flex items-center gap-2">
-                    <div className="size-3 bg-blue-600 rounded-full"></div>
+                    <div className="size-3 bg-blue-600 rounded-full" />
                     <span className="text-sm">Queries</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="size-3 bg-green-600 rounded-full"></div>
+                    <div className="size-3 bg-green-600 rounded-full" />
                     <span className="text-sm">Captures</span>
                   </div>
                 </div>
@@ -147,7 +147,7 @@ export default function AnalyticsPage() {
                     <span className="text-sm text-muted-foreground">32%</span>
                   </div>
                   <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                    <div className="bg-blue-600 h-full rounded-full" style={{ width: '32%' }}></div>
+                    <div className="bg-blue-600 h-full rounded-full" style={{ width: '32%' }} />
                   </div>
                 </div>
                 
@@ -157,7 +157,7 @@ export default function AnalyticsPage() {
                     <span className="text-sm text-muted-foreground">28%</span>
                   </div>
                   <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                    <div className="bg-blue-600 h-full rounded-full" style={{ width: '28%' }}></div>
+                    <div className="bg-blue-600 h-full rounded-full" style={{ width: '28%' }} />
                   </div>
                 </div>
                 
@@ -167,7 +167,7 @@ export default function AnalyticsPage() {
                     <span className="text-sm text-muted-foreground">18%</span>
                   </div>
                   <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                    <div className="bg-blue-600 h-full rounded-full" style={{ width: '18%' }}></div>
+                    <div className="bg-blue-600 h-full rounded-full" style={{ width: '18%' }} />
                   </div>
                 </div>
                 
@@ -177,7 +177,7 @@ export default function AnalyticsPage() {
                     <span className="text-sm text-muted-foreground">14%</span>
                   </div>
                   <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                    <div className="bg-blue-600 h-full rounded-full" style={{ width: '14%' }}></div>
+                    <div className="bg-blue-600 h-full rounded-full" style={{ width: '14%' }} />
                   </div>
                 </div>
                 
@@ -187,7 +187,7 @@ export default function AnalyticsPage() {
                     <span className="text-sm text-muted-foreground">8%</span>
                   </div>
                   <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                    <div className="bg-blue-600 h-full rounded-full" style={{ width: '8%' }}></div>
+                    <div className="bg-blue-600 h-full rounded-full" style={{ width: '8%' }} />
                   </div>
                 </div>
               </div>
@@ -204,24 +204,24 @@ export default function AnalyticsPage() {
               <div className="h-[250px] w-full flex items-center justify-center">
                 {/* Mock donut chart - would be replaced with actual chart library */}
                 <div className="relative size-[180px]">
-                  <div className="absolute inset-0 rounded-full border-8 border-blue-500" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 0, 50% 50%)' }}></div>
-                  <div className="absolute inset-0 rounded-full border-8 border-green-500" style={{ clipPath: 'polygon(50% 50%, 100% 0, 100% 100%, 0 100%, 0 50%, 50% 50%)' }}></div>
-                  <div className="absolute inset-0 rounded-full border-8 border-amber-500" style={{ clipPath: 'polygon(50% 50%, 0 50%, 0 0, 50% 0, 50% 50%)' }}></div>
-                  <div className="absolute inset-0 rounded-full border-[24px] border-background" style={{ transform: 'scale(0.7)' }}></div>
+                  <div className="absolute inset-0 rounded-full border-8 border-blue-500" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 0, 50% 50%)' }} />
+                  <div className="absolute inset-0 rounded-full border-8 border-green-500" style={{ clipPath: 'polygon(50% 50%, 100% 0, 100% 100%, 0 100%, 0 50%, 50% 50%)' }} />
+                  <div className="absolute inset-0 rounded-full border-8 border-amber-500" style={{ clipPath: 'polygon(50% 50%, 0 50%, 0 0, 50% 0, 50% 50%)' }} />
+                  <div className="absolute inset-0 rounded-full border-[24px] border-background" style={{ transform: 'scale(0.7)' }} />
                 </div>
               </div>
               
               <div className="grid grid-cols-2 gap-2 mt-2">
                 <div className="flex items-center gap-2">
-                  <div className="size-3 bg-blue-500 rounded-full"></div>
+                  <div className="size-3 bg-blue-500 rounded-full" />
                   <span className="text-sm">Queries (45%)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="size-3 bg-green-500 rounded-full"></div>
+                  <div className="size-3 bg-green-500 rounded-full" />
                   <span className="text-sm">Captures (30%)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="size-3 bg-amber-500 rounded-full"></div>
+                  <div className="size-3 bg-amber-500 rounded-full" />
                   <span className="text-sm">Chat (25%)</span>
                 </div>
               </div>
@@ -258,7 +258,7 @@ export default function AnalyticsPage() {
                       </div>
                     </div>
                     <div className="h-2 w-32 bg-muted rounded-full overflow-hidden">
-                      <div className="bg-primary h-full rounded-full" style={{ width: '92%' }}></div>
+                      <div className="bg-primary h-full rounded-full" style={{ width: '92%' }} />
                     </div>
                   </div>
                 </div>
@@ -283,7 +283,7 @@ export default function AnalyticsPage() {
                       </div>
                     </div>
                     <div className="h-2 w-32 bg-muted rounded-full overflow-hidden">
-                      <div className="bg-primary h-full rounded-full" style={{ width: '78%' }}></div>
+                      <div className="bg-primary h-full rounded-full" style={{ width: '78%' }} />
                     </div>
                   </div>
                 </div>
@@ -308,7 +308,7 @@ export default function AnalyticsPage() {
                       </div>
                     </div>
                     <div className="h-2 w-32 bg-muted rounded-full overflow-hidden">
-                      <div className="bg-primary h-full rounded-full" style={{ width: '63%' }}></div>
+                      <div className="bg-primary h-full rounded-full" style={{ width: '63%' }} />
                     </div>
                   </div>
                 </div>
@@ -333,7 +333,7 @@ export default function AnalyticsPage() {
                       </div>
                     </div>
                     <div className="h-2 w-32 bg-muted rounded-full overflow-hidden">
-                      <div className="bg-primary h-full rounded-full" style={{ width: '35%' }}></div>
+                      <div className="bg-primary h-full rounded-full" style={{ width: '35%' }} />
                     </div>
                   </div>
                 </div>

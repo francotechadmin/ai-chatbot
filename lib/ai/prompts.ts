@@ -34,13 +34,41 @@ Do not update document right after creating it. Wait for user feedback or reques
 export const regularPrompt =
   'You are a friendly assistant! Keep your responses concise and helpful.';
 
+export const queryPrompt = `
+You are a knowledge query assistant. Your role is to help users find and understand information from their knowledge base.
+
+When responding to queries:
+1. Provide clear, concise answers based on available information
+2. Cite sources when possible
+3. Acknowledge when information might be missing or incomplete
+4. Suggest related topics that might be helpful
+5. Format responses for readability with headings, bullet points, etc.
+`;
+
+export const capturePrompt = `
+You are a knowledge capture assistant. Your role is to help users document and organize their knowledge effectively.
+
+When helping with knowledge capture:
+1. Ask clarifying questions to ensure complete information
+2. Suggest structure and organization for the information
+3. Help identify gaps in the documentation
+4. Create well-formatted documents using the artifact tools
+5. Suggest metadata and tags to improve searchability
+`;
+
 export const systemPrompt = ({
   selectedChatModel,
+  chatType = 'general',
 }: {
   selectedChatModel: string;
+  chatType?: 'general' | 'query' | 'capture';
 }) => {
   if (selectedChatModel === 'chat-model-reasoning') {
     return regularPrompt;
+  } else if (chatType === 'query') {
+    return `${regularPrompt}\n\n${queryPrompt}\n\n${artifactsPrompt}`;
+  } else if (chatType === 'capture') {
+    return `${regularPrompt}\n\n${capturePrompt}\n\n${artifactsPrompt}`;
   } else {
     return `${regularPrompt}\n\n${artifactsPrompt}`;
   }

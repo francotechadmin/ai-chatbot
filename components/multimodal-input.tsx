@@ -104,7 +104,18 @@ function PureMultimodalInput({
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
 
   const submitForm = useCallback(() => {
-    window.history.replaceState({}, '', `/chat/${chatId}`);
+    // Preserve the current path structure instead of hardcoding to /chat/
+    const pathname = window.location.pathname;
+    
+    // If we're on a new chat page, we need to determine the correct path
+    if (pathname.includes('/new')) {
+      // Extract the base path (e.g., /query/chat or /capture/chat)
+      const basePath = pathname.split('/new')[0];
+      window.history.replaceState({}, '', `${basePath}/${chatId}`);
+    } else {
+      // We're already on an existing chat page, so just update the ID
+      window.history.replaceState({}, '', pathname);
+    }
 
     handleSubmit(undefined, {
       experimental_attachments: attachments,

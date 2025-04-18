@@ -20,14 +20,23 @@ export function Chat({
   selectedChatModel,
   selectedVisibilityType,
   isReadonly,
+  chatType = 'general',
 }: {
   id: string;
   initialMessages: Array<UIMessage>;
   selectedChatModel: string;
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
+  chatType?: 'general' | 'query' | 'capture';
 }) {
   const { mutate } = useSWRConfig();
+
+  // Determine the correct API endpoint based on chat type
+  const apiEndpoint = chatType === 'query' 
+    ? '/api/query/chat' 
+    : chatType === 'capture' 
+      ? '/api/capture/chat' 
+      : '/api/chat';
 
   const {
     messages,
@@ -41,7 +50,8 @@ export function Chat({
     reload,
   } = useChat({
     id,
-    body: { id, selectedChatModel: selectedChatModel },
+    body: { id, selectedChatModel: selectedChatModel, chatType },
+    api: apiEndpoint,
     initialMessages,
     experimental_throttle: 100,
     sendExtraMessageFields: true,
@@ -49,7 +59,8 @@ export function Chat({
     onFinish: () => {
       mutate('/api/history');
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Chat error:', error);
       toast.error('An error occured, please try again!');
     },
   });

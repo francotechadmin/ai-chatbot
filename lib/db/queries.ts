@@ -51,10 +51,12 @@ export async function saveChat({
   id,
   userId,
   title,
+  type = 'general',
 }: {
   id: string;
   userId: string;
   title: string;
+  type?: 'general' | 'query' | 'capture';
 }) {
   try {
     return await db.insert(chat).values({
@@ -62,6 +64,7 @@ export async function saveChat({
       createdAt: new Date(),
       userId,
       title,
+      type,
     });
   } catch (error) {
     console.error('Failed to save chat in database');
@@ -346,6 +349,25 @@ export async function updateChatVisiblityById({
     return await db.update(chat).set({ visibility }).where(eq(chat.id, chatId));
   } catch (error) {
     console.error('Failed to update chat visibility in database');
+    throw error;
+  }
+}
+
+export async function getChatsByUserIdAndType({ 
+  id, 
+  type 
+}: { 
+  id: string; 
+  type: 'general' | 'query' | 'capture' 
+}) {
+  try {
+    return await db
+      .select()
+      .from(chat)
+      .where(and(eq(chat.userId, id), eq(chat.type, type)))
+      .orderBy(desc(chat.createdAt));
+  } catch (error) {
+    console.error('Failed to get chats by user and type from database');
     throw error;
   }
 }

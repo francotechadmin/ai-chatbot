@@ -18,6 +18,12 @@ import {
   getMostRecentUserMessage,
   getTrailingMessageId,
 } from '@/lib/utils';
+import { 
+  handleApiError, 
+  handleChatAuthorization, 
+  processMessages, 
+  validateUserMessage 
+} from '@/lib/chat-utils';
 import { generateTitleFromUserMessage } from '../../actions';
 import { createDocument } from '@/lib/ai/tools/create-document';
 import { updateDocument } from '@/lib/ai/tools/update-document';
@@ -34,10 +40,12 @@ export async function POST(request: Request) {
       id,
       messages,
       selectedChatModel,
+      chatType = 'query',
     }: {
       id: string;
       messages: Array<UIMessage>;
       selectedChatModel: string;
+      chatType?: 'general' | 'query' | 'capture';
     } = await request.json();
 
     const session = await auth();
@@ -47,44 +55,51 @@ export async function POST(request: Request) {
     }
 
     const userMessage = getMostRecentUserMessage(messages);
-
-    if (!userMessage) {
-      return new Response('No user message found', { status: 400 });
+    
+    // Validate the user message
+    const validation = validateUserMessage(userMessage);
+    if (!validation.isValid) {
+      return new Response(validation.errorMessage, { status: 400 });
     }
 
-    const chat = await getChatById({ id });
+    // At this point, userMessage is guaranteed to be defined since validation passed
+    const validUserMessage = userMessage as UIMessage;
 
-    if (!chat) {
-      const title = await generateTitleFromUserMessage({
-        message: userMessage,
-      });
-
-      await saveChat({ id, userId: session.user.id, title });
-    } else {
-      if (chat.userId !== session.user.id) {
-        return new Response('Unauthorized', { status: 401 });
-      }
+    // Handle chat authorization and creation
+    const authorization = await handleChatAuthorization({
+      id,
+      userId: session.user.id,
+      userMessage: validUserMessage,
+      chatType,
+      generateTitle: generateTitleFromUserMessage
+    });
+    
+    if (!authorization.isAuthorized) {
+      return new Response(authorization.errorMessage, { status: 401 });
     }
 
     await saveMessages({
       messages: [
         {
           chatId: id,
-          id: userMessage.id,
+          id: validUserMessage.id,
           role: 'user',
-          parts: userMessage.parts,
-          attachments: userMessage.experimental_attachments ?? [],
+          parts: validUserMessage.parts,
+          attachments: validUserMessage.experimental_attachments ?? [],
           createdAt: new Date(),
         },
       ],
     });
 
+    // Process messages to ensure they have valid content
+    const processedMessages = processMessages(messages);
+
     return createDataStreamResponse({
       execute: (dataStream) => {
         const result = streamText({
           model: myProvider.languageModel(selectedChatModel),
-          system: systemPrompt({ selectedChatModel }),
-          messages,
+          system: systemPrompt({ selectedChatModel, chatType }),
+          messages: processedMessages,
           maxSteps: 5,
           experimental_activeTools:
             selectedChatModel === 'chat-model-reasoning'
@@ -120,7 +135,7 @@ export async function POST(request: Request) {
                 }
 
                 const [, assistantMessage] = appendResponseMessages({
-                  messages: [userMessage],
+                  messages: [validUserMessage],
                   responseMessages: response.messages,
                 });
 
@@ -154,14 +169,13 @@ export async function POST(request: Request) {
           sendReasoning: true,
         });
       },
-      onError: () => {
-        return 'Oops, an error occured!';
+      onError: (error) => {
+        console.error('Dashboard query chat stream error:', error);
+        return 'Oops, an error occurred!';
       },
     });
   } catch (error) {
-    return new Response('An error occurred while processing your request!', {
-      status: 404,
-    });
+    return handleApiError(error, 'Dashboard query chat');
   }
 }
 
@@ -190,8 +204,6 @@ export async function DELETE(request: Request) {
 
     return new Response('Chat deleted', { status: 200 });
   } catch (error) {
-    return new Response('An error occurred while processing your request!', {
-      status: 500,
-    });
+    return handleApiError(error, 'Dashboard query chat delete');
   }
 }

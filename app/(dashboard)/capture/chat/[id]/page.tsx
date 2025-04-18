@@ -9,12 +9,12 @@ import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
 import type { DBMessage } from '@/lib/db/schema';
 import type { Attachment, UIMessage } from 'ai';
 
-export default async function QueryChatPage(props: { params: { id: string } }) {
+export default async function CaptureChatPage(props: { params: { id: string } }) {
   const params = await Promise.resolve(props.params);
   const { id } = params;
   const chat = await getChatById({ id });
 
-  if (!chat || chat.type !== 'query') {
+  if (!chat || chat.type !== 'capture') {
     notFound();
   }
 
@@ -58,7 +58,7 @@ export default async function QueryChatPage(props: { params: { id: string } }) {
           selectedChatModel={DEFAULT_CHAT_MODEL}
           selectedVisibilityType={chat.visibility}
           isReadonly={session?.user?.id !== chat.userId}
-          chatType="query"
+          chatType="capture"
         />
         <DataStreamHandler id={id} />
       </>
@@ -73,7 +73,7 @@ export default async function QueryChatPage(props: { params: { id: string } }) {
         selectedChatModel={chatModelFromCookie.value}
         selectedVisibilityType={chat.visibility}
         isReadonly={session?.user?.id !== chat.userId}
-        chatType="query"
+        chatType="capture"
       />
       <DataStreamHandler id={id} />
     </>

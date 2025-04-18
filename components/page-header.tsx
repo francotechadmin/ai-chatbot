@@ -32,17 +32,14 @@ export function PageHeader({
   const { toggleSidebar } = useSidebar();
 
   return (
-    <div className="flex flex-col justify-between items-center gap-8 md:flex-row mb-4">
-      <h1 className="text-2xl font-bold flex self-start items-center gap-2 cursor-pointer" onClick={toggleSidebar}>
-        <span 
-          className="text-muted-foreground " 
-
-        >
+    <div className="flex flex-col justify-between items-start gap-4 md:flex-row md:items-center mb-4">
+      <h1 className="text-2xl font-bold flex items-center gap-2 cursor-pointer" onClick={toggleSidebar}>
+        <span className="text-muted-foreground">
           <SidebarLeftIcon size={24} />
         </span>
-        {title}
+        <span className="truncate max-w-[200px] md:max-w-none">{title}</span>
       </h1>
-      <div className="flex gap-2 items-center">
+      <div className="flex flex-wrap gap-2 items-center w-full md:w-auto">
         {showModelSelector && selectedModelId && !isReadonly && (
           <ModelSelector
             selectedModelId={selectedModelId}

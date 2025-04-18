@@ -35,7 +35,7 @@ export function ChatPageWrapper({
   const router = useRouter();
   
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-2 md:p-6 max-w-[100vw] overflow-hidden">
       <div className="flex flex-col gap-6">
         <PageHeader 
           title={title}
@@ -46,7 +46,7 @@ export function ChatPageWrapper({
           showVisibilitySelector={!isReadonly}
           isReadonly={isReadonly}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Sheet open={historyOpen} onOpenChange={setHistoryOpen}>
               <SheetTrigger asChild>
                 <Button variant="outline">

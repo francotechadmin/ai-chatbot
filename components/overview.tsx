@@ -38,15 +38,15 @@ export const Overview = ({ chatType = 'general' }: OverviewProps) => {
           <p>
             <strong>Knowledge Capture Assistant</strong> helps you document, organize, and structure your knowledge.
           </p>
-          <p>
+          {/* <p>
             Try requests like:
-          </p>
-          <ul className="list-disc list-inside text-left">
+          </p> */}
+          {/* <ul className="list-disc list-inside text-left">
             <li>Document my process for [task]</li>
             <li>Create a guide for [procedure]</li>
             <li>Help me organize information about [topic]</li>
             <li>Structure my notes on [subject]</li>
-          </ul>
+          </ul> */}
         </>
       );
     } else {
@@ -92,13 +92,13 @@ export const Overview = ({ chatType = 'general' }: OverviewProps) => {
   return (
     <motion.div
       key="overview"
-      className="max-w-3xl mx-auto md:mt-20"
+      className="max-w-3xl mx-auto "
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.98 }}
       transition={{ delay: 0.5 }}
     >
-      <div className="rounded-xl p-6 flex flex-col gap-8 leading-relaxed text-center max-w-xl">
+      <div className="rounded-xl p-4 md:p-6 flex flex-col gap-4 md:gap-8 leading-relaxed text-center w-full max-w-xl mx-auto">
         {renderContent()}
       </div>
     </motion.div>

@@ -89,38 +89,43 @@ function PureSuggestedActions({ chatId, append, chatType = 'general' }: Suggeste
   const suggestedActions = getSuggestedActions();
 
   return (
-    <div
-      data-testid="suggested-actions"
-      className="grid sm:grid-cols-2 gap-2 w-full"
-    >
-      {suggestedActions.map((suggestedAction, index) => (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
-          transition={{ delay: 0.05 * index }}
-          key={`suggested-action-${suggestedAction.title}-${index}`}
-          className={index > 1 ? 'hidden sm:block' : 'block'}
-        >
-          <Button
-            variant="ghost"
-            onClick={async () => {
-              window.history.replaceState({}, '', `/chat/${chatId}`);
-
-              append({
-                role: 'user',
-                content: suggestedAction.action,
-              });
-            }}
-            className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start"
+    <div className="w-full overflow-hidden relative max-w-[95vw] mx-auto">
+      <div
+        data-testid="suggested-actions"
+        className="flex overflow-x-auto pb-2 gap-1 scrollbar-hide snap-x max-w-full"
+      >
+        {/* Gradient fade on the right side to indicate scrollable content */}
+        <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none"></div>
+        
+        {suggestedActions.map((suggestedAction, index) => (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ delay: 0.05 * index }}
+            key={`suggested-action-${suggestedAction.title}-${index}`}
+            className="flex-shrink-0 snap-start w-[140px] md:w-[220px]"
           >
-            <span className="font-medium">{suggestedAction.title}</span>
-            <span className="text-muted-foreground">
-              {suggestedAction.label}
-            </span>
-          </Button>
-        </motion.div>
-      ))}
+            <Button
+              variant="ghost"
+              onClick={async () => {
+                window.history.replaceState({}, '', `/chat/${chatId}`);
+
+                append({
+                  role: 'user',
+                  content: suggestedAction.action,
+                });
+              }}
+              className="text-left border rounded-xl px-2 py-2 md:px-4 md:py-3.5 text-xs md:text-sm flex flex-col w-full h-auto justify-start items-start"
+            >
+              <span className="font-medium whitespace-nowrap overflow-hidden text-ellipsis w-full">{suggestedAction.title}</span>
+              <span className="text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis w-full">
+                {suggestedAction.label}
+              </span>
+            </Button>
+          </motion.div>
+        ))}
+      </div>
     </div>
   );
 }

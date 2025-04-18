@@ -128,7 +128,11 @@ function PureMultimodalInput({
     resetHeight();
 
     if (width && width > 768) {
+      // On desktop, refocus the textarea
       textareaRef.current?.focus();
+    } else {
+      // On mobile, blur the textarea to dismiss keyboard
+      textareaRef.current?.blur();
     }
   }, [
     attachments,
@@ -256,6 +260,10 @@ function PureMultimodalInput({
               toast.error('Please wait for the model to finish its response!');
             } else {
               submitForm();
+              // Ensure keyboard is dismissed on mobile
+              if (width && width <= 768) {
+                event.target instanceof HTMLElement && event.target.blur();
+              }
             }
           }
         }}
@@ -305,6 +313,8 @@ function PureAttachmentsButton({
       onClick={(event) => {
         event.preventDefault();
         fileInputRef.current?.click();
+        // Ensure keyboard is dismissed on mobile
+        document.activeElement instanceof HTMLElement && document.activeElement.blur();
       }}
       disabled={status !== 'ready'}
       variant="ghost"
@@ -331,6 +341,8 @@ function PureStopButton({
         event.preventDefault();
         stop();
         setMessages((messages) => messages);
+        // Ensure keyboard is dismissed on mobile
+        document.activeElement instanceof HTMLElement && document.activeElement.blur();
       }}
     >
       <StopIcon size={14} />
@@ -356,6 +368,8 @@ function PureSendButton({
       onClick={(event) => {
         event.preventDefault();
         submitForm();
+        // Ensure keyboard is dismissed on mobile
+        document.activeElement instanceof HTMLElement && document.activeElement.blur();
       }}
       disabled={input.length === 0 || uploadQueue.length > 0}
     >

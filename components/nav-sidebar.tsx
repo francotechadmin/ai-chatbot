@@ -16,7 +16,7 @@ import {
   TerminalIcon,
   NetworkIcon
 } from '@/components/icons';
-import { SidebarHistory } from '@/components/sidebar-history';
+// import { SidebarHistory } from '@/components/sidebar-history';
 import { SidebarUserNav } from '@/components/sidebar-user-nav';
 import {
   Sidebar,
@@ -162,10 +162,7 @@ export function NavSidebar({ user }: { user: User | undefined }) {
           </nav>
         </div>
         
-        <div className="pt-4 border-t">
-          <h3 className="px-3 text-sm font-medium text-muted-foreground mb-2">Recent Chats</h3>
-          <SidebarHistory user={user} />
-        </div>
+        {/* Recent Chats section removed - now available in modal/sheet */}
       </SidebarContent>
       <SidebarFooter>{user && <SidebarUserNav user={user} />}</SidebarFooter>
     </Sidebar>

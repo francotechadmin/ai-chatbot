@@ -7,7 +7,8 @@ import { useWindowSize } from 'usehooks-ts';
 import { ModelSelector } from '@/components/model-selector';
 import { SidebarToggle } from '@/components/sidebar-toggle';
 import { Button } from '@/components/ui/button';
-import { PlusIcon, VercelIcon } from './icons';
+import { PlusIcon } from './icons';
+import { ChatHeaderActions } from './chat-header-actions';
 import { useSidebar } from './ui/sidebar';
 import { memo } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
@@ -17,12 +18,14 @@ function PureChatHeader({
   chatId,
   selectedModelId,
   selectedVisibilityType,
-  isReadonly,
+  isReadonly, 
+  chatType,
 }: {
   chatId: string;
   selectedModelId: string;
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
+  chatType: 'query' | 'capture';
 }) {
   const router = useRouter();
   const { open } = useSidebar();
@@ -34,22 +37,9 @@ function PureChatHeader({
       <SidebarToggle />
 
 
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="outline"
-            className="order-2 md:order-1 md:px-2 px-2 md:h-fit ml-auto md:ml-0"
-            onClick={() => {
-              router.push('/query');
-              router.refresh();
-            }}
-          >
-            <PlusIcon />
-            <span className="md:sr-only">New Chat</span>
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>New Chat</TooltipContent>
-      </Tooltip>
+      <div className="order-2 md:order-1 ml-auto md:ml-0">
+        <ChatHeaderActions chatType={chatType} />
+      </div>
 
 
       {!isReadonly && (

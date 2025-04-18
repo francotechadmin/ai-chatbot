@@ -37,6 +37,7 @@ function PureMultimodalInput({
   append,
   handleSubmit,
   className,
+  chatType = 'general',
 }: {
   chatId: string;
   input: UseChatHelpers['input'];
@@ -50,6 +51,7 @@ function PureMultimodalInput({
   append: UseChatHelpers['append'];
   handleSubmit: UseChatHelpers['handleSubmit'];
   className?: string;
+  chatType?: 'general' | 'query' | 'capture';
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
@@ -195,7 +197,7 @@ function PureMultimodalInput({
       {messages.length === 0 &&
         attachments.length === 0 &&
         uploadQueue.length === 0 && (
-          <SuggestedActions append={append} chatId={chatId} />
+          <SuggestedActions append={append} chatId={chatId} chatType={chatType} />
         )}
 
       <input

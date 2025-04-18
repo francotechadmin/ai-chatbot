@@ -4,13 +4,31 @@ import { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { SidebarLeftIcon } from '@/components/icons';
 import { useSidebar } from '@/components/ui/sidebar';
+import { ModelSelector } from '@/components/model-selector';
+import { VisibilitySelector } from '@/components/visibility-selector';
+import { VisibilityType } from '@/components/visibility-selector';
 
 interface PageHeaderProps {
   title: string;
   children?: ReactNode;
+  chatId?: string;
+  selectedModelId?: string;
+  selectedVisibilityType?: VisibilityType;
+  showModelSelector?: boolean;
+  showVisibilitySelector?: boolean;
+  isReadonly?: boolean;
 }
 
-export function PageHeader({ title, children }: PageHeaderProps) {
+export function PageHeader({ 
+  title, 
+  children, 
+  chatId,
+  selectedModelId,
+  selectedVisibilityType,
+  showModelSelector = false,
+  showVisibilitySelector = false,
+  isReadonly = false
+}: PageHeaderProps) {
   const { toggleSidebar } = useSidebar();
 
   return (
@@ -24,7 +42,23 @@ export function PageHeader({ title, children }: PageHeaderProps) {
         </span>
         {title}
       </h1>
-      {children && <div className="flex gap-2">{children}</div>}
+      <div className="flex gap-2 items-center">
+        {showModelSelector && selectedModelId && !isReadonly && (
+          <ModelSelector
+            selectedModelId={selectedModelId}
+            className="mr-2"
+          />
+        )}
+        
+        {showVisibilitySelector && chatId && selectedVisibilityType && !isReadonly && (
+          <VisibilitySelector
+            chatId={chatId}
+            selectedVisibilityType={selectedVisibilityType}
+          />
+        )}
+        
+        {children}
+      </div>
     </div>
   );
 }

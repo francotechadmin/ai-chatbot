@@ -1,90 +1,74 @@
 'use client';
 
-import { auth } from '@/app/(auth)/auth';
-import { getChatsByUserIdAndType } from '@/lib/db/queries';
-import { redirect } from 'next/navigation';
-import Link from 'next/link';
+import { useState } from 'react';
+import { Chat } from '@/components/chat';
+import { DataStreamHandler } from '@/components/data-stream-handler';
+import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
+import { generateUUID } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/page-header';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatDistance } from 'date-fns';
-import { PlusIcon, MessageIcon } from '@/components/icons';
-import { useEffect, useState } from 'react';
-import type { Chat } from '@/lib/db/schema';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { HistoryPanel } from '@/components/history-panel';
+import { ClockRewind, PlusIcon } from '@/components/icons';
+import { useRouter } from 'next/navigation';
 
 export default function QueryPage() {
-  const [chats, setChats] = useState<Chat[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchChats() {
-      try {
-        const response = await fetch('/api/history?type=query');
-        if (response.ok) {
-          const data = await response.json();
-          setChats(data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch chats:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchChats();
-  }, []);
-
+  const [chatId] = useState(() => generateUUID());
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const router = useRouter();
+  
   return (
     <div className="container mx-auto p-6">
       <div className="flex flex-col gap-6">
-        <PageHeader title="Knowledge Query">
-          <Button asChild>
-            <Link href="/query/chat/new">
+        <PageHeader 
+          title="Knowledge Query"
+          chatId={chatId}
+          selectedModelId={DEFAULT_CHAT_MODEL}
+          selectedVisibilityType="private"
+          showModelSelector={true}
+          showVisibilitySelector={true}
+        >
+          <div className="flex items-center gap-2">
+            <Sheet open={historyOpen} onOpenChange={setHistoryOpen}>
+              <SheetTrigger asChild>
+                <Button variant="outline">
+                  <ClockRewind size={16} />
+                  <span className="ml-2">History</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[400px] sm:w-[540px] p-0">
+                <HistoryPanel 
+                  defaultType="query" 
+                  onSelect={(id) => {
+                    router.push(`/query/chat/${id}`);
+                    setHistoryOpen(false);
+                  }}
+                  onClose={() => setHistoryOpen(false)}
+                />
+              </SheetContent>
+            </Sheet>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                router.push('/query/chat/new');
+              }}
+            >
               <PlusIcon size={16} />
               <span className="ml-2">New Query</span>
-            </Link>
-          </Button>
+            </Button>
+          </div>
         </PageHeader>
-
-        {loading ? (
-          <div className="flex justify-center">
-            <div className="animate-pulse h-8 w-32 bg-muted rounded"></div>
-          </div>
-        ) : chats.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center p-6">
-              <div className="text-muted-foreground mb-4">
-                <MessageIcon size={48} />
-              </div>
-              <p className="text-muted-foreground text-center mb-4">
-                You haven&apos;t created any knowledge queries yet.
-              </p>
-              <Button asChild>
-                <Link href="/query/chat/new">
-                  <PlusIcon size={16} />
-                  <span className="ml-2">Start a New Query</span>
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {chats.map((chat) => (
-              <Card key={chat.id} className="hover:bg-muted/50 transition-colors">
-                <Link href={`/query/chat/${chat.id}`} className="block h-full">
-                  <CardHeader>
-                    <CardTitle className="truncate">{chat.title}</CardTitle>
-                    <CardDescription>
-                      {formatDistance(new Date(chat.createdAt), new Date(), {
-                        addSuffix: true,
-                      })}
-                    </CardDescription>
-                  </CardHeader>
-                </Link>
-              </Card>
-            ))}
-          </div>
-        )}
+        
+        <Chat
+          key={chatId}
+          id={chatId}
+          initialMessages={[]}
+          selectedChatModel={DEFAULT_CHAT_MODEL}
+          selectedVisibilityType="private"
+          isReadonly={false}
+          chatType="query"
+        />
+        <DataStreamHandler id={chatId} />
       </div>
     </div>
   );

@@ -1,11 +1,9 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { auth } from '@/app/(auth)/auth';
-import { Chat } from '@/components/chat';
 import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
 import { generateUUID } from '@/lib/utils';
-import { DataStreamHandler } from '@/components/data-stream-handler';
-import type { UIMessage } from 'ai';
+import { ChatPageWrapper } from '@/components/chat-page-wrapper';
 
 export default async function NewCapturePage() {
   const session = await auth();
@@ -18,49 +16,17 @@ export default async function NewCapturePage() {
 
   const cookieStore = await cookies();
   const modelIdFromCookie = cookieStore.get('chat-model');
-
-  // Create a system message for knowledge capture
-  const systemMessage: UIMessage = {
-    id: generateUUID(),
-    role: 'system',
-    content: '',
-    parts: [
-      {
-        type: 'text',
-        text: 'You are a knowledge capture assistant. Help the user document, organize, and structure their knowledge and information.'
-      }
-    ]
-  };
-
-  if (!modelIdFromCookie) {
-    return (
-      <>
-        <Chat
-          key={id}
-          id={id}
-          initialMessages={[systemMessage]}
-          selectedChatModel={DEFAULT_CHAT_MODEL}
-          selectedVisibilityType="private"
-          isReadonly={false}
-          chatType="capture"
-        />
-        <DataStreamHandler id={id} />
-      </>
-    );
-  }
+  const selectedChatModel = modelIdFromCookie ? modelIdFromCookie.value : DEFAULT_CHAT_MODEL;
 
   return (
-    <>
-      <Chat
-        key={id}
-        id={id}
-        initialMessages={[systemMessage]}
-        selectedChatModel={modelIdFromCookie.value}
-        selectedVisibilityType="private"
-        isReadonly={false}
-        chatType="capture"
-      />
-      <DataStreamHandler id={id} />
-    </>
+    <ChatPageWrapper
+      id={id}
+      initialMessages={[]}
+      selectedChatModel={selectedChatModel}
+      selectedVisibilityType="private"
+      isReadonly={false}
+      chatType="capture"
+      title="New Knowledge Capture"
+    />
   );
 }

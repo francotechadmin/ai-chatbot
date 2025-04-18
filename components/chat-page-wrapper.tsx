@@ -3,17 +3,34 @@
 import { useState } from 'react';
 import { Chat } from '@/components/chat';
 import { DataStreamHandler } from '@/components/data-stream-handler';
-import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
-import { generateUUID } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/page-header';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { HistoryPanel } from '@/components/history-panel';
 import { ClockRewind, PlusIcon } from '@/components/icons';
+import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import type { UIMessage } from 'ai';
+import type { VisibilityType } from '@/components/visibility-selector';
 
-export default function CapturePage() {
-  const [chatId] = useState(() => generateUUID());
+interface ChatPageWrapperProps {
+  id: string;
+  initialMessages: Array<UIMessage>;
+  selectedChatModel: string;
+  selectedVisibilityType: VisibilityType;
+  isReadonly: boolean;
+  chatType: 'query' | 'capture';
+  title: string;
+}
+
+export function ChatPageWrapper({
+  id,
+  initialMessages,
+  selectedChatModel,
+  selectedVisibilityType,
+  isReadonly,
+  chatType,
+  title
+}: ChatPageWrapperProps) {
   const [historyOpen, setHistoryOpen] = useState(false);
   const router = useRouter();
   
@@ -21,12 +38,13 @@ export default function CapturePage() {
     <div className="container mx-auto p-6">
       <div className="flex flex-col gap-6">
         <PageHeader 
-          title="Knowledge Capture"
-          chatId={chatId}
-          selectedModelId={DEFAULT_CHAT_MODEL}
-          selectedVisibilityType="private"
-          showModelSelector={true}
-          showVisibilitySelector={true}
+          title={title}
+          chatId={id}
+          selectedModelId={selectedChatModel}
+          selectedVisibilityType={selectedVisibilityType}
+          showModelSelector={!isReadonly}
+          showVisibilitySelector={!isReadonly}
+          isReadonly={isReadonly}
         >
           <div className="flex items-center gap-2">
             <Sheet open={historyOpen} onOpenChange={setHistoryOpen}>
@@ -38,9 +56,9 @@ export default function CapturePage() {
               </SheetTrigger>
               <SheetContent side="right" className="w-[400px] sm:w-[540px] p-0">
                 <HistoryPanel 
-                  defaultType="capture" 
-                  onSelect={(id) => {
-                    router.push(`/capture/chat/${id}`);
+                  defaultType={chatType} 
+                  onSelect={(chatId) => {
+                    router.push(`/${chatType}/chat/${chatId}`);
                     setHistoryOpen(false);
                   }}
                   onClose={() => setHistoryOpen(false)}
@@ -50,25 +68,24 @@ export default function CapturePage() {
             <Button 
               variant="outline" 
               onClick={() => {
-                router.push('/capture/chat/new');
+                router.push(`/${chatType}/chat/new`);
               }}
             >
               <PlusIcon size={16} />
-              <span className="ml-2">New Capture</span>
+              <span className="ml-2">New {chatType === 'query' ? 'Query' : 'Capture'}</span>
             </Button>
           </div>
         </PageHeader>
         
         <Chat
-          key={chatId}
-          id={chatId}
-          initialMessages={[]}
-          selectedChatModel={DEFAULT_CHAT_MODEL}
-          selectedVisibilityType="private"
-          isReadonly={false}
-          chatType="capture"
+          id={id}
+          initialMessages={initialMessages}
+          selectedChatModel={selectedChatModel}
+          selectedVisibilityType={selectedVisibilityType}
+          isReadonly={isReadonly}
+          chatType={chatType}
         />
-        <DataStreamHandler id={chatId} />
+        <DataStreamHandler id={id} />
       </div>
     </div>
   );

@@ -76,12 +76,6 @@ export function Chat({
   return (
     <>
       <div className="flex flex-col min-w-0 h-dvh bg-background">
-        <ChatHeader
-          chatId={id}
-          selectedModelId={selectedChatModel}
-          selectedVisibilityType={selectedVisibilityType}
-          isReadonly={isReadonly}
-        />
 
         <Messages
           chatId={id}
@@ -92,6 +86,7 @@ export function Chat({
           reload={reload}
           isReadonly={isReadonly}
           isArtifactVisible={isArtifactVisible}
+          chatType={chatType}
         />
 
         <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
@@ -108,6 +103,7 @@ export function Chat({
               messages={messages as any}
               setMessages={setMessages}
               append={append}
+              chatType={chatType}
             />
           )}
         </form>

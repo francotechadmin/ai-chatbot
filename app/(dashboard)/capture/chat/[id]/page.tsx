@@ -2,12 +2,11 @@ import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 import { auth } from '@/app/(auth)/auth';
-import { Chat } from '@/components/chat';
 import { getChatById, getMessagesByChatId } from '@/lib/db/queries';
-import { DataStreamHandler } from '@/components/data-stream-handler';
 import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
 import type { DBMessage } from '@/lib/db/schema';
 import type { Attachment, UIMessage } from 'ai';
+import { ChatPageWrapper } from '@/components/chat-page-wrapper';
 
 export default async function CaptureChatPage(props: { params: { id: string } }) {
   const params = await Promise.resolve(props.params);
@@ -48,34 +47,18 @@ export default async function CaptureChatPage(props: { params: { id: string } })
 
   const cookieStore = await cookies();
   const chatModelFromCookie = cookieStore.get('chat-model');
-
-  if (!chatModelFromCookie) {
-    return (
-      <>
-        <Chat
-          id={chat.id}
-          initialMessages={convertToUIMessages(messagesFromDb)}
-          selectedChatModel={DEFAULT_CHAT_MODEL}
-          selectedVisibilityType={chat.visibility}
-          isReadonly={session?.user?.id !== chat.userId}
-          chatType="capture"
-        />
-        <DataStreamHandler id={id} />
-      </>
-    );
-  }
+  const selectedChatModel = chatModelFromCookie ? chatModelFromCookie.value : DEFAULT_CHAT_MODEL;
+  const isReadonly = session?.user?.id !== chat.userId;
 
   return (
-    <>
-      <Chat
-        id={chat.id}
-        initialMessages={convertToUIMessages(messagesFromDb)}
-        selectedChatModel={chatModelFromCookie.value}
-        selectedVisibilityType={chat.visibility}
-        isReadonly={session?.user?.id !== chat.userId}
-        chatType="capture"
-      />
-      <DataStreamHandler id={id} />
-    </>
+    <ChatPageWrapper
+      id={chat.id}
+      initialMessages={convertToUIMessages(messagesFromDb)}
+      selectedChatModel={selectedChatModel}
+      selectedVisibilityType={chat.visibility}
+      isReadonly={isReadonly}
+      chatType="capture"
+      title={chat.title || "Knowledge Capture"}
+    />
   );
 }

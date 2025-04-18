@@ -16,6 +16,7 @@ interface MessagesProps {
   reload: UseChatHelpers['reload'];
   isReadonly: boolean;
   isArtifactVisible: boolean;
+  chatType?: 'general' | 'query' | 'capture';
 }
 
 function PureMessages({
@@ -26,6 +27,7 @@ function PureMessages({
   setMessages,
   reload,
   isReadonly,
+  chatType = 'general',
 }: MessagesProps) {
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
@@ -35,7 +37,7 @@ function PureMessages({
       ref={messagesContainerRef}
       className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll pt-4"
     >
-      {messages.length === 0 && <Overview />}
+      {messages.length === 0 && <Overview chatType={chatType} />}
 
       {messages.map((message, index) => (
         <PreviewMessage

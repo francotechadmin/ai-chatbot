@@ -114,7 +114,7 @@ export function HistoryPanel({
         
         {/* Search input */}
         <div className="relative mb-4">
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
             <SearchIcon />
           </div>
           <Input
@@ -196,7 +196,7 @@ export function HistoryPanel({
                   
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button variant="ghost" size="icon" className="size-8">
                         <MoreHorizontalIcon size={16} />
                         <span className="sr-only">Actions</span>
                       </Button>

@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button';
 import { SidebarLeftIcon } from '@/components/icons';
 import { useSidebar } from '@/components/ui/sidebar';
 import { ModelSelector } from '@/components/model-selector';
-import { VisibilitySelector } from '@/components/visibility-selector';
-import { VisibilityType } from '@/components/visibility-selector';
+import { VisibilitySelector, VisibilityType } from '@/components/visibility-selector';
 
 interface PageHeaderProps {
   title: string;

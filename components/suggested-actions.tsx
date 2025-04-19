@@ -98,7 +98,7 @@ function PureSuggestedActions({ chatId, append, chatType = 'general' }: Suggeste
         style={{ touchAction: 'pan-x' }}
       >
         {/* Gradient fade on the right side to indicate scrollable content */}
-        <div className="sticky right-0 top-0 bottom-0 w-8 ml-auto bg-gradient-to-l from-background to-transparent pointer-events-none"></div>
+        <div className="sticky right-0 inset-y-0 w-8 ml-auto bg-gradient-to-l from-background to-transparent pointer-events-none"></div>
         
         {suggestedActions.map((suggestedAction, index) => (
           <motion.div
@@ -107,7 +107,7 @@ function PureSuggestedActions({ chatId, append, chatType = 'general' }: Suggeste
             exit={{ opacity: 0, x: 20 }}
             transition={{ delay: 0.05 * index }}
             key={`suggested-action-${suggestedAction.title}-${index}`}
-            className="flex-shrink-0 snap-start w-[140px] md:w-[220px]"
+            className="shrink-0 snap-start w-[140px] md:w-[220px]"
           >
             <Button
               variant="ghost"
@@ -119,10 +119,10 @@ function PureSuggestedActions({ chatId, append, chatType = 'general' }: Suggeste
                   content: suggestedAction.action,
                 });
               }}
-              className="text-left border rounded-xl px-2 py-2 md:px-4 md:py-3.5 text-xs md:text-sm flex flex-col w-full h-auto justify-start items-start"
+              className="text-left border rounded-xl p-2 md:px-4 md:py-3.5 text-xs md:text-sm flex flex-col w-full h-auto justify-start items-start"
             >
-              <span className="font-medium whitespace-nowrap overflow-hidden text-ellipsis w-full">{suggestedAction.title}</span>
-              <span className="text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis w-full">
+              <span className="font-medium truncate w-full">{suggestedAction.title}</span>
+              <span className="text-muted-foreground truncate w-full">
                 {suggestedAction.label}
               </span>
             </Button>

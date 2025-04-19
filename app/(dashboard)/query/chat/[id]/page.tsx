@@ -8,8 +8,8 @@ import type { DBMessage } from '@/lib/db/schema';
 import type { Attachment, UIMessage } from 'ai';
 import { ChatPageWrapper } from '@/components/chat-page-wrapper';
 
-export default async function QueryChatPage(props: { params: { id: string } }) {
-  const params = await Promise.resolve(props.params);
+export default async function QueryChatPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const { id } = params;
   const chat = await getChatById({ id });
 

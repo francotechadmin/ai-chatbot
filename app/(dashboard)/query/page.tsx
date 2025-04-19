@@ -29,7 +29,7 @@ export default function QueryPage() {
           showVisibilitySelector={true}
         >
           <div className="flex items-center gap-2">
-            <div className="flex-shrink-0 w-[140px] md:w-auto">
+            <div className="shrink-0 w-[140px] md:w-auto">
               <Sheet open={historyOpen} onOpenChange={setHistoryOpen}>
                 <SheetTrigger asChild>
                   <Button variant="outline" className="w-full h-[34px] text-sm">
@@ -49,7 +49,7 @@ export default function QueryPage() {
                 </SheetContent>
               </Sheet>
             </div>
-            <div className="flex-shrink-0 w-[140px] md:w-auto">
+            <div className="shrink-0 w-[140px] md:w-auto">
               <Button 
                 variant="outline" 
                 onClick={() => {

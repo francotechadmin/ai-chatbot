@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { SidebarInset, } from '@/components/ui/sidebar';
-import { auth } from '../../(auth)/auth';
+import { auth } from '@/app/(auth)/auth';
 import Script from 'next/script';
 
 export const experimental_ppr = true;

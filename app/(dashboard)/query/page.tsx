@@ -28,34 +28,39 @@ export default function QueryPage() {
           showModelSelector={true}
           showVisibilitySelector={true}
         >
-          <div className="flex flex-wrap items-center gap-2">
-            <Sheet open={historyOpen} onOpenChange={setHistoryOpen}>
-              <SheetTrigger asChild>
-                <Button variant="outline">
-                  <ClockRewind size={16} />
-                  <span className="ml-2">History</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[400px] sm:w-[540px] p-0">
-                <HistoryPanel 
-                  defaultType="query" 
-                  onSelect={(id) => {
-                    router.push(`/query/chat/${id}`);
-                    setHistoryOpen(false);
-                  }}
-                  onClose={() => setHistoryOpen(false)}
-                />
-              </SheetContent>
-            </Sheet>
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                router.push('/query/chat/new');
-              }}
-            >
-              <PlusIcon size={16} />
-              <span className="ml-2">New Query</span>
-            </Button>
+          <div className="flex items-center gap-2">
+            <div className="flex-shrink-0 w-[140px] md:w-auto">
+              <Sheet open={historyOpen} onOpenChange={setHistoryOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="outline" className="w-full h-[34px] text-sm">
+                    <ClockRewind size={16} />
+                    <span className="ml-2">History</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[400px] sm:w-[540px] p-0">
+                  <HistoryPanel 
+                    defaultType="query" 
+                    onSelect={(id) => {
+                      router.push(`/query/chat/${id}`);
+                      setHistoryOpen(false);
+                    }}
+                    onClose={() => setHistoryOpen(false)}
+                  />
+                </SheetContent>
+              </Sheet>
+            </div>
+            <div className="flex-shrink-0 w-[140px] md:w-auto">
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  router.push('/query/chat/new');
+                }}
+                className="w-full h-[34px] text-sm"
+              >
+                <PlusIcon size={16} />
+                <span className="ml-2">New Query</span>
+              </Button>
+            </div>
           </div>
         </PageHeader>
         

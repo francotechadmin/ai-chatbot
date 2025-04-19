@@ -87,6 +87,18 @@ const config: Config = {
           '&::-webkit-scrollbar': {
             display: 'none'
           }
+        },
+        '.scroll-lock': {
+          '& button': {
+            'pointer-events': 'none',
+            'touch-action': 'none'
+          }
+        },
+        '.scroll-lock-active': {
+          '& button': {
+            'pointer-events': 'auto',
+            'touch-action': 'auto'
+          }
         }
       });
     }

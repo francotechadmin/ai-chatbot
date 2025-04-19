@@ -1,6 +1,6 @@
 'use client';
 
-import { startTransition, useMemo, useOptimistic, useState } from 'react';
+import { startTransition, useMemo, useOptimistic, useState, useRef, useEffect } from 'react';
 
 import { saveChatModelAsCookie } from '@/app/(dashboard)/query/(chat)/actions';
 import { Button } from '@/components/ui/button';
@@ -24,14 +24,52 @@ export function ModelSelector({
   const [open, setOpen] = useState(false);
   const [optimisticModelId, setOptimisticModelId] =
     useOptimistic(selectedModelId);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const lastScrollTime = useRef(0);
+
+  // Check if parent container is scrolling
+  useEffect(() => {
+    const checkScrolling = () => {
+      lastScrollTime.current = Date.now();
+      setIsScrolling(true);
+    };
+
+    // Find the scrollable parent
+    const scrollableParent = document.querySelector('.scroll-lock');
+    
+    if (scrollableParent) {
+      scrollableParent.addEventListener('scroll', checkScrolling, { passive: true });
+      
+      // Reset scrolling state after a delay
+      const interval = setInterval(() => {
+        if (Date.now() - lastScrollTime.current > 200) {
+          setIsScrolling(false);
+        }
+      }, 100);
+      
+      return () => {
+        scrollableParent.removeEventListener('scroll', checkScrolling);
+        clearInterval(interval);
+      };
+    }
+  }, []);
 
   const selectedChatModel = useMemo(
     () => chatModels.find((chatModel) => chatModel.id === optimisticModelId),
     [optimisticModelId],
   );
+  
+  // Custom handler for dropdown open/close
+  const handleOpenChange = (newOpen: boolean) => {
+    if (newOpen && isScrolling) {
+      // Don't open if we're scrolling
+      return;
+    }
+    setOpen(newOpen);
+  };
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
+    <DropdownMenu open={open} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger
         asChild
         className={cn(

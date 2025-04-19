@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -49,6 +49,35 @@ export function VisibilitySelector({
   selectedVisibilityType: VisibilityType;
 } & React.ComponentProps<typeof Button>) {
   const [open, setOpen] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const lastScrollTime = useRef(0);
+
+  // Check if parent container is scrolling
+  useEffect(() => {
+    const checkScrolling = () => {
+      lastScrollTime.current = Date.now();
+      setIsScrolling(true);
+    };
+
+    // Find the scrollable parent
+    const scrollableParent = document.querySelector('.scroll-lock');
+    
+    if (scrollableParent) {
+      scrollableParent.addEventListener('scroll', checkScrolling, { passive: true });
+      
+      // Reset scrolling state after a delay
+      const interval = setInterval(() => {
+        if (Date.now() - lastScrollTime.current > 200) {
+          setIsScrolling(false);
+        }
+      }, 100);
+      
+      return () => {
+        scrollableParent.removeEventListener('scroll', checkScrolling);
+        clearInterval(interval);
+      };
+    }
+  }, []);
 
   const { visibilityType, setVisibilityType } = useChatVisibility({
     chatId,
@@ -59,9 +88,18 @@ export function VisibilitySelector({
     () => visibilities.find((visibility) => visibility.id === visibilityType),
     [visibilityType],
   );
+  
+  // Custom handler for dropdown open/close
+  const handleOpenChange = (newOpen: boolean) => {
+    if (newOpen && isScrolling) {
+      // Don't open if we're scrolling
+      return;
+    }
+    setOpen(newOpen);
+  };
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
+    <DropdownMenu open={open} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger
         asChild
         className={cn(

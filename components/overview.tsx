@@ -22,10 +22,8 @@ export const Overview = ({ chatType = 'general' }: OverviewProps) => {
             Try asking questions like:
           </p>
           <ul className="list-disc list-inside text-left">
-            <li>Find information about [topic]</li>
             <li>Summarize what we know about [subject]</li>
             <li>What are the key points from [document]</li>
-            <li>Compare the information between [topic A] and [topic B]</li>
           </ul>
         </>
       );
@@ -38,15 +36,13 @@ export const Overview = ({ chatType = 'general' }: OverviewProps) => {
           <p>
             <strong>Knowledge Capture Assistant</strong> helps you document, organize, and structure your knowledge.
           </p>
-          {/* <p>
+          <p>
             Try requests like:
-          </p> */}
-          {/* <ul className="list-disc list-inside text-left">
+          </p>
+          <ul className="list-disc list-inside text-left">
             <li>Document my process for [task]</li>
-            <li>Create a guide for [procedure]</li>
             <li>Help me organize information about [topic]</li>
-            <li>Structure my notes on [subject]</li>
-          </ul> */}
+          </ul>
         </>
       );
     } else {

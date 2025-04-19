@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
-import { memo } from 'react';
+import { memo, useRef } from 'react';
 import { UseChatHelpers } from '@ai-sdk/react';
 
 interface SuggestedActionsProps {
@@ -87,15 +87,18 @@ function PureSuggestedActions({ chatId, append, chatType = 'general' }: Suggeste
   };
 
   const suggestedActions = getSuggestedActions();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="w-full overflow-hidden relative max-w-[95vw] mx-auto">
       <div
+        ref={scrollContainerRef}
         data-testid="suggested-actions"
-        className="flex overflow-x-auto pb-2 gap-1 scrollbar-hide snap-x max-w-full"
+        className="flex overflow-x-auto pb-2 gap-1 scrollbar-hide scroll-lock snap-x max-w-full"
+        style={{ touchAction: 'pan-x' }}
       >
         {/* Gradient fade on the right side to indicate scrollable content */}
-        <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none"></div>
+        <div className="sticky right-0 top-0 bottom-0 w-8 ml-auto bg-gradient-to-l from-background to-transparent pointer-events-none"></div>
         
         {suggestedActions.map((suggestedAction, index) => (
           <motion.div

@@ -75,7 +75,7 @@ export function Chat({
 
   return (
     <>
-      <div className="flex flex-col min-w-0 h-[calc(100vh-16rem)] md:h-[calc(100vh-8rem)]">
+      <div className="flex flex-col min-w-0 h-[calc(100vh-15rem)] md:h-[calc(100vh-8rem)]">
 
         <Messages
           chatId={id}

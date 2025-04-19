@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { SidebarLeftIcon } from '@/components/icons';
 import { useSidebar } from '@/components/ui/sidebar';
@@ -30,31 +30,42 @@ export function PageHeader({
   isReadonly = false
 }: PageHeaderProps) {
   const { toggleSidebar } = useSidebar();
-
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  
   return (
     <div className="flex flex-col justify-between items-start gap-4 md:flex-row md:items-center mb-4">
       <h1 className="text-2xl font-bold flex items-center gap-2 cursor-pointer" onClick={toggleSidebar}>
         <span className="text-muted-foreground">
           <SidebarLeftIcon size={24} />
         </span>
-        <span className="truncate max-w-[200px] md:max-w-none">{title}</span>
+        <span className="truncate max-w-[90vw] md:max-w-none">{title}</span>
       </h1>
-      <div className="flex flex-wrap gap-2 items-center w-full md:w-auto">
+      <div 
+        ref={scrollContainerRef}
+        className="flex place-items-center overflow-x-auto scrollbar-hide scroll-lock pb-2 pr-8 gap-2 w-full md:w-auto relative"
+        style={{ touchAction: 'pan-x' }}
+      >
+        <div className="gap-2 flex items-center">
+          {children}
+        </div>
         {showModelSelector && selectedModelId && !isReadonly && (
-          <ModelSelector
-            selectedModelId={selectedModelId}
-            className="mr-2"
-          />
+          <div className="shrink-0 w-[140px] md:w-auto">
+            <ModelSelector
+              selectedModelId={selectedModelId}
+              className="mr-2 w-full"
+            />
+          </div>
         )}
         
         {showVisibilitySelector && chatId && selectedVisibilityType && !isReadonly && (
-          <VisibilitySelector
-            chatId={chatId}
-            selectedVisibilityType={selectedVisibilityType}
-          />
+          <div className="shrink-0 w-[140px] md:w-auto">
+            <VisibilitySelector
+              chatId={chatId}
+              selectedVisibilityType={selectedVisibilityType}
+              className="w-full"
+            />
+          </div>
         )}
-        
-        {children}
       </div>
     </div>
   );

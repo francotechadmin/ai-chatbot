@@ -4,6 +4,7 @@ export const authConfig = {
   pages: {
     signIn: '/login',
     newUser: '/dashboard',
+    error: '/login',
   },
   providers: [
     // added later in auth.ts since it requires bcrypt which is only compatible with Node.js
@@ -12,36 +13,32 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const isOnChat = nextUrl.pathname.startsWith('/');
-      const isOnRegister = nextUrl.pathname.startsWith('/register');
-      const isOnLogin = nextUrl.pathname.startsWith('/login');
-
-      if (isLoggedIn && (isOnLogin || isOnRegister)) {
-        return Response.redirect(new URL('/dashboard', nextUrl as unknown as URL));
+      
+      // Define public paths that don't require authentication
+      const isPublicPath = 
+        nextUrl.pathname === '/login' || 
+        nextUrl.pathname === '/register' || 
+        nextUrl.pathname === '/pending-approval' ||
+        nextUrl.pathname.startsWith('/api/auth');
+      
+      // If the user is logged in and trying to access a public path, redirect to dashboard
+      if (isLoggedIn && isPublicPath) {
+        return Response.redirect(new URL('/dashboard', nextUrl));
       }
-
-      if (isOnRegister || isOnLogin) {
-        return true; // Always allow access to register and login pages
+      
+      // If the user is not logged in and trying to access a protected path, deny access
+      // The middleware will handle the redirect to login
+      if (!isLoggedIn && !isPublicPath) {
+        return false;
       }
-
-      // Redirect root path to dashboard for logged-in users
-      if (nextUrl.pathname === '/') {
-        if (isLoggedIn) {
-          return Response.redirect(new URL('/dashboard', nextUrl as unknown as URL));
-        }
-        return false; // Redirect unauthenticated users to login page
-      }
-
-      if (isOnChat) {
-        if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
-      }
-
-      if (isLoggedIn) {
-        return Response.redirect(new URL('/dashboard', nextUrl as unknown as URL));
-      }
-
+      
+      // Allow access otherwise
       return true;
     },
   },
+  session: {
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  debug: process.env.NODE_ENV === 'development',
 } satisfies NextAuthConfig;

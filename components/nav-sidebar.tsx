@@ -3,6 +3,8 @@
 import type { User } from 'next-auth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { hasRole } from '@/lib/rbac';
 
 import { 
   HomeIcon,
@@ -28,9 +30,13 @@ import {
 } from '@/components/ui/sidebar';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
-export function NavSidebar({ user }: { user: User | undefined }) {
+export function NavSidebar() {
   const router = useRouter();
+  const { data: session } = useSession();
   const { setOpenMobile } = useSidebar();
+  const user = session?.user;
+  console.log('NavSidebar session:', session);
+  console.log('NavSidebar user:', user);
 
   return (
     <Sidebar className="group-data-[side=left]:border-r-0">
@@ -131,36 +137,68 @@ export function NavSidebar({ user }: { user: User | undefined }) {
           </nav>
         </div>
         
-        {/* Administration Section */}
-        <div className="space-y-1 mb-4">
-          <h3 className="px-3 text-xs font-medium text-muted-foreground mb-2">Administration</h3>
-          <nav className="space-y-1">
-            <Link 
-              href="/users" 
-              className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-muted"
-              onClick={() => setOpenMobile(false)}
-            >
-              <UserIcon />
-              <span>User Management</span>
-            </Link>
-            <Link 
-              href="/settings" 
-              className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-muted"
-              onClick={() => setOpenMobile(false)}
-            >
-              <GlobeIcon size={18} />
-              <span>Settings</span>
-            </Link>
-            <Link 
-              href="/help" 
-              className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-muted"
-              onClick={() => setOpenMobile(false)}
-            >
-              <MessageIcon size={18} />
-              <span>Help & Docs</span>
-            </Link>
-          </nav>
-        </div>
+        {/* Administration Section - Only visible to admins and superusers */}
+        {user && (
+          <div className="space-y-1 mb-4">
+            <h3 className="px-3 text-xs font-medium text-muted-foreground mb-2">Administration</h3>
+            <nav className="space-y-1">
+              {/* User Management - Only visible to admins and superusers */}
+              {user?.role && ['admin', 'superuser'].includes(user.role) && (
+                <Link 
+                  href="/users" 
+                  className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-muted"
+                  onClick={() => setOpenMobile(false)}
+                >
+                  <UserIcon />
+                  <span>User Management</span>
+                </Link>
+              )}
+              
+              {/* Knowledge Base Management - Only visible to admins and superusers */}
+              {user?.role && ['admin', 'superuser'].includes(user.role) && (
+                <Link 
+                  href="/knowledge-base/manage" 
+                  className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-muted"
+                  onClick={() => setOpenMobile(false)}
+                >
+                  <GlobeIcon size={18} />
+                  <span>KB Management</span>
+                </Link>
+              )}
+              
+              {/* System Settings - Only visible to superusers */}
+              {user?.role === 'superuser' && (
+                <Link 
+                  href="/settings/system" 
+                  className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-muted"
+                  onClick={() => setOpenMobile(false)}
+                >
+                  <GlobeIcon size={18} />
+                  <span>System Settings</span>
+                </Link>
+              )}
+              
+              {/* User Settings - Visible to all users */}
+              <Link 
+                href="/settings" 
+                className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-muted"
+                onClick={() => setOpenMobile(false)}
+              >
+                <GlobeIcon size={18} />
+                <span>User Settings</span>
+              </Link>
+              
+              <Link 
+                href="/help" 
+                className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-muted"
+                onClick={() => setOpenMobile(false)}
+              >
+                <MessageIcon size={18} />
+                <span>Help & Docs</span>
+              </Link>
+            </nav>
+          </div>
+        )}
         
         {/* Recent Chats section removed - now available in modal/sheet */}
       </SidebarContent>

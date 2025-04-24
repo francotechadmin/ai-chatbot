@@ -23,11 +23,30 @@ export default function Page() {
     },
   );
 
+  // Handle URL parameters only once on mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    
+    if (error === 'pending') {
+      toast({
+        type: 'error',
+        description: 'Your account is pending approval. Please wait for an administrator to approve your account.',
+      });
+    }
+  }, []);
+
+  // Handle form submission states
   useEffect(() => {
     if (state.status === 'failed') {
       toast({
         type: 'error',
         description: 'Invalid credentials!',
+      });
+    } else if (state.status === 'pending_approval') {
+      toast({
+        type: 'error',
+        description: 'Your account is pending approval. Please wait for an administrator to approve your account.',
       });
     } else if (state.status === 'invalid_data') {
       toast({
@@ -35,10 +54,16 @@ export default function Page() {
         description: 'Failed validating your submission!',
       });
     } else if (state.status === 'success') {
+      toast({
+        type: 'success',
+        description: 'Logged in successfully!',
+      });
       setIsSuccessful(true);
-      router.refresh();
+      
+      // Use window.location instead of router.refresh() to avoid potential loops
+      window.location.href = '/dashboard';
     }
-  }, [state.status, router]);
+  }, [state.status]);
 
   const handleSubmit = (formData: FormData) => {
     setEmail(formData.get('email') as string);
@@ -67,6 +92,16 @@ export default function Page() {
             {' for free.'}
           </p>
         </AuthForm>
+        
+        {state.status === 'pending_approval' && (
+          <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+            <h4 className="font-medium text-yellow-800">Account Pending Approval</h4>
+            <p className="text-sm text-yellow-700 mt-1">
+              Your account has been created but requires administrator approval before you can access the system.
+              You will be notified once your account has been approved.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

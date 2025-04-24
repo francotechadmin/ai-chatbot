@@ -33,6 +33,14 @@ export default function Page() {
         type: 'error',
         description: 'Failed validating your submission!',
       });
+    } else if (state.status === 'pending_approval') {
+      toast({ 
+        type: 'success', 
+        description: 'Account created successfully! Your account is pending admin approval.' 
+      });
+      
+      // Instead of redirecting, just show the message
+      setIsSuccessful(true);
     } else if (state.status === 'success') {
       toast({ type: 'success', description: 'Account created successfully!' });
 
@@ -68,6 +76,16 @@ export default function Page() {
             {' instead.'}
           </p>
         </AuthForm>
+        
+        {state.status === 'pending_approval' && (
+          <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+            <h4 className="font-medium text-yellow-800">Account Pending Approval</h4>
+            <p className="text-sm text-yellow-700 mt-1">
+              Your account has been created but requires administrator approval before you can access the system.
+              You will be notified once your account has been approved.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

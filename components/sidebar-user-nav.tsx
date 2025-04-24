@@ -18,8 +18,12 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 
-export function SidebarUserNav({ user }: { user: User }) {
+export function SidebarUserNav({ user }: { user: User | undefined }) {
   const { setTheme, theme } = useTheme();
+  
+  if (!user) {
+    return null;
+  }
 
   return (
     <SidebarMenu>

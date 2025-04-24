@@ -50,6 +50,20 @@
       "when": 1745002648890,
       "tag": "0006_soft_nightmare",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1745608269000,
+      "tag": "0007_rbac_user_columns",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1745608429000,
+      "tag": "0008_default_user_roles",
+      "breakpoints": true
     }
   ]
 }

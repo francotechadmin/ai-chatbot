@@ -155,7 +155,7 @@ export function NavSidebar() {
               )}
               
               {/* Knowledge Base Management - Only visible to admins and superusers */}
-              {user?.role && ['admin', 'superuser'].includes(user.role) && (
+              {/* {user?.role && ['admin', 'superuser'].includes(user.role) && (
                 <Link 
                   href="/knowledge-base/manage" 
                   className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-muted"
@@ -164,10 +164,10 @@ export function NavSidebar() {
                   <GlobeIcon size={18} />
                   <span>KB Management</span>
                 </Link>
-              )}
+              )} */}
               
               {/* System Settings - Only visible to superusers */}
-              {user?.role === 'superuser' && (
+              {/* {user?.role === 'superuser' && (
                 <Link 
                   href="/settings/system" 
                   className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-muted"
@@ -177,7 +177,7 @@ export function NavSidebar() {
                   <span>System Settings</span>
                 </Link>
               )}
-              
+               */}
               {/* User Settings - Visible to all users */}
               <Link 
                 href="/settings" 

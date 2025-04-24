@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useTheme } from 'next-themes';
+import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -9,16 +11,59 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { PageHeader } from '@/components/page-header';
+import { chatModels, DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
+import { saveChatModelAsCookie } from '@/app/(dashboard)/query/(chat)/actions';
+import { saveDefaultVisibilityAsCookie } from './actions';
+import { toast } from 'sonner';
 
 export default function SettingsPage() {
+  const { data: session } = useSession();
+  const { theme, setTheme } = useTheme();
   const [saved, setSaved] = useState(false);
+  const [selectedModel, setSelectedModel] = useState(DEFAULT_CHAT_MODEL);
+  const [defaultVisibility, setDefaultVisibility] = useState<'private' | 'public'>('private');
   
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  // Load saved preferences from cookies on component mount
+  useEffect(() => {
+    const getCookieValue = (name: string) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(';').shift();
+      return null;
+    };
+    
+    // Load saved model
+    const savedModel = getCookieValue('chat-model');
+    if (savedModel) {
+      setSelectedModel(savedModel);
+    }
+    
+    // Load saved visibility preference
+    const savedVisibility = getCookieValue('default-visibility');
+    if (savedVisibility && (savedVisibility === 'private' || savedVisibility === 'public')) {
+      setDefaultVisibility(savedVisibility);
+    }
+  }, []);
+  
+  const handleSave = async () => {
+    try {
+      // Save model selection to cookie
+      await saveChatModelAsCookie(selectedModel);
+      
+      // Save visibility preference to cookie
+      await saveDefaultVisibilityAsCookie(defaultVisibility);
+      
+      // Save theme (this happens automatically via next-themes)
+      
+      // Show success message
+      toast.success('Settings saved successfully');
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+      toast.error('Failed to save settings');
+    }
   };
 
   return (
@@ -31,40 +76,27 @@ export default function SettingsPage() {
         </PageHeader>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* General Settings */}
+          {/* Account Information */}
           <Card className="md:col-span-2">
             <CardHeader>
-              <CardTitle>General Settings</CardTitle>
-              <CardDescription>Configure your system preferences</CardDescription>
+              <CardTitle>Account Information</CardTitle>
+              <CardDescription>Your account details</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="app-name">Application Name</Label>
-                <Input id="app-name" defaultValue="Knowledge Management System" />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="default-model">Default AI Model</Label>
-                <select id="default-model" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                  <option value="gpt-4">GPT-4</option>
-                  <option value="gpt-3.5">GPT-3.5</option>
-                  <option value="claude-3">Claude 3</option>
-                </select>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="default-visibility">Default Content Visibility</Label>
-                  <select id="default-visibility" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                    <option value="private">Private</option>
-                    <option value="team">Team</option>
-                    <option value="public">Public</option>
-                  </select>
+                  <div className="text-sm font-medium">Email</div>
+                  <div className="text-sm text-muted-foreground">{session?.user?.email || 'Not available'}</div>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="max-tokens">Max Tokens per Query</Label>
-                  <Input type="number" id="max-tokens" defaultValue="4000" />
+                  <div className="text-sm font-medium">Role</div>
+                  <div className="text-sm text-muted-foreground capitalize">{session?.user?.role || 'user'}</div>
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="text-sm font-medium">Account Status</div>
+                  <div className="text-sm text-muted-foreground capitalize">{session?.user?.status || 'active'}</div>
                 </div>
               </div>
             </CardContent>
@@ -78,85 +110,69 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>Theme</Label>
+                <div className="text-sm font-medium">Theme</div>
                 <div className="grid grid-cols-2 gap-2">
-                  <Button variant="outline" className="justify-start">
+                  <Button 
+                    variant={theme === 'light' ? 'default' : 'outline'} 
+                    className="justify-start"
+                    onClick={() => setTheme('light')}
+                  >
                     Light
                   </Button>
-                  <Button variant="outline" className="justify-start">
+                  <Button 
+                    variant={theme === 'dark' ? 'default' : 'outline'} 
+                    className="justify-start"
+                    onClick={() => setTheme('dark')}
+                  >
                     Dark
                   </Button>
-                  <Button variant="outline" className="justify-start col-span-2">
+                  <Button 
+                    variant={theme === 'system' ? 'default' : 'outline'} 
+                    className="justify-start col-span-2"
+                    onClick={() => setTheme('system')}
+                  >
                     System Default
                   </Button>
                 </div>
               </div>
-              
-              <div className="space-y-2">
-                <Label>Density</Label>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button variant="outline" className="justify-start">
-                    Compact
-                  </Button>
-                  <Button variant="outline" className="justify-start">
-                    Comfortable
-                  </Button>
-                </div>
-              </div>
             </CardContent>
           </Card>
 
-          {/* API Settings */}
-          <Card className="md:col-span-2">
+          {/* Chat Defaults */}
+          <Card className="md:col-span-3">
             <CardHeader>
-              <CardTitle>API Configuration</CardTitle>
-              <CardDescription>Configure external API connections</CardDescription>
+              <CardTitle>Chat Defaults</CardTitle>
+              <CardDescription>Configure default settings for new chats</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="openai-key">OpenAI API Key</Label>
-                <Input id="openai-key" type="password" defaultValue="sk-••••••••••••••••••••••••" />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="anthropic-key">Anthropic API Key</Label>
-                <Input id="anthropic-key" type="password" />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="endpoint-url">Custom Endpoint URL</Label>
-                <Input id="endpoint-url" defaultValue="https://api.example.com/v1" />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Notification Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Notifications</CardTitle>
-              <CardDescription>Configure your notification preferences</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="email-notif">Email Notifications</Label>
-                  <div className="relative inline-flex h-6 w-11 items-center rounded-full bg-muted transition-colors">
-                    <span className="absolute left-1 size-4 rounded-full bg-white transition-transform" />
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <div className="text-sm font-medium">Default AI Model</div>
+                  <select 
+                    id="default-model" 
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    value={selectedModel}
+                    onChange={(e) => setSelectedModel(e.target.value)}
+                  >
+                    {chatModels.map((model) => (
+                      <option key={model.id} value={model.id}>
+                        {model.name} - {model.description}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="browser-notif">Browser Notifications</Label>
-                  <div className="relative inline-flex h-6 w-11 items-center rounded-full bg-primary transition-colors">
-                    <span className="absolute left-6 size-4 rounded-full bg-white transition-transform" />
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between pt-2">
-                  <Label htmlFor="approval-notif">Content Approval</Label>
-                  <div className="relative inline-flex h-6 w-11 items-center rounded-full bg-primary transition-colors">
-                    <span className="absolute left-6 size-4 rounded-full bg-white transition-transform" />
-                  </div>
+                <div className="space-y-2">
+                  <div className="text-sm font-medium">Default Content Visibility</div>
+                  <select 
+                    id="default-visibility" 
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    value={defaultVisibility}
+                    onChange={(e) => setDefaultVisibility(e.target.value as 'private' | 'public')}
+                  >
+                    <option value="private">Private - Only you can access</option>
+                    <option value="public">Public - Anyone with the link can access</option>
+                  </select>
                 </div>
               </div>
             </CardContent>
@@ -165,4 +181,4 @@ export default function SettingsPage() {
       </div>
     </div>
   );
-} 
+}

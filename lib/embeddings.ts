@@ -177,3 +177,81 @@ export async function cosineSimilarity(a: number[], b: number[]): Promise<number
   
   return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
 }
+
+/**
+ * Searches for knowledge chunks relevant to a query
+ * @param query The search query
+ * @param limit Maximum number of results to return
+ * @param minSimilarity Minimum similarity score (0-1) for results
+ * @returns Array of relevant knowledge chunks with similarity scores
+ */
+export async function searchKnowledgeBase(
+  query: string,
+  limit: number = 5,
+  minSimilarity: number = 0.7
+): Promise<Array<{
+  chunk: any,
+  source: any,
+  similarity: number
+}>> {
+  try {
+    // Import database queries
+    const { getKnowledgeSourcesByStatus, getKnowledgeChunksBySourceId } = await import('./db/queries');
+    
+    // Get approved knowledge sources
+    const approvedSources = await getKnowledgeSourcesByStatus('approved');
+    if (!approvedSources || approvedSources.length === 0) {
+      console.log('No approved knowledge sources found');
+      return [];
+    }
+    
+    // Generate embedding for the query
+    const queryEmbedding = await generateEmbedding(query);
+    
+    // Collect all chunks from approved sources
+    const allChunks: Array<{
+      chunk: any,
+      source: any,
+      similarity: number
+    }> = [];
+    
+    for (const source of approvedSources) {
+      const chunks = await getKnowledgeChunksBySourceId(source.id);
+      
+      if (chunks && chunks.length > 0) {
+        for (const chunk of chunks) {
+          // Skip chunks without embeddings
+          if (!chunk.embedding) continue;
+          
+          // Parse embedding if it's stored as JSON
+          const embeddingVector = Array.isArray(chunk.embedding) 
+            ? chunk.embedding 
+            : (typeof chunk.embedding === 'string' 
+                ? JSON.parse(chunk.embedding) 
+                : Object.values(chunk.embedding));
+          
+          // Calculate similarity score
+          const similarity = await cosineSimilarity(queryEmbedding, embeddingVector);
+          
+          // Only include chunks with similarity above threshold
+          if (similarity >= minSimilarity) {
+            allChunks.push({
+              chunk,
+              source,
+              similarity
+            });
+          }
+        }
+      }
+    }
+    
+    // Sort by similarity (highest first)
+    allChunks.sort((a, b) => b.similarity - a.similarity);
+    
+    // Return top results
+    return allChunks.slice(0, limit);
+  } catch (error) {
+    console.error('Error searching knowledge base:', error);
+    return [];
+  }
+}

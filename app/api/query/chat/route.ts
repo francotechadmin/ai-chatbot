@@ -6,7 +6,8 @@ import {
   streamText,
 } from 'ai';
 import { auth } from '@/app/(auth)/auth';
-import { systemPrompt } from '@/lib/ai/prompts';
+import { systemPrompt, queryPrompt } from '@/lib/ai/prompts';
+import { searchKnowledgeBase } from '@/lib/embeddings';
 import {
   deleteChatById,
   getChatById,
@@ -94,11 +95,58 @@ export async function POST(request: Request) {
     // Process messages to ensure they have valid content
     const processedMessages = processMessages(messages);
 
+    // Extract query text from the user message
+    const queryText = validUserMessage.parts
+      .filter(part => part.type === 'text')
+      .map(part => part.text)
+      .join(' ');
+
+    // Search knowledge base for relevant chunks
+    let knowledgeContext = '';
+    try {
+      const searchResults = await searchKnowledgeBase(queryText, 3, 0.6);
+      
+      if (searchResults.length > 0) {
+        console.log(
+          `Found ${searchResults.length} relevant knowledge chunks for query: "${queryText}"`,
+        );
+        console.log(  
+          'Knowledge chunks:',
+          searchResults.map(result => ({
+            id: result.chunk.id,
+            content: result.chunk.content,
+            source: result.source.title,
+            similarity: result.similarity,
+          })),
+        );
+        // Format knowledge chunks for context
+        knowledgeContext = `
+            Relevant information from knowledge base:
+
+            ${searchResults.map((result, index) => {
+              return `[Source ${index + 1}: ${result.source.title}]
+            ${result.chunk.content}
+            `;
+            }).join('\n')}
+
+            Use the above information to help answer the user's query. Cite sources when using information from the knowledge base.
+            `;
+      }
+    } catch (error) {
+      console.error('Error searching knowledge base:', error);
+      // Continue without knowledge context if search fails
+    }
+
+    // Create custom system prompt with knowledge context
+    const customSystemPrompt = chatType === 'query' 
+      ? `${systemPrompt({ selectedChatModel, chatType })}\n\n${knowledgeContext}`
+      : systemPrompt({ selectedChatModel, chatType });
+
     return createDataStreamResponse({
       execute: (dataStream) => {
         const result = streamText({
           model: myProvider.languageModel(selectedChatModel),
-          system: systemPrompt({ selectedChatModel, chatType }),
+          system: customSystemPrompt,
           messages: processedMessages,
           maxSteps: 5,
           experimental_activeTools:

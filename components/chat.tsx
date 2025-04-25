@@ -21,6 +21,7 @@ export function Chat({
   selectedVisibilityType,
   isReadonly,
   chatType = 'general',
+  title,
 }: {
   id: string;
   initialMessages: Array<UIMessage>;
@@ -28,6 +29,7 @@ export function Chat({
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
   chatType?: 'general' | 'query' | 'capture';
+  title?: string;
 }) {
   const { mutate } = useSWRConfig();
 
@@ -76,6 +78,14 @@ export function Chat({
   return (
     <>
       <div className="flex flex-col min-w-0 h-[calc(100vh-15rem)] md:h-[calc(100vh-8rem)]">
+        <ChatHeader
+          chatId={id}
+          title={title}
+          selectedModelId={selectedChatModel}
+          selectedVisibilityType={selectedVisibilityType}
+          isReadonly={isReadonly}
+          chatType={chatType}
+        />
 
         <Messages
           chatId={id}

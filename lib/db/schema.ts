@@ -9,7 +9,13 @@ import {
   primaryKey,
   foreignKey,
   boolean,
+  integer,
 } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+
+// Custom vector type for pgvector
+const pgvector = (dimensions: number) => 
+  sql`vector(${sql.raw(dimensions.toString())})`.as('pg_vector');
 
 export const user = pgTable('User', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
@@ -160,3 +166,59 @@ export const suggestion = pgTable(
 );
 
 export type Suggestion = InferSelectModel<typeof suggestion>;
+
+// Knowledge Base Schema
+
+export const knowledgeSource = pgTable('KnowledgeSource', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  createdAt: timestamp('createdAt').notNull(),
+  updatedAt: timestamp('updatedAt').notNull(),
+  title: text('title').notNull(),
+  description: text('description'),
+  sourceType: varchar('sourceType', { 
+    enum: ['chat', 'document', 'image', 'video', 'webpage', 'api'] 
+  }).notNull(),
+  sourceId: uuid('sourceId'), // Reference to original source (chat, document, etc.)
+  status: varchar('status', { 
+    enum: ['pending', 'approved', 'rejected'] 
+  }).notNull().default('pending'),
+  userId: uuid('userId')
+    .notNull()
+    .references(() => user.id),
+  approvedBy: uuid('approvedBy')
+    .references(() => user.id),
+  approvedAt: timestamp('approvedAt'),
+  metadata: json('metadata'), // For source-specific metadata
+});
+
+export type KnowledgeSource = InferSelectModel<typeof knowledgeSource>;
+
+export const knowledgeChunk = pgTable('KnowledgeChunk', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  sourceId: uuid('sourceId')
+    .notNull()
+    .references(() => knowledgeSource.id),
+  content: text('content').notNull(),
+  embedding: json('embedding'), // Vector embedding for similarity search (stored as JSON in schema but as vector in DB)
+  metadata: json('metadata'), // Position in document, context, etc.
+  createdAt: timestamp('createdAt').notNull(),
+});
+
+export type KnowledgeChunk = InferSelectModel<typeof knowledgeChunk>;
+
+export const knowledgeRelation = pgTable('KnowledgeRelation', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  sourceId: uuid('sourceId')
+    .notNull()
+    .references(() => knowledgeSource.id),
+  targetId: uuid('targetId')
+    .notNull()
+    .references(() => knowledgeSource.id),
+  relationType: varchar('relationType', { 
+    enum: ['related', 'part_of', 'references', 'contradicts', 'supports'] 
+  }).notNull(),
+  strength: integer('strength').notNull().default(5), // 1-10 scale
+  createdAt: timestamp('createdAt').notNull(),
+});
+
+export type KnowledgeRelation = InferSelectModel<typeof knowledgeRelation>;

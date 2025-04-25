@@ -6,11 +6,16 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { HistoryPanel } from '@/components/history-panel';
 import { ClockRewind, PlusIcon } from '@/components/icons';
 import { useRouter } from 'next/navigation';
+import { SubmitToKnowledgeBaseButton } from './submit-to-kb-button';
 
 export function ChatHeaderActions({ 
-  chatType 
+  chatType,
+  chatId,
+  chatTitle
 }: { 
-  chatType: 'query' | 'capture' 
+  chatType: 'general' | 'query' | 'capture';
+  chatId?: string;
+  chatTitle?: string;
 }) {
   const [historyOpen, setHistoryOpen] = useState(false);
   const router = useRouter();
@@ -26,25 +31,42 @@ export function ChatHeaderActions({
         </SheetTrigger>
         <SheetContent side="right" className="w-[400px] sm:w-[540px] p-0">
           <HistoryPanel 
-            defaultType={chatType} 
+            defaultType={chatType === 'general' ? 'all' : chatType} 
             onSelect={(id) => {
-              router.push(`/${chatType}/chat/${id}`);
+              const chatPath = chatType === 'general' ? '/chat/' : `/${chatType}/chat/`;
+              router.push(`${chatPath}${id}`);
               setHistoryOpen(false);
             }}
             onClose={() => setHistoryOpen(false)}
           />
         </SheetContent>
       </Sheet>
+      
       <Button 
         variant="outline" 
         size="sm"
         onClick={() => {
-          router.push(`/${chatType}/chat/new`);
+          const chatPath = chatType === 'general' ? '/chat/new' : `/${chatType}/chat/new`;
+          router.push(chatPath);
         }}
       >
         <PlusIcon size={16} />
-        <span className="ml-2">New {chatType === 'query' ? 'Query' : 'Capture'}</span>
+        <span className="ml-2">
+          New {
+            chatType === 'query' ? 'Query' : 
+            chatType === 'capture' ? 'Capture' : 
+            'Chat'
+          }
+        </span>
       </Button>
+      
+      {/* Show Submit to Knowledge Base button only for capture chats with valid ID and title */}
+      {chatType === 'capture' && chatId && chatTitle && (
+        <SubmitToKnowledgeBaseButton 
+          chatId={chatId} 
+          chatTitle={chatTitle} 
+        />
+      )}
     </div>
   );
 }

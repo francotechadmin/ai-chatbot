@@ -15,6 +15,12 @@ import {
   message,
   vote,
   type DBMessage,
+  knowledgeSource,
+  knowledgeChunk,
+  knowledgeRelation,
+  type KnowledgeSource,
+  type KnowledgeChunk,
+  type KnowledgeRelation
 } from './schema';
 import { ArtifactKind } from '@/components/artifact';
 
@@ -448,6 +454,215 @@ export async function getChatsByUserIdAndType({
       .orderBy(desc(chat.createdAt));
   } catch (error) {
     console.error('Failed to get chats by user and type from database');
+    throw error;
+  }
+}
+
+// Knowledge Base Queries
+
+export async function createKnowledgeSource({
+  title,
+  description,
+  sourceType,
+  sourceId,
+  userId,
+  metadata,
+}: {
+  title: string;
+  description?: string;
+  sourceType: 'chat' | 'document' | 'image' | 'video' | 'webpage' | 'api';
+  sourceId?: string;
+  userId: string;
+  metadata?: any;
+}) {
+  try {
+    const now = new Date();
+    const [result] = await db.insert(knowledgeSource).values({
+      title,
+      description,
+      sourceType,
+      sourceId,
+      userId,
+      metadata,
+      createdAt: now,
+      updatedAt: now,
+    }).returning();
+    
+    return result;
+  } catch (error) {
+    console.error('Failed to create knowledge source in database');
+    throw error;
+  }
+}
+
+export async function getKnowledgeSourceById(id: string) {
+  try {
+    const [result] = await db.select().from(knowledgeSource).where(eq(knowledgeSource.id, id));
+    return result;
+  } catch (error) {
+    console.error('Failed to get knowledge source by id from database');
+    throw error;
+  }
+}
+
+export async function getKnowledgeSourcesByStatus(status: 'pending' | 'approved' | 'rejected') {
+  try {
+    return await db
+      .select()
+      .from(knowledgeSource)
+      .where(eq(knowledgeSource.status, status))
+      .orderBy(desc(knowledgeSource.createdAt));
+  } catch (error) {
+    console.error('Failed to get knowledge sources by status from database');
+    throw error;
+  }
+}
+
+export async function updateKnowledgeSourceStatus({
+  id,
+  status,
+  approvedBy,
+}: {
+  id: string;
+  status: 'pending' | 'approved' | 'rejected';
+  approvedBy?: string;
+}) {
+  try {
+    const updates: any = {
+      status,
+      updatedAt: new Date(),
+    };
+    
+    if (status === 'approved' && approvedBy) {
+      updates.approvedBy = approvedBy;
+      updates.approvedAt = new Date();
+    }
+    
+    return await db
+      .update(knowledgeSource)
+      .set(updates)
+      .where(eq(knowledgeSource.id, id));
+  } catch (error) {
+    console.error('Failed to update knowledge source status in database');
+    throw error;
+  }
+}
+
+export async function createKnowledgeChunk({
+  sourceId,
+  content,
+  embedding,
+  metadata,
+}: {
+  sourceId: string;
+  content: string;
+  embedding?: any;
+  metadata?: any;
+}) {
+  try {
+    const [result] = await db.insert(knowledgeChunk).values({
+      sourceId,
+      content,
+      embedding,
+      metadata,
+      createdAt: new Date(),
+    }).returning();
+    
+    return result;
+  } catch (error) {
+    console.error('Failed to create knowledge chunk in database');
+    throw error;
+  }
+}
+
+export async function getKnowledgeChunksBySourceId(sourceId: string) {
+  try {
+    return await db
+      .select()
+      .from(knowledgeChunk)
+      .where(eq(knowledgeChunk.sourceId, sourceId))
+      .orderBy(asc(knowledgeChunk.createdAt));
+  } catch (error) {
+    console.error('Failed to get knowledge chunks by source id from database');
+    throw error;
+  }
+}
+
+export async function createKnowledgeRelation({
+  sourceId,
+  targetId,
+  relationType,
+  strength,
+}: {
+  sourceId: string;
+  targetId: string;
+  relationType: 'related' | 'part_of' | 'references' | 'contradicts' | 'supports';
+  strength?: number;
+}) {
+  try {
+    const [result] = await db.insert(knowledgeRelation).values({
+      sourceId,
+      targetId,
+      relationType,
+      strength: strength || 5,
+      createdAt: new Date(),
+    }).returning();
+    
+    return result;
+  } catch (error) {
+    console.error('Failed to create knowledge relation in database');
+    throw error;
+  }
+}
+
+export async function getKnowledgeRelationsBySourceId(sourceId: string) {
+  try {
+    return await db
+      .select()
+      .from(knowledgeRelation)
+      .where(eq(knowledgeRelation.sourceId, sourceId))
+      .orderBy(desc(knowledgeRelation.strength));
+  } catch (error) {
+    console.error('Failed to get knowledge relations by source id from database');
+    throw error;
+  }
+}
+
+export async function getKnowledgeRelationsByTargetId(targetId: string) {
+  try {
+    return await db
+      .select()
+      .from(knowledgeRelation)
+      .where(eq(knowledgeRelation.targetId, targetId))
+      .orderBy(desc(knowledgeRelation.strength));
+  } catch (error) {
+    console.error('Failed to get knowledge relations by target id from database');
+    throw error;
+  }
+}
+
+export async function deleteKnowledgeSource(id: string) {
+  try {
+    // First delete all chunks associated with this source
+    await db
+      .delete(knowledgeChunk)
+      .where(eq(knowledgeChunk.sourceId, id));
+    
+    // Delete all relations where this source is either the source or target
+    await db
+      .delete(knowledgeRelation)
+      .where(eq(knowledgeRelation.sourceId, id));
+    
+    await db
+      .delete(knowledgeRelation)
+      .where(eq(knowledgeRelation.targetId, id));
+    
+    // Finally delete the source itself
+    return await db
+      .delete(knowledgeSource)
+      .where(eq(knowledgeSource.id, id));
+  } catch (error) {
+    console.error('Failed to delete knowledge source from database');
     throw error;
   }
 }

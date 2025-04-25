@@ -89,6 +89,7 @@ export function ChatPageWrapper({
           selectedVisibilityType={selectedVisibilityType}
           isReadonly={isReadonly}
           chatType={chatType}
+          title={title}
         />
         <DataStreamHandler id={id} />
       </div>

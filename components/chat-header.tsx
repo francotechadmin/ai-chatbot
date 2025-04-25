@@ -16,16 +16,18 @@ import { VisibilityType, VisibilitySelector } from './visibility-selector';
 
 function PureChatHeader({
   chatId,
+  title,
   selectedModelId,
   selectedVisibilityType,
   isReadonly, 
   chatType,
 }: {
   chatId: string;
+  title?: string;
   selectedModelId: string;
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
-  chatType: 'query' | 'capture';
+  chatType: 'general' | 'query' | 'capture';
 }) {
   const router = useRouter();
   const { open } = useSidebar();
@@ -38,7 +40,11 @@ function PureChatHeader({
 
 
       <div className="order-2 md:order-1 ml-auto md:ml-0">
-        <ChatHeaderActions chatType={chatType} />
+        <ChatHeaderActions 
+          chatType={chatType} 
+          chatId={chatId}
+          chatTitle={title}
+        />
       </div>
 
 

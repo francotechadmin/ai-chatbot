@@ -78,30 +78,6 @@ const config: Config = {
   plugins: [
     require('tailwindcss-animate'), 
     require('@tailwindcss/typography'),
-    function({ addUtilities }: { addUtilities: any }) {
-      addUtilities({
-        '.scrollbar-hide': {
-          /* Firefox */
-          'scrollbar-width': 'none',
-          /* Safari and Chrome */
-          '&::-webkit-scrollbar': {
-            display: 'none'
-          }
-        },
-        '.scroll-lock': {
-          '& button': {
-            'pointer-events': 'none',
-            'touch-action': 'none'
-          }
-        },
-        '.scroll-lock-active': {
-          '& button': {
-            'pointer-events': 'auto',
-            'touch-action': 'auto'
-          }
-        }
-      });
-    }
   ],
 };
 export default config;

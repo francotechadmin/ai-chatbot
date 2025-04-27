@@ -52,7 +52,10 @@ export function SubmitToKnowledgeBaseButton({
       <Button
         variant="outline"
         size="sm"
-        onClick={() => setIsDialogOpen(true)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsDialogOpen(true);
+        }}
         disabled={disabled}
         className="flex items-center gap-1"
       >

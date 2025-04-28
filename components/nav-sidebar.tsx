@@ -95,14 +95,14 @@ export function NavSidebar() {
               <GlobeIcon size={18} />
               <span>Knowledge Base</span>
             </Link>
-            <Link 
+            {/* <Link 
               href="/knowledge-graph" 
               className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-muted"
               onClick={() => setOpenMobile(false)}
             >
               <GlobeIcon size={18} />
               <span>Knowledge Graph</span>
-            </Link>
+            </Link> */}
           </nav>
         </div>
         

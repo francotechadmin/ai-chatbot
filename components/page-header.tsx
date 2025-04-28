@@ -56,7 +56,7 @@ export function PageHeader({
           </div>
         )}
         
-        {showVisibilitySelector && chatId && selectedVisibilityType && !isReadonly && (
+        {/* {showVisibilitySelector && chatId && selectedVisibilityType && !isReadonly && (
           <div className="shrink-0 w-[140px] md:w-auto">
             <VisibilitySelector
               chatId={chatId}
@@ -64,7 +64,7 @@ export function PageHeader({
               className="w-full"
             />
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

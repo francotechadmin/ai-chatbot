@@ -58,7 +58,7 @@ export default function CapturePage() {
                 className="w-full h-[34px] text-sm"
               >
                 <PlusIcon size={16} />
-                <span className="ml-2">New Capturess</span>
+                <span className="ml-2">New Capture</span>
               </Button>
             </div>
           </div>

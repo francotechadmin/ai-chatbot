@@ -12,8 +12,17 @@ import { formatDistance } from 'date-fns';
 import { KnowledgeSource } from '@/lib/db/schema';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { ProtectedRoute } from '@/components/protected-route';
 
 export default function KnowledgeBasePage() {
+  return (
+    <ProtectedRoute requiredRole="admin">
+      <KnowledgeBaseContent />
+    </ProtectedRoute>
+  );
+}
+
+function KnowledgeBaseContent() {
   const [knowledgeSources, setKnowledgeSources] = useState<KnowledgeSource[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');

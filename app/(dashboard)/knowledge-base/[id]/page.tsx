@@ -10,6 +10,7 @@ import { ArrowLeft, Clock, CheckCircle, XCircle, Edit, Trash, MessageSquare } fr
 import { formatDistance, format } from 'date-fns';
 import { KnowledgeSource, KnowledgeChunk } from '@/lib/db/schema';
 import { toast } from 'sonner';
+import { ProtectedRoute } from '@/components/protected-route';
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +23,14 @@ import {
 } from '@/components/ui/alert-dialog';
 
 export default function KnowledgeSourceDetailPage({ params }: { params: { id: string } }) {
+  return (
+    <ProtectedRoute requiredRole="admin">
+      <KnowledgeSourceDetailContent params={params} />
+    </ProtectedRoute>
+  );
+}
+
+function KnowledgeSourceDetailContent({ params }: { params: { id: string } }) {
   const [source, setSource] = useState<KnowledgeSource | null>(null);
   const [chunks, setChunks] = useState<KnowledgeChunk[]>([]);
   const [isLoading, setIsLoading] = useState(true);

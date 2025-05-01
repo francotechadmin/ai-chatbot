@@ -1,5 +1,5 @@
 import { createKnowledgeSource, createKnowledgeChunk } from '@/lib/db/queries';
-import { processContentForKnowledgeBase } from '@/lib/embeddings';
+import { splitTextIntoChunks, generateEmbedding } from '@/lib/embeddings';
 
 /**
  * Base class for processing documents from Microsoft integrations
@@ -28,35 +28,60 @@ export abstract class DocumentProcessor {
    * @returns Created knowledge source
    */
   async processDocument(
-    content: ArrayBuffer, 
-    title: string, 
+    content: ArrayBuffer,
+    title: string,
     description?: string
   ) {
-    // Extract text from the document
-    const text = await this.extractText(content);
-    
-    // Create knowledge source
-    const source = await createKnowledgeSource({
-      title,
-      description,
-      sourceType: 'document',
-      userId: this.userId,
-      metadata: this.metadata,
-    });
-    
-    // Process and chunk the content
-    const chunks = await processContentForKnowledgeBase(text);
-    
-    // Store chunks with embeddings
-    for (const chunk of chunks) {
-      await createKnowledgeChunk({
-        sourceId: source.id,
-        content: chunk.content,
-        embedding: chunk.embedding,
-        metadata: chunk.metadata,
+    try {
+      // Extract text from the document
+      const text = await this.extractText(content);
+      
+      // Create knowledge source
+      const source = await createKnowledgeSource({
+        title,
+        description,
+        sourceType: 'document',
+        userId: this.userId,
+        metadata: this.metadata,
       });
+      
+      // Process content and create chunks directly in the database
+      // Split content into chunks and process them
+      const chunks = await splitTextIntoChunks(text);
+      
+      // Process each chunk
+      for (let i = 0; i < chunks.length; i++) {
+        const chunk = chunks[i];
+        
+        // Generate embedding for the chunk
+        let embedding;
+        try {
+          embedding = await generateEmbedding(chunk);
+        } catch (error) {
+          console.error(`Error generating embedding for chunk ${i}:`, error);
+          // Continue without embedding if there's an error
+        }
+        
+        // Create chunk metadata
+        const chunkMetadata = {
+          ...this.metadata,
+          chunkIndex: i,
+          totalChunks: chunks.length
+        };
+        
+        // Save the chunk to the database
+        await createKnowledgeChunk({
+          sourceId: source.id,
+          content: chunk,
+          embedding,
+          metadata: chunkMetadata
+        });
+      }
+      
+      return source;
+    } catch (error) {
+      console.error('Error processing document:', error);
+      throw error;
     }
-    
-    return source;
   }
 }

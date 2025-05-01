@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -11,36 +11,193 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { FileIcon, UploadIcon, DownloadIcon } from '@/components/icons';
+import { FileIcon, UploadIcon, DownloadIcon, CrossIcon } from '@/components/icons';
 import { PageHeader } from '@/components/page-header';
+import { toast } from 'sonner';
+
+// File type validation
+const ALLOWED_FILE_TYPES = [
+  "application/pdf", // PDF
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // DOCX
+  "text/plain", // TXT
+];
+
+// File size limit (10MB)
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 export default function ToolsPage() {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [importing, setImporting] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
+  const [uploadResults, setUploadResults] = useState<any[]>([]);
 
+  // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setSelectedFile(e.target.files[0]);
+      const newFiles = Array.from(e.target.files);
+      validateAndAddFiles(newFiles);
     }
   };
 
-  const simulateImport = () => {
-    if (!selectedFile) return;
-    
-    setImporting(true);
-    setProgress(0);
-    
-    const interval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setImporting(false);
-          return 100;
-        }
-        return prev + 5;
+  // Validate and add files
+  const validateAndAddFiles = (files: File[]) => {
+    const validFiles: File[] = [];
+    const invalidFiles: { name: string; reason: string }[] = [];
+
+    files.forEach((file) => {
+      // Check file type
+      if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+        invalidFiles.push({
+          name: file.name,
+          reason: "Invalid file type. Only PDF, DOCX, and TXT files are allowed.",
+        });
+        return;
+      }
+
+      // Check file size
+      if (file.size > MAX_FILE_SIZE) {
+        invalidFiles.push({
+          name: file.name,
+          reason: "File size exceeds the 10MB limit.",
+        });
+        return;
+      }
+
+      // Check for duplicates
+      if (selectedFiles.some((f) => f.name === file.name)) {
+        invalidFiles.push({
+          name: file.name,
+          reason: "File already selected.",
+        });
+        return;
+      }
+
+      validFiles.push(file);
+    });
+
+    // Show errors for invalid files
+    invalidFiles.forEach((file) => {
+      toast.error(`${file.name}: ${file.reason}`);
+    });
+
+    // Add valid files to the selection
+    if (validFiles.length > 0) {
+      setSelectedFiles((prev) => [...prev, ...validFiles]);
+    }
+  };
+
+  // Handle drag and drop
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const newFiles = Array.from(e.dataTransfer.files);
+      validateAndAddFiles(newFiles);
+    }
+  }, [selectedFiles]);
+
+  // Remove a file from selection
+  const removeFile = (index: number) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Format file size for display
+  const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return bytes + " bytes";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  };
+
+  // Get file type icon based on file extension
+  const getFileIcon = (fileName: string) => {
+    const extension = fileName.split(".").pop()?.toLowerCase();
+
+    switch (extension) {
+      case "pdf":
+        return <span className="text-red-500"><FileIcon size={16} /></span>;
+      case "docx":
+      case "doc":
+        return <span className="text-blue-500"><FileIcon size={16} /></span>;
+      case "txt":
+      case "md":
+        return <span className="text-gray-500"><FileIcon size={16} /></span>;
+      default:
+        return <FileIcon size={16} />;
+    }
+  };
+
+  // Upload files to the server
+  const uploadFiles = async () => {
+    if (selectedFiles.length === 0) return;
+
+    setUploading(true);
+    setUploadProgress({});
+    setUploadResults([]);
+
+    try {
+      const formData = new FormData();
+
+      selectedFiles.forEach((file) => {
+        formData.append("files", file);
+        setUploadProgress((prev) => ({ ...prev, [file.name]: 0 }));
       });
-    }, 200);
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', '/api/knowledge-base/upload', true);
+      
+      // Track upload progress
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percentComplete = Math.round((event.loaded / event.total) * 100);
+          const newProgress = { ...uploadProgress };
+          selectedFiles.forEach((file) => {
+            newProgress[file.name] = percentComplete;
+          });
+          setUploadProgress(newProgress);
+        }
+      };
+      
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          const result = JSON.parse(xhr.responseText);
+          setUploadResults(result.sources || []);
+          
+          // Update progress to 100% for all files
+          const completedProgress = { ...uploadProgress };
+          selectedFiles.forEach((file) => {
+            completedProgress[file.name] = 100;
+          });
+          setUploadProgress(completedProgress);
+          
+          toast.success(`Successfully uploaded ${selectedFiles.length} file(s) to the knowledge base`);
+          
+          // Clear selected files after successful upload
+          setSelectedFiles([]);
+        } else {
+          console.error('Error uploading files:', xhr.statusText);
+          toast.error('Failed to upload files: ' + xhr.statusText);
+        }
+        setUploading(false);
+      };
+      
+      xhr.onerror = function() {
+        console.error('Error uploading files');
+        toast.error('Failed to upload files: Network error');
+        setUploading(false);
+      };
+      
+      xhr.send(formData);
+    } catch (error) {
+      console.error("Error uploading files:", error);
+      toast.error("Failed to upload files: " + (error as Error).message);
+      setUploading(false);
+    }
   };
 
   return (
@@ -60,9 +217,14 @@ export default function ToolsPage() {
             </CardHeader>
             <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
               <div className="space-y-4">
-                <div className="border border-dashed rounded-lg p-4 md:p-8 flex flex-col items-center justify-center">
+                {/* Drag and drop area */}
+                <div
+                  className="border border-dashed rounded-lg p-4 md:p-8 flex flex-col items-center justify-center"
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
+                >
                   <div className="mb-4">
-                    <span><UploadIcon size={32} /></span>
+                    <UploadIcon size={32} />
                   </div>
                   <p className="text-xs md:text-sm text-center mb-4">
                     Drag and drop files here, or click to select files
@@ -71,30 +233,113 @@ export default function ToolsPage() {
                     type="file"
                     className="hidden"
                     id="file-upload"
+                    multiple
+                    accept=".pdf,.docx,.txt"
                     onChange={handleFileChange}
                   />
-                  <Button size="sm" variant="outline" onClick={() => document.getElementById('file-upload')?.click()}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => document.getElementById("file-upload")?.click()}
+                    disabled={uploading}
+                  >
                     Select Files
                   </Button>
-                  {selectedFile && (
-                    <div className="mt-4 flex items-center gap-2">
-                      <span><FileIcon size={16} /></span>
-                      <span className="text-xs md:text-sm">{selectedFile.name}</span>
-                    </div>
-                  )}
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Supported formats: PDF, DOCX, TXT (Max 10MB per file)
+                  </p>
                 </div>
 
-                {importing && (
+                {/* Selected files list */}
+                {selectedFiles.length > 0 && (
                   <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs md:text-sm">Importing...</span>
-                      <span className="text-xs md:text-sm">{progress}%</span>
+                    <h3 className="text-sm font-medium">
+                      Selected Files ({selectedFiles.length})
+                    </h3>
+                    <div className="border rounded-md divide-y">
+                      {selectedFiles.map((file, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-2"
+                        >
+                          <div className="flex items-center gap-2">
+                            {getFileIcon(file.name)}
+                            <span className="text-sm truncate max-w-[200px]">
+                              {file.name}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {formatFileSize(file.size)}
+                            </span>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeFile(index)}
+                            disabled={uploading}
+                          >
+                            <CrossIcon size={16} />
+                          </Button>
+                        </div>
+                      ))}
                     </div>
-                    <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                      <div 
-                        className="bg-primary h-full rounded-full transition-all duration-300 ease-in-out" 
-                        style={{ width: `${progress}%` }}
-                      />
+                  </div>
+                )}
+
+                {/* Upload progress */}
+                {uploading && Object.keys(uploadProgress).length > 0 && (
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium">Upload Progress</h3>
+                    {Object.entries(uploadProgress).map(
+                      ([fileName, progress]) => (
+                        <div key={fileName} className="space-y-1">
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs truncate max-w-[200px]">
+                              {fileName}
+                            </span>
+                            <span className="text-xs">{progress}%</span>
+                          </div>
+                          <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                            <div
+                              className="bg-primary h-full rounded-full transition-all duration-300 ease-in-out"
+                              style={{ width: `${progress}%` }}
+                            />
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                )}
+
+                {/* Upload results */}
+                {uploadResults.length > 0 && (
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium">Upload Results</h3>
+                    <div className="border rounded-md divide-y">
+                      {uploadResults.map((result, index) => (
+                        <div key={index} className="p-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">
+                              {result.title || result.fileName}
+                            </span>
+                            <span className="text-xs bg-yellow-100 text-yellow-800 rounded-full px-2 py-0.5">
+                              Pending
+                            </span>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Added to knowledge base, awaiting approval
+                          </p>
+                          <Button
+                            variant="link"
+                            size="sm"
+                            className="p-0 h-auto text-xs"
+                            onClick={() =>
+                              (window.location.href = `/knowledge-base/${result.id}`)
+                            }
+                          >
+                            View Details
+                          </Button>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -119,13 +364,13 @@ export default function ToolsPage() {
               </div>
             </CardContent>
             <CardFooter className="p-4 pt-0 md:p-6 md:pt-0">
-              <Button 
-                size="sm" 
-                disabled={!selectedFile || importing} 
+              <Button
+                size="sm"
+                disabled={selectedFiles.length === 0 || uploading}
                 className="w-full"
-                onClick={simulateImport}
+                onClick={uploadFiles}
               >
-                Import Now
+                {uploading ? "Uploading..." : "Import Now"}
               </Button>
             </CardFooter>
           </Card>

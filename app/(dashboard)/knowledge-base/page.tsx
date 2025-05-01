@@ -5,7 +5,7 @@ import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BookOpen, Plus, Search, Filter, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { BookOpen, Plus, Search, Filter, Clock, CheckCircle, XCircle, FileText, FileImage, Video, Globe, Database, MessageSquare } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { formatDistance } from 'date-fns';
@@ -193,8 +193,15 @@ function KnowledgeSourceGrid({ sources, isLoading }: { sources: KnowledgeSource[
               {source.status === 'approved' && <CheckCircle size={18} className="text-green-500" />}
               {source.status === 'rejected' && <XCircle size={18} className="text-red-500" />}
             </div>
-            <CardDescription>
-              {source.sourceType.charAt(0).toUpperCase() + source.sourceType.slice(1)}
+            <CardDescription className="flex items-center gap-1">
+              {source.sourceType === 'document' && <FileText size={14} className="text-blue-500" />}
+              {source.sourceType === 'image' && <FileImage size={14} className="text-green-500" />}
+              {source.sourceType === 'video' && <Video size={14} className="text-red-500" />}
+              {source.sourceType === 'webpage' && <Globe size={14} className="text-purple-500" />}
+              {source.sourceType === 'api' && <Database size={14} className="text-orange-500" />}
+              {source.sourceType === 'chat' && <MessageSquare size={14} className="text-teal-500" />}
+              <span>{source.sourceType.charAt(0).toUpperCase() + source.sourceType.slice(1)}</span>
+              {source.status === 'pending' && <span className="ml-2 text-xs bg-yellow-100 text-yellow-800 rounded-full px-2 py-0.5">Pending</span>}
             </CardDescription>
           </CardHeader>
           <CardContent>

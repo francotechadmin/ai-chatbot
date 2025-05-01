@@ -229,17 +229,20 @@ export default function ToolsPage() {
             </CardHeader>
             <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
               <p className="text-xs md:text-sm text-muted-foreground mb-4">
-                Import knowledge directly from connected systems like Slack, Google Drive, or Notion.
+                Import knowledge directly from connected systems like Slack, Google Drive, or Microsoft 365.
               </p>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 <div className="flex justify-center items-center aspect-square rounded bg-muted/40">
                   <span className="text-xl">S</span>
                 </div>
                 <div className="flex justify-center items-center aspect-square rounded bg-muted/40">
                   <span className="text-xl">G</span>
                 </div>
-                <div className="flex justify-center items-center aspect-square rounded bg-muted/40">
-                  <span className="text-xl">N</span>
+                <div className="flex justify-center items-center aspect-square rounded bg-primary/10">
+                  <span className="text-xl text-primary">SP</span>
+                </div>
+                <div className="flex justify-center items-center aspect-square rounded bg-primary/10">
+                  <span className="text-xl text-primary">OD</span>
                 </div>
               </div>
             </CardContent>
@@ -412,4 +415,4 @@ export default function ToolsPage() {
       </div>
     </div>
   );
-} 
+}

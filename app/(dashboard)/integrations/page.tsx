@@ -19,6 +19,7 @@ interface Integration {
   name: string;
   description: string;
   icon: string;
+  route?: string; // Optional route for direct linking
   status: 'connected' | 'available' | 'coming_soon';
   category: 'communication' | 'document' | 'project' | 'knowledge' | 'crm';
 }
@@ -87,6 +88,15 @@ export default function IntegrationsPage() {
     },
     {
       id: '8',
+      name: 'Microsoft',
+      route: '/integrations/microsoft',
+      description: 'Connect Microsoft 365 services for knowledge capture.',
+      icon: 'MS',
+      status: 'available',
+      category: 'document',
+    },
+    {
+      id: '9',
       name: 'Confluence',
       description: 'Connect and import Confluence pages and spaces.',
       icon: 'C',
@@ -233,8 +243,11 @@ export default function IntegrationsPage() {
                     <Button variant="outline" className="flex-1 text-red-500">Disconnect</Button>
                   </div>
                 ) : integration.status === 'available' ? (
-                  <Button className="w-full">Connect</Button>
+                  <Button className="w-full" onClick={() => window.location.href = integration.route || `/integrations/${integration.id}/connect`}>
+                    Connect Now
+                  </Button>
                 ) : (
+                  // For 'coming_soon' status, we disable the button
                   <Button disabled className="w-full">Coming Soon</Button>
                 )}
               </CardFooter>

@@ -222,3 +222,22 @@ export const knowledgeRelation = pgTable('KnowledgeRelation', {
 });
 
 export type KnowledgeRelation = InferSelectModel<typeof knowledgeRelation>;
+
+// Microsoft Integration Schema
+export const microsoftIntegration = pgTable('MicrosoftIntegration', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  userId: uuid('userId')
+    .notNull()
+    .references(() => user.id),
+  accessToken: text('accessToken').notNull(),
+  refreshToken: text('refreshToken').notNull(),
+  expiresAt: timestamp('expiresAt').notNull(),
+  tokenType: varchar('tokenType').notNull(),
+  scope: text('scope').notNull(),
+  clientId: text('clientId'),         // User-provided client ID
+  clientSecret: text('clientSecret'), // User-provided client secret
+  createdAt: timestamp('createdAt').notNull(),
+  updatedAt: timestamp('updatedAt').notNull(),
+});
+
+export type MicrosoftIntegration = InferSelectModel<typeof microsoftIntegration>;

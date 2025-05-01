@@ -124,12 +124,12 @@ export async function POST(request: Request) {
             Relevant information from knowledge base:
 
             ${searchResults.map((result, index) => {
-              return `[Source ${index + 1}: ${result.source.title}]
+              return `[Source ${index + 1}: ${result.source.title}] [Link: /knowledge-base/${result.source.id}]
             ${result.chunk.content}
             `;
             }).join('\n')}
 
-            Use the above information to help answer the user's query. Cite sources when using information from the knowledge base.
+            Use the above information to help answer the user's query. Cite sources when using information from the knowledge base. When citing sources, include the link in the format "/knowledge-base/[source-id]".
             `;
       }
     } catch (error) {

@@ -104,7 +104,7 @@ export async function POST(request: Request) {
     // Search knowledge base for relevant chunks
     let knowledgeContext = '';
     try {
-      const searchResults = await searchKnowledgeBase(queryText, 3, 0.6);
+      const searchResults = await searchKnowledgeBase(queryText, 10, 0.4);
       
       if (searchResults.length > 0) {
         console.log(

@@ -3,9 +3,17 @@ import NextAuth, { type User, type Session } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
 import { getUser, updateUserLastActive } from '@/lib/db/queries';
+import {
+  recordUserSessionMetric,
+  updateUserSessionMetric,
+  recordUserActivityMetric
+} from '@/lib/services/metrics-service';
 
 import { authConfig } from './auth.config';
 import { Role } from '@/lib/rbac';
+
+// Store active sessions
+const userSessions = new Map<string, string>();
 
 interface ExtendedSession extends Session {
   user: User & { 
@@ -62,8 +70,31 @@ export const {
           if (user.id && typeof process !== 'undefined' && process.env.NEXT_RUNTIME !== 'edge') {
             try {
               await updateUserLastActive({ id: user.id });
+              
+              // Record user session start
+              const deviceInfo = {
+                userAgent: password.headers?.['user-agent'] || 'unknown',
+                ip: password.headers?.['x-forwarded-for'] || 'unknown',
+              };
+              
+              // Store session ID in map for later use
+              const sessionId = await recordUserSessionMetric({
+                userId: user.id,
+                deviceInfo,
+                ipAddress: deviceInfo.ip as string,
+                userAgent: deviceInfo.userAgent as string,
+                status: 'active',
+                metadata: {
+                  loginMethod: 'credentials',
+                  role: user.role,
+                }
+              });
+              
+              if (sessionId) {
+                userSessions.set(user.id, sessionId);
+              }
             } catch (error) {
-              console.error('Error updating last active timestamp during login:', error);
+              console.error('Error updating last active timestamp or recording session during login:', error);
             }
           }
           
@@ -90,6 +121,14 @@ export const {
         token.role = (user.role as Role) || 'user';
         token.status = user.status || 'active';
         token.email = user.email;
+        
+        // Add session ID to token if available
+        if (user.id) {
+          const sessionId = userSessions.get(user.id);
+          if (sessionId) {
+            token.sessionId = sessionId;
+          }
+        }
       } else if (trigger === 'update') {
         // Handle token updates if needed
         // This could be used to refresh user data
@@ -126,9 +165,21 @@ export const {
           try {
             if (session.user.id) {
               await updateUserLastActive({ id: session.user.id });
+              
+              // Record user activity
+              if (token.sessionId) {
+                // Update the session with latest activity
+                await recordUserActivityMetric({
+                  userId: session.user.id,
+                  activityType: 'session_active',
+                  metadata: {
+                    sessionId: token.sessionId as string,
+                  }
+                });
+              }
             }
           } catch (error) {
-            console.error('Error updating last active timestamp:', error);
+            console.error('Error updating last active timestamp or recording activity:', error);
           }
         }
       }
@@ -137,3 +188,33 @@ export const {
     },
   },
 });
+
+// Handle user sign out and record session end
+export const handleSignOut = async (userId: string, sessionId?: string) => {
+  if (sessionId && typeof process !== 'undefined' && process.env.NEXT_RUNTIME !== 'edge') {
+    try {
+      // Update session to completed status
+      await updateUserSessionMetric({
+        sessionId,
+        status: 'completed',
+        metadata: {
+          endReason: 'user_logout',
+        }
+      });
+      
+      // Record user activity for logout
+      await recordUserActivityMetric({
+        userId,
+        activityType: 'user_logout',
+        metadata: {
+          sessionId,
+        }
+      });
+      
+      // Remove from sessions map
+      userSessions.delete(userId);
+    } catch (error) {
+      console.error('Error recording session end metrics:', error);
+    }
+  }
+};

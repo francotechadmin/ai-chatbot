@@ -10,6 +10,9 @@ import {
   foreignKey,
   boolean,
   integer,
+  date,
+  real,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
@@ -241,3 +244,225 @@ export const microsoftIntegration = pgTable('MicrosoftIntegration', {
 });
 
 export type MicrosoftIntegration = InferSelectModel<typeof microsoftIntegration>;
+
+// Metrics Collection System Schema
+
+// Raw Event Data Tables
+export const metricEvent = pgTable('MetricEvent', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  userId: uuid('userId').references(() => user.id),
+  eventType: varchar('eventType').notNull(),
+  category: varchar('category').notNull(),
+  action: varchar('action').notNull(),
+  metadata: json('metadata'),
+  timestamp: timestamp('timestamp').notNull().defaultNow(),
+});
+
+export type MetricEvent = InferSelectModel<typeof metricEvent>;
+
+export const userSession = pgTable('UserSession', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  userId: uuid('userId').notNull().references(() => user.id),
+  startTime: timestamp('startTime').notNull(),
+  endTime: timestamp('endTime'),
+  duration: integer('duration'), // in seconds, calculated on session end
+  deviceInfo: json('deviceInfo'),
+  ipAddress: varchar('ipAddress'),
+  userAgent: text('userAgent'),
+  status: varchar('status', { enum: ['active', 'completed', 'terminated'] }).notNull(),
+  metadata: json('metadata'),
+});
+
+export type UserSession = InferSelectModel<typeof userSession>;
+
+export const queryMetric = pgTable('QueryMetric', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  chatId: uuid('chatId').references(() => chat.id),
+  userId: uuid('userId').references(() => user.id),
+  messageId: uuid('messageId'),
+  queryText: text('queryText'),
+  responseTime: integer('responseTime').notNull(), // in milliseconds
+  tokenCount: integer('tokenCount'),
+  promptTokens: integer('promptTokens'),
+  completionTokens: integer('completionTokens'),
+  modelUsed: varchar('modelUsed'),
+  knowledgeBaseUsed: boolean('knowledgeBaseUsed').default(false),
+  knowledgeSourceIds: json('knowledgeSourceIds'), // UUID array stored as JSON
+  timestamp: timestamp('timestamp').notNull().defaultNow(),
+  metadata: json('metadata'),
+});
+
+export type QueryMetric = InferSelectModel<typeof queryMetric>;
+
+export const knowledgeBaseMetric = pgTable('KnowledgeBaseMetric', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  userId: uuid('userId').references(() => user.id),
+  operation: varchar('operation', {
+    enum: ['upload', 'search', 'retrieve', 'update', 'delete']
+  }).notNull(),
+  knowledgeSourceId: uuid('knowledgeSourceId').references(() => knowledgeSource.id),
+  responseTime: integer('responseTime'), // in milliseconds
+  resultCount: integer('resultCount'),
+  queryText: text('queryText'),
+  timestamp: timestamp('timestamp').notNull().defaultNow(),
+  metadata: json('metadata'),
+});
+
+export type KnowledgeBaseMetric = InferSelectModel<typeof knowledgeBaseMetric>;
+
+export const userActivityMetric = pgTable('UserActivityMetric', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  userId: uuid('userId').notNull().references(() => user.id),
+  activityType: varchar('activityType').notNull(),
+  resourceType: varchar('resourceType'),
+  resourceId: uuid('resourceId'),
+  duration: integer('duration'), // in seconds
+  timestamp: timestamp('timestamp').notNull().defaultNow(),
+  metadata: json('metadata'),
+});
+
+export type UserActivityMetric = InferSelectModel<typeof userActivityMetric>;
+
+export const systemPerformanceMetric = pgTable('SystemPerformanceMetric', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  metricType: varchar('metricType').notNull(),
+  value: real('value').notNull(),
+  unit: varchar('unit').notNull(),
+  component: varchar('component').notNull(),
+  timestamp: timestamp('timestamp').notNull().defaultNow(),
+  metadata: json('metadata'),
+});
+
+export type SystemPerformanceMetric = InferSelectModel<typeof systemPerformanceMetric>;
+
+// Aggregated Metrics Tables
+export const dailyMetricAggregate = pgTable('DailyMetricAggregate', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  date: date('date').notNull(),
+  metricType: varchar('metricType').notNull(),
+  dimension: varchar('dimension').notNull(),
+  dimensionValue: varchar('dimensionValue'),
+  count: integer('count').notNull().default(0),
+  sum: real('sum'),
+  avg: real('avg'),
+  min: real('min'),
+  max: real('max'),
+  metadata: json('metadata'),
+}, (table) => {
+  return {
+    unq: uniqueIndex('unq_daily_metric').on(
+      table.date,
+      table.metricType,
+      table.dimension,
+      table.dimensionValue
+    ),
+  };
+});
+
+export type DailyMetricAggregate = InferSelectModel<typeof dailyMetricAggregate>;
+
+export const weeklyMetricAggregate = pgTable('WeeklyMetricAggregate', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  year: integer('year').notNull(),
+  week: integer('week').notNull(),
+  metricType: varchar('metricType').notNull(),
+  dimension: varchar('dimension').notNull(),
+  dimensionValue: varchar('dimensionValue'),
+  count: integer('count').notNull().default(0),
+  sum: real('sum'),
+  avg: real('avg'),
+  min: real('min'),
+  max: real('max'),
+  metadata: json('metadata'),
+}, (table) => {
+  return {
+    unq: uniqueIndex('unq_weekly_metric').on(
+      table.year,
+      table.week,
+      table.metricType,
+      table.dimension,
+      table.dimensionValue
+    ),
+  };
+});
+
+export type WeeklyMetricAggregate = InferSelectModel<typeof weeklyMetricAggregate>;
+
+export const monthlyMetricAggregate = pgTable('MonthlyMetricAggregate', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  year: integer('year').notNull(),
+  month: integer('month').notNull(),
+  metricType: varchar('metricType').notNull(),
+  dimension: varchar('dimension').notNull(),
+  dimensionValue: varchar('dimensionValue'),
+  count: integer('count').notNull().default(0),
+  sum: real('sum'),
+  avg: real('avg'),
+  min: real('min'),
+  max: real('max'),
+  metadata: json('metadata'),
+}, (table) => {
+  return {
+    unq: uniqueIndex('unq_monthly_metric').on(
+      table.year,
+      table.month,
+      table.metricType,
+      table.dimension,
+      table.dimensionValue
+    ),
+  };
+});
+
+export type MonthlyMetricAggregate = InferSelectModel<typeof monthlyMetricAggregate>;
+
+export const quarterlyMetricAggregate = pgTable('QuarterlyMetricAggregate', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  year: integer('year').notNull(),
+  quarter: integer('quarter').notNull(),
+  metricType: varchar('metricType').notNull(),
+  dimension: varchar('dimension').notNull(),
+  dimensionValue: varchar('dimensionValue'),
+  count: integer('count').notNull().default(0),
+  sum: real('sum'),
+  avg: real('avg'),
+  min: real('min'),
+  max: real('max'),
+  metadata: json('metadata'),
+}, (table) => {
+  return {
+    unq: uniqueIndex('unq_quarterly_metric').on(
+      table.year,
+      table.quarter,
+      table.metricType,
+      table.dimension,
+      table.dimensionValue
+    ),
+  };
+});
+
+export type QuarterlyMetricAggregate = InferSelectModel<typeof quarterlyMetricAggregate>;
+
+export const yearlyMetricAggregate = pgTable('YearlyMetricAggregate', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  year: integer('year').notNull(),
+  metricType: varchar('metricType').notNull(),
+  dimension: varchar('dimension').notNull(),
+  dimensionValue: varchar('dimensionValue'),
+  count: integer('count').notNull().default(0),
+  sum: real('sum'),
+  avg: real('avg'),
+  min: real('min'),
+  max: real('max'),
+  metadata: json('metadata'),
+}, (table) => {
+  return {
+    unq: uniqueIndex('unq_yearly_metric').on(
+      table.year,
+      table.metricType,
+      table.dimension,
+      table.dimensionValue
+    ),
+  };
+});
+
+export type YearlyMetricAggregate = InferSelectModel<typeof yearlyMetricAggregate>;

@@ -19,11 +19,11 @@ import {
   getMostRecentUserMessage,
   getTrailingMessageId,
 } from '@/lib/utils';
-import { 
-  handleApiError, 
-  handleChatAuthorization, 
-  processMessages, 
-  validateUserMessage 
+import {
+  handleApiError,
+  handleChatAuthorization,
+  processMessages,
+  validateUserMessage
 } from '@/lib/chat-utils';
 import { generateTitleFromUserMessage } from '@/app/(dashboard)/query/(chat)/actions';
 import { createDocument } from '@/lib/ai/tools/create-document';
@@ -32,6 +32,7 @@ import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
 import { getWeather } from '@/lib/ai/tools/get-weather';
 import { isProductionEnvironment } from '@/lib/constants';
 import { myProvider } from '@/lib/ai/providers';
+import { recordQueryMetric } from '@/lib/services/metrics-service';
 
 export const maxDuration = 60;
 
@@ -103,14 +104,18 @@ export async function POST(request: Request) {
 
     // Search knowledge base for relevant chunks
     let knowledgeContext = '';
+    let knowledgeSourceIds: string[] = [];
+    const searchStartTime = Date.now();
+    
     try {
       const searchResults = await searchKnowledgeBase(queryText, 10, 0.4);
+      const searchEndTime = Date.now();
       
       if (searchResults.length > 0) {
         console.log(
           `Found ${searchResults.length} relevant knowledge chunks for query: "${queryText}"`,
         );
-        console.log(  
+        console.log(
           'Knowledge chunks:',
           searchResults.map(result => ({
             id: result.chunk.id,
@@ -119,6 +124,23 @@ export async function POST(request: Request) {
             similarity: result.similarity,
           })),
         );
+        
+        // Collect source IDs for metrics
+        knowledgeSourceIds = searchResults.map(result => result.source.id);
+        
+        // Record knowledge base search metric - ensure it's non-blocking
+        void recordQueryMetric({
+          chatId: id,
+          userId: session.user.id,
+          queryText,
+          responseTime: searchEndTime - searchStartTime,
+          knowledgeBaseUsed: true,
+          knowledgeSourceIds,
+          metadata: {
+            resultCount: searchResults.length,
+            operation: 'search',
+          }
+        });
         // Format knowledge chunks for context
         knowledgeContext = `
             Relevant information from knowledge base:
@@ -142,6 +164,9 @@ export async function POST(request: Request) {
       ? `${systemPrompt({ selectedChatModel, chatType })}\n\n${knowledgeContext}`
       : systemPrompt({ selectedChatModel, chatType });
 
+    // Start timing the query processing
+    const queryStartTime = Date.now();
+    
     return createDataStreamResponse({
       execute: (dataStream) => {
         const result = streamText({
@@ -200,8 +225,37 @@ export async function POST(request: Request) {
                     },
                   ],
                 });
-              } catch (_) {
-                console.error('Failed to save chat');
+                
+                // Record query metrics after completion
+                const queryEndTime = Date.now();
+                const responseTime = queryEndTime - queryStartTime;
+                
+                // Calculate token counts if available
+                const promptTokens = response.usage?.promptTokens;
+                const completionTokens = response.usage?.completionTokens;
+                const totalTokens = promptTokens && completionTokens
+                  ? promptTokens + completionTokens
+                  : undefined;
+                
+                // Record the query metric - ensure it's non-blocking
+                void recordQueryMetric({
+                  chatId: id,
+                  userId: session.user.id,
+                  messageId: assistantId,
+                  queryText,
+                  responseTime,
+                  tokenCount: totalTokens,
+                  promptTokens,
+                  completionTokens,
+                  modelUsed: selectedChatModel,
+                  knowledgeBaseUsed: knowledgeSourceIds.length > 0,
+                  knowledgeSourceIds: knowledgeSourceIds.length > 0 ? knowledgeSourceIds : undefined,
+                  metadata: {
+                    chatType,
+                  }
+                });
+              } catch (error) {
+                console.error('Failed to save chat or record metrics:', error);
               }
             }
           },

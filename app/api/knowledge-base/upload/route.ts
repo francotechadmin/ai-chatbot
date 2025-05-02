@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/app/(auth)/auth";
 import { processDocument } from "@/lib/services/document-upload-service";
+import { recordKnowledgeBaseMetric } from "@/lib/services/metrics-service";
 
 // File size limit (10MB)
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -81,6 +82,8 @@ export async function POST(request: NextRequest) {
     const results = [];
     for (const { file, buffer } of validFiles) {
       try {
+        const startTime = Date.now();
+        
         // Create metadata
         const metadata = {
           originalFilename: file.name,
@@ -103,6 +106,22 @@ export async function POST(request: NextRequest) {
           buffer,
           metadata
         );
+        
+        const endTime = Date.now();
+        const processingTime = endTime - startTime;
+        
+        // Record knowledge base upload metric
+        recordKnowledgeBaseMetric({
+          userId: session.user.id,
+          operation: 'upload',
+          knowledgeSourceId: source.id,
+          responseTime: processingTime,
+          metadata: {
+            fileType: file.type,
+            fileSize: file.size,
+            fileName: file.name,
+          }
+        });
 
         results.push({
           id: source.id,

@@ -71,6 +71,27 @@
       "when": 1714073700000,
       "tag": "0009_knowledge_base_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1714073800000,
+      "tag": "0010_microsoft_integration",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1714073900000,
+      "tag": "0011_add_microsoft_credentials",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1714074000000,
+      "tag": "0012_metrics_schema",
+      "breakpoints": true
     }
   ]
 }

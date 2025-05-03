@@ -245,6 +245,26 @@ export const microsoftIntegration = pgTable('MicrosoftIntegration', {
 
 export type MicrosoftIntegration = InferSelectModel<typeof microsoftIntegration>;
 
+// Google Integration Schema
+export const googleIntegration = pgTable("GoogleIntegration", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("userId").notNull().references(() => user.id, { onDelete: "cascade" }),
+  accessToken: text("accessToken").notNull(),
+  refreshToken: text("refreshToken"),
+  tokenType: text("tokenType").notNull(),
+  scope: text("scope").notNull(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  createdAt: timestamp("createdAt").notNull(),
+  updatedAt: timestamp("updatedAt").notNull(),
+  providerUserId: text("providerUserId"),
+  providerUserEmail: text("providerUserEmail"),
+  providerUserName: text("providerUserName"),
+  clientId: text("clientId"),
+  clientSecret: text("clientSecret"),
+});
+
+export type GoogleIntegration = InferSelectModel<typeof googleIntegration>;
+
 // Metrics Collection System Schema
 
 // Raw Event Data Tables

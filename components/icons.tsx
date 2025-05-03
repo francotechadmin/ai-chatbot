@@ -1,3 +1,5 @@
+import { RefreshCwIcon } from "lucide-react";
+
 export const BotIcon = () => {
   return (
     <svg
@@ -1206,3 +1208,76 @@ export const NetworkIcon = ({ size = 16 }: { size?: number }) => (
   </g>
 </svg>
 );
+
+export const ArrowLeftIcon = ({ size = 16 }: { size?: number }) => {
+  return (
+    <svg
+      height={size}
+      strokeLinejoin="round"
+      viewBox="0 0 16 16"
+      width={size}
+      style={{ color: 'currentcolor' }}
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M1.39644 7.29289C1.00592 7.68342 1.00592 8.31658 1.39644 8.70711L6.46966 13.7803L6.99999 14.3107L8.06065 13.25L7.53032 12.7197L3.56065 8.75H14.25H15V7.25H14.25H3.56065L7.53032 3.28033L8.06065 2.75L6.99999 1.68934L6.46966 2.21967L1.39644 7.29289Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+};
+
+export const FolderIcon = ({ size = 16 }: { size?: number }) => {
+  return (
+    <svg
+      height={size}
+      strokeLinejoin="round"
+      viewBox="0 0 16 16"
+      width={size}
+      style={{ color: 'currentcolor' }}
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M1.5 2.5H6.5H7.08579L7.5 2.91421L8.91421 4.32843L9.32843 4.74264H9.91421H14.5V13.5H1.5V2.5ZM1 1V2.5V13.5V15H1.5H14.5H15V13.5V4.74264V3.24264H14.5H9.91421L8.5 1.82843L8.08579 1.41421H7.5H6.5H1.5H1Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+};
+
+export const RefreshIcon = ({ size = 16 }: { size?: number }) => {
+  return (
+    <svg
+      height={size}
+      strokeLinejoin="round"
+      viewBox="0 0 24 24"
+      width={size}
+      style={{ color: 'currentcolor' }}
+    >
+
+      <g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M3 12C3 16.9706 7.02944 21 12 21C14.3051 21 16.4077 20.1334 18 18.7083L21 16M21 12C21 7.02944 16.9706 3 12 3C9.69494 3 7.59227 3.86656 6 5.29168L3 8M21 21V16M21 16H16M3 3V8M3 8H8" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g>
+    </svg>
+
+  );
+};
+
+export const CheckCircleIcon = ({ size = 16 }: { size?: number }) => {
+  return (
+    <svg
+      height={size}
+      strokeLinejoin="round"
+      viewBox="0 0 16 16"
+      width={size}
+      style={{ color: 'currentcolor' }}
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M8 1C4.13401 1 1 4.13401 1 8C1 11.866 4.13401 15 8 15C11.866 15 15 11.866 15 8C15 4.13401 11.866 1 8 1ZM6.46967 10.4697C6.76256 10.7626 7.23744 10.7626 7.53033 10.4697L11.5303 6.46967C11.8232 6.17678 11.8232 5.70322 11.5303 5.41033L10.4697 4.34967C10.1768 4.05678 9.72322 4.05678 9.43033 4.34967L6.96967 6.81033L5.56967 5.41033C5.27678 5.11744 4.82322 5.11744 4.53033 5.41033L3.46967 6.47099C3.17678 6.76388 3.17678 7.21745 3.46967 7.51034L6.46967 10.4697Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+};

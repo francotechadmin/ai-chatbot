@@ -40,8 +40,9 @@ export default function IntegrationsPage() {
     },
     {
       id: '2',
-      name: 'Google Workspace',
-      description: 'Import documents from Google Drive, Docs, and Sheets.',
+      name: 'Google Drive',
+      route: '/integrations/google',
+      description: 'Import documents from Google Drive and other Google services.',
       icon: 'G',
       status: 'available',
       category: 'document'
@@ -316,4 +317,4 @@ export default function IntegrationsPage() {
       </div>
     </div>
   );
-} 
+}

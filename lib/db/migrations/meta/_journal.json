@@ -92,6 +92,13 @@
       "when": 1714074000000,
       "tag": "0012_metrics_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1746241590757,
+      "tag": "0013_add_google_integration",
+      "breakpoints": true
     }
   ]
 }

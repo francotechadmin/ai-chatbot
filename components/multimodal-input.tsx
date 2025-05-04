@@ -1,6 +1,6 @@
 'use client';
 
-import type { Attachment, Message, UIMessage } from 'ai';
+import type { Attachment, UIMessage } from 'ai';
 import cx from 'classnames';
 import type React from 'react';
 import {
@@ -23,6 +23,8 @@ import { Textarea } from './ui/textarea';
 import { SuggestedActions } from './suggested-actions';
 import equal from 'fast-deep-equal';
 import { UseChatHelpers } from '@ai-sdk/react';
+import { VoiceRecordButton } from './voice-record-button';
+import { useVoiceCapture } from '@/hooks/use-voice-capture';
 
 function PureMultimodalInput({
   chatId,
@@ -104,8 +106,56 @@ function PureMultimodalInput({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
+  const [voiceConversationMode, setVoiceConversationMode] = useState(false);
+  
+  // Initialize voice capture hook
+  const {
+    isRecording,
+    isProcessing,
+    startRecording,
+    stopRecording
+  } = useVoiceCapture({
+    chatId,
+    onTranscription: (text) => {
+      console.log("Transcription received:", text);
+      // Update the input field directly with the transcription
+      setInput((prev) => {
+        const newText = prev + text;
+        console.log("Updated input with transcription:", newText);
+        return newText;
+      });
+    },
+    onAIResponse: (text) => {
+      // Handle AI response text if needed
+      console.log("AI response received:", text);
+    }
+  });
+  
+  // Handle starting voice recording
+  const handleStartRecording = () => {
+    console.log("Starting voice recording");
+    // Clear the input field and start recording
+    setInput('');
+    startRecording();
+  };
+  
+  // Handle stopping voice recording
+  const handleStopRecording = () => {
+    console.log("Stopping voice recording");
+    stopRecording();
+    
+    // Don't automatically submit - let the user decide when to send
+    // Just make sure the input field is focused so they can edit if needed
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    }, 500);
+  };
 
   const submitForm = useCallback(() => {
+    console.log("submitForm called with input:", input);
+    
     // Preserve the current path structure instead of hardcoding to /chat/
     const pathname = window.location.pathname;
     
@@ -119,10 +169,13 @@ function PureMultimodalInput({
       window.history.replaceState({}, '', pathname);
     }
 
+    // Make sure we're using the current input value
+    console.log("Submitting with input:", input);
     handleSubmit(undefined, {
       experimental_attachments: attachments,
     });
 
+    // Clear the UI state
     setAttachments([]);
     setLocalStorageInput('');
     resetHeight();
@@ -135,6 +188,7 @@ function PureMultimodalInput({
       textareaRef.current?.blur();
     }
   }, [
+    input, // Add input to dependencies to ensure we use the latest value
     attachments,
     handleSubmit,
     setAttachments,
@@ -239,11 +293,12 @@ function PureMultimodalInput({
       <Textarea
         data-testid="multimodal-input"
         ref={textareaRef}
-        placeholder="Send a message..."
+        placeholder={isRecording ? "Listening..." : "Send a message..."}
         value={input}
         onChange={handleInput}
         className={cx(
           'min-h-[24px] max-h-[calc(75dvh)] overflow-hidden resize-none rounded-2xl !text-base bg-muted pb-10 dark:border-zinc-700',
+          isRecording && 'border-red-500 dark:border-red-500',
           className,
         )}
         rows={2}
@@ -269,8 +324,15 @@ function PureMultimodalInput({
         }}
       />
 
-      <div className="absolute bottom-0 p-2 w-fit flex flex-row justify-start">
+      <div className="absolute bottom-0 p-2 w-fit flex flex-row justify-start gap-1">
         <AttachmentsButton fileInputRef={fileInputRef} status={status} />
+        <VoiceRecordButton
+          onStartRecording={handleStartRecording}
+          onStopRecording={handleStopRecording}
+          isRecording={isRecording}
+          isProcessing={isProcessing}
+          disabled={status !== 'ready' || voiceConversationMode}
+        />
       </div>
 
       <div className="absolute bottom-0 right-0 p-2 w-fit flex flex-row justify-end">
@@ -294,6 +356,7 @@ export const MultimodalInput = memo(
     if (prevProps.input !== nextProps.input) return false;
     if (prevProps.status !== nextProps.status) return false;
     if (!equal(prevProps.attachments, nextProps.attachments)) return false;
+    if (prevProps.chatType !== nextProps.chatType) return false;
 
     return true;
   },
@@ -314,9 +377,9 @@ function PureAttachmentsButton({
         event.preventDefault();
         fileInputRef.current?.click();
         // Ensure keyboard is dismissed on mobile
-        document.activeElement instanceof HTMLElement && document.activeElement.blur();
       }}
-      disabled={status !== 'ready'}
+      disabled={status === 'submitted'}
+      size="sm"
       variant="ghost"
     >
       <PaperclipIcon size={14} />
@@ -336,14 +399,20 @@ function PureStopButton({
   return (
     <Button
       data-testid="stop-button"
-      className="rounded-full p-1.5 h-fit border dark:border-zinc-600"
+      className="rounded-md rounded-br-lg p-[7px] h-fit dark:border-zinc-700 hover:dark:bg-zinc-900 hover:bg-zinc-200"
       onClick={(event) => {
         event.preventDefault();
         stop();
-        setMessages((messages) => messages);
-        // Ensure keyboard is dismissed on mobile
-        document.activeElement instanceof HTMLElement && document.activeElement.blur();
+        setMessages((messages) => {
+          const lastMessage = messages[messages.length - 1];
+          if (lastMessage?.role === 'assistant') {
+            return [...messages.slice(0, -1), { ...lastMessage, done: true }];
+          }
+          return messages;
+        });
       }}
+      size="sm"
+      variant="ghost"
     >
       <StopIcon size={14} />
     </Button>
@@ -353,25 +422,25 @@ function PureStopButton({
 const StopButton = memo(PureStopButton);
 
 function PureSendButton({
-  submitForm,
   input,
+  submitForm,
   uploadQueue,
 }: {
-  submitForm: () => void;
   input: string;
+  submitForm: () => void;
   uploadQueue: Array<string>;
 }) {
   return (
     <Button
       data-testid="send-button"
-      className="rounded-full p-1.5 h-fit border dark:border-zinc-600"
+      className="rounded-md rounded-br-lg p-[7px] h-fit dark:border-zinc-700 hover:dark:bg-zinc-900 hover:bg-zinc-200"
       onClick={(event) => {
         event.preventDefault();
         submitForm();
-        // Ensure keyboard is dismissed on mobile
-        document.activeElement instanceof HTMLElement && document.activeElement.blur();
       }}
-      disabled={input.length === 0 || uploadQueue.length > 0}
+      disabled={!input.trim() || uploadQueue.length > 0}
+      size="sm"
+      variant="ghost"
     >
       <ArrowUpIcon size={14} />
     </Button>
@@ -379,8 +448,8 @@ function PureSendButton({
 }
 
 const SendButton = memo(PureSendButton, (prevProps, nextProps) => {
+  if (prevProps.input !== nextProps.input) return false;
   if (prevProps.uploadQueue.length !== nextProps.uploadQueue.length)
     return false;
-  if (prevProps.input !== nextProps.input) return false;
   return true;
 });

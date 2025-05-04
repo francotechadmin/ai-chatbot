@@ -15,6 +15,7 @@ import {
 import { memo } from 'react';
 import equal from 'fast-deep-equal';
 import { toast } from 'sonner';
+import { TextToSpeechButton } from './text-to-speech-button';
 
 export function PureMessageActions({
   chatId,
@@ -36,6 +37,14 @@ export function PureMessageActions({
   return (
     <TooltipProvider delayDuration={0}>
       <div className="flex flex-row gap-2">
+
+        <TextToSpeechButton text={message.parts
+          ?.filter((part) => part.type === 'text')
+          .map((part) => part.text)
+          .join('\n')
+          .trim() || ''} voice="alloy" />
+
+
         <Tooltip>
           <TooltipTrigger asChild>
             <Button

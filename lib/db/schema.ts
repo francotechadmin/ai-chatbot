@@ -486,3 +486,29 @@ export const yearlyMetricAggregate = pgTable('YearlyMetricAggregate', {
 });
 
 export type YearlyMetricAggregate = InferSelectModel<typeof yearlyMetricAggregate>;
+
+// Voice Integration Schema
+export const voiceSession = pgTable('voice_sessions', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  chatId: uuid('chat_id').references(() => chat.id, { onDelete: 'cascade' }),
+  userId: uuid('user_id').references(() => user.id, { onDelete: 'cascade' }),
+  startedAt: timestamp('started_at').notNull().defaultNow(),
+  endedAt: timestamp('ended_at'),
+  durationSeconds: integer('duration_seconds'),
+  voice: text('voice').notNull().default('alloy'),
+  model: text('model').notNull().default('gpt-4o-realtime'),
+  metadata: json('metadata'),
+});
+
+export type VoiceSession = InferSelectModel<typeof voiceSession>;
+
+export const voiceTranscription = pgTable('voice_transcriptions', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  sessionId: uuid('session_id').references(() => voiceSession.id, { onDelete: 'cascade' }),
+  messageId: uuid('message_id').references(() => message.id, { onDelete: 'cascade' }),
+  transcript: text('transcript').notNull(),
+  confidence: real('confidence'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+export type VoiceTranscription = InferSelectModel<typeof voiceTranscription>;

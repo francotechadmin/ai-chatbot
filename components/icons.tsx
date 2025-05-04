@@ -1,4 +1,4 @@
-import { RefreshCwIcon } from "lucide-react";
+import { Headphones, RefreshCwIcon } from "lucide-react";
 
 export const BotIcon = () => {
   return (
@@ -1276,6 +1276,44 @@ export const CheckCircleIcon = ({ size = 16 }: { size?: number }) => {
         fillRule="evenodd"
         clipRule="evenodd"
         d="M8 1C4.13401 1 1 4.13401 1 8C1 11.866 4.13401 15 8 15C11.866 15 15 11.866 15 8C15 4.13401 11.866 1 8 1ZM6.46967 10.4697C6.76256 10.7626 7.23744 10.7626 7.53033 10.4697L11.5303 6.46967C11.8232 6.17678 11.8232 5.70322 11.5303 5.41033L10.4697 4.34967C10.1768 4.05678 9.72322 4.05678 9.43033 4.34967L6.96967 6.81033L5.56967 5.41033C5.27678 5.11744 4.82322 5.11744 4.53033 5.41033L3.46967 6.47099C3.17678 6.76388 3.17678 7.21745 3.46967 7.51034L6.46967 10.4697Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+};
+
+export const MicrophoneIcon = ({ size = 16 }: { size?: number }) => {
+  return (
+    <svg
+      height={size}
+      strokeLinejoin="round"
+      viewBox="0 0 16 16"
+      width={size}
+      style={{ color: 'currentcolor' }}
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M8 0C6.34315 0 5 1.34315 5 3V8C5 9.65685 6.34315 11 8 11C9.65685 11 11 9.65685 11 8V3C11 1.34315 9.65685 0 8 0ZM6.5 3C6.5 2.17157 7.17157 1.5 8 1.5C8.82843 1.5 9.5 2.17157 9.5 3V8C9.5 8.82843 8.82843 9.5 8 9.5C7.17157 9.5 6.5 8.82843 6.5 8V3ZM3.5 6.5V8C3.5 10.4853 5.51472 12.5 8 12.5C10.4853 12.5 12.5 10.4853 12.5 8V6.5H14V8C14 11.0376 11.7657 13.5795 8.85355 13.9487L8.85355 16H10.5H11.25V16.75V17.5H10.5H5.5H4.75V16.75V16H5.5H7.14645L7.14645 13.9487C4.23435 13.5795 2 11.0376 2 8V6.5H3.5Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+};
+
+export const HeadphonesIcon = ({ size = 16 }: { size?: number }) => {
+  return (
+    <svg
+      height={size}
+      strokeLinejoin="round"
+      viewBox="0 0 16 16"
+      width={size}
+      style={{ color: 'currentcolor' }}
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M8 0C3.58172 0 0 3.58172 0 8V12C0 12.5523 0.447715 13 1 13H3V8C3 5.23858 5.23858 3 8 3C10.7614 3 13 5.23858 13 8V13H15C15.5523 13 16 12.5523 16 12V8C16 3.58172 12.4183 0 8 0ZM4.5 8V14C4.5 14.5523 4.94772 15 5.5 15H6.5C7.05228 15 7.5 14.5523 7.5 14V8C7.5 7.44772 7.05228 7 6.5 7H5.5C4.94772 7 4.5 7.44772 4.5 8ZM9.5 7C8.94772 7 8.5 7.44772 8.5 8V14C8.5 14.5523 8.94772 15 9.5 15H10.5C11.0523 15 11.5 14.5523 11.5 14V8C11.5 7.44772 11.0523 7 10.5 7H9.5Z"
         fill="currentColor"
       />
     </svg>

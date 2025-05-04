@@ -47,12 +47,7 @@ export async function POST(req: NextRequest) {
     if (userIntegration.expiresAt && userIntegration.expiresAt < new Date() && userIntegration.refreshToken) {
       const { GoogleAuth } = await import('@/lib/integrations/google/auth');
       
-      // Get credentials from DB if user provided them
-      const credentials = userIntegration.clientId && userIntegration.clientSecret 
-        ? { clientId: userIntegration.clientId, clientSecret: userIntegration.clientSecret } 
-        : undefined;
-        
-      const newTokens = await GoogleAuth.refreshAccessToken(userIntegration.refreshToken, credentials);
+      const newTokens = await GoogleAuth.refreshAccessToken(userIntegration.refreshToken);
       
       // Update the tokens in the database
       await db.update(googleIntegration)
@@ -152,10 +147,11 @@ export async function POST(req: NextRequest) {
           };
         } catch (error) {
           console.error(`Error processing file ${fileId}:`, error);
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
           return {
             fileId,
             status: 'error',
-            error: error.message || 'Unknown error',
+            error: errorMessage,
           };
         }
       })
@@ -170,9 +166,12 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error('Error importing Google Drive files:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to import files';
+    const errorStatus = error instanceof Error && 'status' in error ? (error as any).status : 500;
+    
     return NextResponse.json(
-      { error: error.message || 'Failed to import files' },
-      { status: error.status || 500 }
+      { error: errorMessage },
+      { status: errorStatus }
     );
   }
 }

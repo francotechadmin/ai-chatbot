@@ -10,7 +10,6 @@ import { Label } from '@/components/ui/label';
 import { PageHeader } from '@/components/page-header';
 import { Spinner } from '@/components/ui/spinner';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { InfoIcon, CheckCircleIcon } from '@/components/icons';
 
 export default function GoogleIntegrationsPage() {
   const router = useRouter();
@@ -21,12 +20,7 @@ export default function GoogleIntegrationsPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const [hasCustomCredentials, setHasCustomCredentials] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any>(null);
-  
-  // Form for user-provided credentials
-  const [clientId, setClientId] = useState<string>('');
-  const [clientSecret, setClientSecret] = useState<string>('');
 
   useEffect(() => {
     // Show success message if redirected from OAuth callback
@@ -46,7 +40,6 @@ export default function GoogleIntegrationsPage() {
       if (response.ok) {
         const data = await response.json();
         setIsConnected(data.connected);
-        setHasCustomCredentials(data.hasCustomCredentials);
         setUserInfo(data.user);
         
         if (data.connected) {
@@ -69,17 +62,12 @@ export default function GoogleIntegrationsPage() {
       setIsLoading(true);
       setError(null);
       
-      // Include user-provided credentials if they're using custom credentials
-      const credentials = clientId && clientSecret 
-        ? { clientId, clientSecret } 
-        : undefined;
-      
       const response = await fetch('/api/integrations/google/auth/connect', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ credentials }),
+        body: JSON.stringify({}),
       });
       
       if (response.ok) {
@@ -106,7 +94,6 @@ export default function GoogleIntegrationsPage() {
       
       if (response.ok) {
         setIsConnected(false);
-        setHasCustomCredentials(false);
         setUserInfo(null);
         setMessage('Google Drive integration has been disconnected.');
       } else {
@@ -152,7 +139,6 @@ export default function GoogleIntegrationsPage() {
 
         {message && (
           <Alert>
-            <CheckCircleIcon className="h-4 w-4 mr-2" />
             <AlertTitle>Success</AlertTitle>
             <AlertDescription>{message}</AlertDescription>
           </Alert>
@@ -193,14 +179,6 @@ export default function GoogleIntegrationsPage() {
                   </Button>
                 </div>
                 
-                {hasCustomCredentials && (
-                  <Alert>
-                    <InfoIcon className="h-4 w-4 mr-2" />
-                    <AlertDescription>
-                      You're using custom API credentials for this integration.
-                    </AlertDescription>
-                  </Alert>
-                )}
               </div>
             </CardContent>
           </Card>
@@ -214,60 +192,6 @@ export default function GoogleIntegrationsPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                <Alert className="bg-secondary/20">
-                  <InfoIcon className="h-4 w-4 mr-2" />
-                  <AlertDescription>
-                    You can connect using your own Google API credentials or use the default application credentials.
-                    Using your own credentials gives you more control over API quotas and permissions.
-                  </AlertDescription>
-                </Alert>
-                
-                <form onSubmit={connectToGoogle} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="clientId">Google Client ID (Optional)</Label>
-                    <Input
-                      id="clientId"
-                      value={clientId}
-                      onChange={(e) => setClientId(e.target.value)}
-                      placeholder="Enter your Google Client ID"
-                    />
-                    <p className="text-sm text-gray-500">
-                      You can find this in the Google Cloud Console under API & Services > Credentials.
-                    </p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="clientSecret">Client Secret (Optional)</Label>
-                    <Input
-                      id="clientSecret"
-                      type="password"
-                      value={clientSecret}
-                      onChange={(e) => setClientSecret(e.target.value)}
-                      placeholder="Enter your Google Client Secret"
-                    />
-                    <p className="text-sm text-gray-500">
-                      You can find this in the Google Cloud Console under API & Services > Credentials.
-                    </p>
-                  </div>
-                  
-                  {clientId && clientSecret && (
-                    <Button 
-                      type="submit" 
-                      className="w-full"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? (
-                        <>
-                          <Spinner className="mr-2 h-4 w-4" />
-                          Connecting...
-                        </>
-                      ) : (
-                        'Connect with Custom Credentials'
-                      )}
-                    </Button>
-                  )}
-                </form>
-
                 <div className="space-y-4">
                   <div className="flex items-center gap-4 p-4 border rounded-lg">
                     <div className="w-10 h-10 flex items-center justify-center bg-red-100 text-red-800 rounded-full">
@@ -291,24 +215,22 @@ export default function GoogleIntegrationsPage() {
                 </div>
               </div>
             </CardContent>
-            {!clientId || !clientSecret ? (
-              <CardFooter>
-                <Button 
-                  className="w-full" 
-                  onClick={() => connectToGoogle()} 
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <Spinner className="mr-2 h-4 w-4" />
-                      Connecting...
-                    </>
-                  ) : (
-                    'Connect with Default Credentials'
-                  )}
-                </Button>
-              </CardFooter>
-            ) : null}
+            <CardFooter>
+              <Button
+                className="w-full"
+                onClick={() => connectToGoogle()}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Spinner className="mr-2 h-4 w-4" />
+                    Connecting...
+                  </>
+                ) : (
+                  'Connect to Google Drive'
+                )}
+              </Button>
+            </CardFooter>
           </Card>
         )}
       </div>

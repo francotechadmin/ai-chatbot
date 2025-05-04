@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/app/(auth)/auth';
 import { getTokenFromCode, saveTokens } from '@/lib/integrations/microsoft/auth';
-import { MicrosoftCredentials } from '@/lib/integrations/microsoft/config';
 
 /**
  * GET: Handle OAuth callback from Microsoft
@@ -28,40 +27,18 @@ export async function GET(request: NextRequest) {
   }
   
   try {
-    // Check if there are user-provided credentials in the cookie
-    let credentials: MicrosoftCredentials | undefined;
-    const credentialsCookie = request.cookies.get('ms_credentials');
-    
-    if (credentialsCookie?.value) {
-      try {
-        // Decode the base64 encoded credentials
-        const decodedCreds = Buffer.from(credentialsCookie.value, 'base64').toString();
-        credentials = JSON.parse(decodedCreds);
-      } catch (e) {
-        console.error('Failed to parse credentials from cookie:', e);
-        // Continue without credentials if parsing fails
-      }
-    }
-    
-    // Exchange code for token using credentials if available
-    const tokenResponse = await getTokenFromCode(code, credentials);
-    
+    // Exchange code for token using environment variables
+    const tokenResponse = await getTokenFromCode(code);
+
     if (tokenResponse.error) {
       throw new Error(`Token error: ${tokenResponse.error_description}`);
     }
-    
-    // Save tokens and credentials to database
-    await saveTokens(session.user.id, tokenResponse, credentials);
-    
-    // Create response to redirect back to integration page
-    const response = NextResponse.redirect(new URL('/integrations/microsoft?success=true', request.url));
-    
-    // Clear the credentials cookie
-    if (credentialsCookie) {
-      response.cookies.delete('ms_credentials');
-    }
-    
-    return response;
+
+    // Save tokens to database
+    await saveTokens(session.user.id, tokenResponse);
+
+    // Redirect back to integration page
+    return NextResponse.redirect(new URL('/integrations/microsoft?success=true', request.url));
     
   } catch (error) {
     console.error('Microsoft OAuth callback error:', error);

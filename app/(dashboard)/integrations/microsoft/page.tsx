@@ -19,9 +19,6 @@ export default function MicrosoftIntegrationsPage() {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   
-  // Form for user-provided credentials
-  const [clientId, setClientId] = useState<string>('');
-  const [clientSecret, setClientSecret] = useState<string>('');
 
   useEffect(() => {
     // Check if integration exists when the component mounts
@@ -57,18 +54,12 @@ export default function MicrosoftIntegrationsPage() {
       setIsLoading(true);
       setError(null);
       
-      // Include user-provided credentials if they're using custom credentials
-      const credentials = clientId && clientSecret ? {
-        clientId,
-        clientSecret,
-      } : undefined;
-      
       const response = await fetch('/api/integrations/microsoft/auth/connect', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ credentials }),
+        body: JSON.stringify({}),
       });
       
       if (response.ok) {
@@ -111,7 +102,7 @@ export default function MicrosoftIntegrationsPage() {
       <div className="flex flex-col gap-6">
         <PageHeader title="Microsoft 365 Integration">
           {!isConnected && (
-            <Button onClick={() => connectToMicrosoft()} disabled={isLoading || (!clientId || !clientSecret)}>
+            <Button onClick={() => connectToMicrosoft()} disabled={isLoading}>
               {isLoading ? (
                 <>
                   <Spinner className="mr-2 h-4 w-4" />
@@ -196,39 +187,7 @@ export default function MicrosoftIntegrationsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-6">
-                <form onSubmit={connectToMicrosoft} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="clientId">Application (Client) ID</Label>
-                    <Input
-                      id="clientId"
-                      value={clientId}
-                      onChange={(e) => setClientId(e.target.value)}
-                      placeholder="Enter your Microsoft Application ID"
-                      required
-                    />
-                    <p className="text-sm text-gray-500">
-                      You can find this in the Azure Portal under App registrations.
-                    </p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="clientSecret">Client Secret</Label>
-                    <Input
-                      id="clientSecret"
-                      type="password"
-                      value={clientSecret}
-                      onChange={(e) => setClientSecret(e.target.value)}
-                      placeholder="Enter your Microsoft Client Secret"
-                      required
-                    />
-                    <p className="text-sm text-gray-500">
-                      You can create this in the Azure Portal under Certificates & secrets.
-                    </p>
-                  </div>
-                </form>
-
-                
+              <div className="space-y-6">               
                 <div className="space-y-4">
                   <div className="flex items-center gap-4 p-4 border rounded-lg">
                     <div className="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-800 rounded-full">
@@ -253,10 +212,10 @@ export default function MicrosoftIntegrationsPage() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button 
-                className="w-full" 
-                onClick={() => connectToMicrosoft()} 
-                disabled={isLoading || (!clientId || !clientSecret)}
+              <Button
+                className="w-full"
+                onClick={() => connectToMicrosoft()}
+                disabled={isLoading}
               >
                 {isLoading ? (
                   <>

@@ -1,6 +1,5 @@
-import { 
+import {
   getGoogleConfig,
-  GoogleCredentials,
   GOOGLE_TOKEN_URL,
   GOOGLE_USER_INFO_URL,
   GOOGLE_AUTH_URL
@@ -43,8 +42,8 @@ export class GoogleAuth {
    * Generate the OAuth authorization URL for Google
    * @returns The URL to redirect users to for authentication
    */
-  static getAuthorizationUrl(credentials?: GoogleCredentials, state?: string): string {
-    const config = getGoogleConfig(credentials);
+  static getAuthorizationUrl(state?: string): string {
+    const config = getGoogleConfig();
     
     const params = new URLSearchParams({
       client_id: config.clientId,
@@ -65,8 +64,8 @@ export class GoogleAuth {
   /**
    * Exchange authorization code for tokens
    */
-  static async getTokensFromCode(code: string, credentials?: GoogleCredentials): Promise<GoogleTokens> {
-    const config = getGoogleConfig(credentials);
+  static async getTokensFromCode(code: string): Promise<GoogleTokens> {
+    const config = getGoogleConfig();
     
     const params = new URLSearchParams({
       code,
@@ -95,8 +94,8 @@ export class GoogleAuth {
   /**
    * Refresh access token using refresh token
    */
-  static async refreshAccessToken(refreshToken: string, credentials?: GoogleCredentials): Promise<GoogleTokens> {
-    const config = getGoogleConfig(credentials);
+  static async refreshAccessToken(refreshToken: string): Promise<GoogleTokens> {
+    const config = getGoogleConfig();
     
     const params = new URLSearchParams({
       refresh_token: refreshToken,
@@ -175,7 +174,7 @@ export class GoogleAuth {
   /**
    * Save Google credentials to the database
    */
-  static async saveCredentials(userId: string, tokens: GoogleTokens, userInfo: GoogleUserInfo, credentials?: GoogleCredentials) {
+  static async saveCredentials(userId: string, tokens: GoogleTokens, userInfo: GoogleUserInfo) {
     try {
       const now = new Date();
       const expiresAt = new Date(now.getTime() + tokens.expires_in * 1000);
@@ -198,8 +197,6 @@ export class GoogleAuth {
             providerUserId: userInfo.id,
             providerUserEmail: userInfo.email,
             providerUserName: userInfo.name,
-            ...(credentials?.clientId && { clientId: credentials.clientId }),
-            ...(credentials?.clientSecret && { clientSecret: credentials.clientSecret }),
           })
           .where(eq(googleIntegration.userId, userId));
       } else {
@@ -216,8 +213,6 @@ export class GoogleAuth {
           providerUserId: userInfo.id,
           providerUserEmail: userInfo.email,
           providerUserName: userInfo.name,
-          ...(credentials?.clientId && { clientId: credentials.clientId }),
-          ...(credentials?.clientSecret && { clientSecret: credentials.clientSecret }),
         });
       }
     } catch (error) {

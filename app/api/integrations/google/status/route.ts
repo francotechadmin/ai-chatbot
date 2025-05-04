@@ -24,28 +24,22 @@ export async function GET(req: NextRequest) {
 
     // Check if the token is valid
     let isValid = false;
-    
+
     try {
       isValid = await GoogleAuth.validateToken(integration.accessToken);
-      
+
       // If the token is expired but we have a refresh token, attempt to refresh it
       if (!isValid && integration.refreshToken) {
-        // Get credentials from DB, if the user provided them
-        const credentials = integration.clientId && integration.clientSecret 
-          ? { clientId: integration.clientId, clientSecret: integration.clientSecret } 
-          : undefined;
-          
-        const newTokens = await GoogleAuth.refreshAccessToken(integration.refreshToken, credentials);
+        const newTokens = await GoogleAuth.refreshAccessToken(integration.refreshToken);
         
         // Get user info to validate the new token
         const userInfo = await GoogleAuth.getUserInfo(newTokens.access_token);
-        
+
         // Update the database with new tokens
         await GoogleAuth.saveCredentials(
           userId,
           newTokens,
-          userInfo,
-          credentials
+          userInfo
         );
         
         isValid = true;
@@ -58,7 +52,6 @@ export async function GET(req: NextRequest) {
     // Return the connection status and user info
     return NextResponse.json({
       connected: isValid,
-      hasCustomCredentials: !!(integration.clientId && integration.clientSecret),
       user: isValid ? {
         id: integration.providerUserId,
         name: integration.providerUserName,

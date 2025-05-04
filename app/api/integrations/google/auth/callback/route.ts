@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { GoogleAuth } from '@/lib/integrations/google/auth';
-import { GoogleCredentials } from '@/lib/integrations/google/config';
 import { auth } from '@/app/(auth)/auth';
 
 /**
@@ -35,16 +34,10 @@ export async function GET(req: NextRequest) {
 
     // Decode and parse the state
     let stateData;
-    let credentials: GoogleCredentials | undefined;
-    
+
     try {
       const decodedState = Buffer.from(encodedState, 'base64').toString();
       stateData = JSON.parse(decodedState);
-      
-      // Extract credentials if they were included
-      if (stateData.credentials) {
-        credentials = stateData.credentials;
-      }
     } catch (error) {
       console.error('Error parsing state:', error);
       return NextResponse.redirect(new URL('/error?message=Invalid state format', req.url));
@@ -61,14 +54,14 @@ export async function GET(req: NextRequest) {
       return NextResponse.redirect(new URL('/error?message=Invalid OAuth state', req.url));
     }
 
-    // Exchange the code for tokens, using credentials if provided
-    const tokens = await GoogleAuth.getTokensFromCode(code, credentials);
-    
+    // Exchange the code for tokens using environment variables
+    const tokens = await GoogleAuth.getTokensFromCode(code);
+
     // Get user info from Google
     const userInfo = await GoogleAuth.getUserInfo(tokens.access_token);
 
-    // Save the integration to the database, including credentials if provided
-    await GoogleAuth.saveCredentials(userId, tokens, userInfo, credentials);
+    // Save the integration to the database
+    await GoogleAuth.saveCredentials(userId, tokens, userInfo);
 
     // Clear the state cookie
     cookieStore.set('google_oauth_state', '', { maxAge: 0 });

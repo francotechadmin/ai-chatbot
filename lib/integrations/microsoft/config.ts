@@ -1,11 +1,7 @@
 /**
  * Microsoft integration configuration
- * This allows for using user-provided credentials instead of environment variables
+ * Uses environment variables for credentials
  */
-export interface MicrosoftCredentials {
-  clientId: string;
-  clientSecret: string;
-}
 
 export const DEFAULT_SCOPES = [
   'User.Read',
@@ -15,14 +11,15 @@ export const DEFAULT_SCOPES = [
 ];
 
 /**
- * Creates a Microsoft configuration object from user provided credentials
- * Falls back to environment variables if no credentials are provided
+ * Creates a Microsoft configuration object from environment variables
  */
-export function getMicrosoftConfig(credentials: MicrosoftCredentials) {
+export function getMicrosoftConfig() {
   return {
-    clientId: credentials.clientId,
-    clientSecret: credentials.clientSecret,
-    redirectUri: `${window.location.origin}/api/integrations/microsoft/auth/callback`,
+    clientId: process.env.MICROSOFT_CLIENT_ID || '',
+    clientSecret: process.env.MICROSOFT_CLIENT_SECRET || '',
+    redirectUri: typeof window !== 'undefined'
+      ? `${window.location.origin}/api/integrations/microsoft/auth/callback`
+      : process.env.MICROSOFT_REDIRECT_URI || 'http://localhost:3000/api/integrations/microsoft/auth/callback',
     scopes: DEFAULT_SCOPES
   };
 }

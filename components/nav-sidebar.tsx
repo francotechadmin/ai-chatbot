@@ -1,10 +1,7 @@
 'use client';
-
-import type { User } from 'next-auth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { hasRole } from '@/lib/rbac';
 
 import { 
   HomeIcon,
@@ -28,7 +25,6 @@ import {
   SidebarMenu,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 export function NavSidebar() {
   const router = useRouter();

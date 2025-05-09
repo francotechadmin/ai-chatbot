@@ -7,9 +7,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookOpen, Plus, Search, Filter, Clock, CheckCircle, XCircle, FileText, FileImage, Video, Globe, Database, MessageSquare } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
 import { formatDistance } from 'date-fns';
-import { KnowledgeSource } from '@/lib/db/schema';
+import type { KnowledgeSource } from '@/lib/db/schema';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { ProtectedRoute } from '@/components/protected-route';
@@ -54,7 +53,7 @@ function KnowledgeBaseContent() {
   const filteredSources = knowledgeSources.filter(source => {
     // Filter by search query
     const matchesSearch = source.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         (source.description && source.description.toLowerCase().includes(searchQuery.toLowerCase()));
+                         (source.description?.toLowerCase().includes(searchQuery.toLowerCase()));
     
     // Filter by tab
     if (activeTab === 'all') return matchesSearch;
@@ -150,15 +149,15 @@ function KnowledgeSourceGrid({ sources, isLoading }: { sources: KnowledgeSource[
         {[1, 2, 3, 4, 5, 6].map((i) => (
           <Card key={i} className="animate-pulse">
             <CardHeader className="pb-2">
-              <div className="h-6 bg-muted rounded w-3/4 mb-2"></div>
-              <div className="h-4 bg-muted rounded w-1/2"></div>
+              <div className="h-6 bg-muted rounded w-3/4 mb-2" />
+              <div className="h-4 bg-muted rounded w-1/2" />
             </CardHeader>
             <CardContent>
-              <div className="h-4 bg-muted rounded w-full mb-2"></div>
-              <div className="h-4 bg-muted rounded w-5/6"></div>
+              <div className="h-4 bg-muted rounded w-full mb-2" />
+              <div className="h-4 bg-muted rounded w-5/6" />
             </CardContent>
             <CardFooter>
-              <div className="h-4 bg-muted rounded w-1/3"></div>
+              <div className="h-4 bg-muted rounded w-1/3" />
             </CardFooter>
           </Card>
         ))}

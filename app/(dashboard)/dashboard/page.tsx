@@ -90,7 +90,7 @@ export default function DashboardPage() {
             <CardContent>
               <div className="grid grid-cols-1 gap-2">
                 {quickActions.map((action, index) => (
-                  <Button key={index} variant="outline" className="justify-start h-auto py-3" asChild>
+                  <Button key={`action-${action.path}`} variant="outline" className="justify-start h-auto py-3" asChild>
                     <a href={action.path} className="flex items-center">
                       <span className="mr-2">{action.icon}</span>
                       {action.name}

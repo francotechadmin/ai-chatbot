@@ -10,7 +10,6 @@ import { systemPrompt } from '@/lib/ai/prompts';
 import {
   deleteChatById,
   getChatById,
-  saveChat,
   saveMessages,
 } from '@/lib/db/queries';
 import {

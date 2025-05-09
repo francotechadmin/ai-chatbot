@@ -54,7 +54,7 @@ export abstract class DocumentProcessor {
         const chunk = chunks[i];
         
         // Generate embedding for the chunk
-        let embedding;
+        let embedding: number[] | undefined;
         try {
           embedding = await generateEmbedding(chunk);
         } catch (error) {

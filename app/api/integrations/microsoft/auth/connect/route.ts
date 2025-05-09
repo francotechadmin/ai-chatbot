@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/app/(auth)/auth';
 import { getAuthUrl } from '@/lib/integrations/microsoft/auth';
 import { v4 as uuidv4 } from 'uuid';

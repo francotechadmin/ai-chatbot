@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { GoogleAuth } from '@/lib/integrations/google/auth';
+import { getTokensFromCode, getUserInfo, saveCredentials } from '@/lib/integrations/google/auth';
 import { auth } from '@/app/(auth)/auth';
 
 /**
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Decode and parse the state
-    let stateData;
+    let stateData: any;
 
     try {
       const decodedState = Buffer.from(encodedState, 'base64').toString();
@@ -55,13 +55,13 @@ export async function GET(req: NextRequest) {
     }
 
     // Exchange the code for tokens using environment variables
-    const tokens = await GoogleAuth.getTokensFromCode(code);
+    const tokens = await getTokensFromCode(code);
 
     // Get user info from Google
-    const userInfo = await GoogleAuth.getUserInfo(tokens.access_token);
+    const userInfo = await getUserInfo(tokens.access_token);
 
     // Save the integration to the database
-    await GoogleAuth.saveCredentials(userId, tokens, userInfo);
+    await saveCredentials(userId, tokens, userInfo);
 
     // Clear the state cookie
     cookieStore.set('google_oauth_state', '', { maxAge: 0 });

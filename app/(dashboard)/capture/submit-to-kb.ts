@@ -1,9 +1,8 @@
 'use server';
 
 import { auth } from '@/app/(auth)/auth';
-import { createKnowledgeSource } from '@/lib/db/queries';
+import { createKnowledgeSource, getMessagesByChatId, getChatById } from '@/lib/db/queries';
 import { processContentForKnowledgeBase } from '@/lib/embeddings';
-import { getMessagesByChatId, getChatById } from '@/lib/db/queries';
 
 /**
  * Submits a capture session to the knowledge base

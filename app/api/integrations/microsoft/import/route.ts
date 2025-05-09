@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/app/(auth)/auth';
 import { MicrosoftGraphClient } from '@/lib/integrations/microsoft/graph-client';
 import { SharePointClient } from '@/lib/integrations/microsoft/sharepoint';
 import { OneDriveClient } from '@/lib/integrations/microsoft/onedrive';
-import { ProcessorFactory } from '@/lib/integrations/microsoft/processors/processor-factory';
+import { getProcessor } from '@/lib/integrations/microsoft/processors/processor-factory';
 
 /**
  * POST: Import document from SharePoint or OneDrive to knowledge base
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
     };
     
     // Get the appropriate document processor
-    const processor = ProcessorFactory.getProcessor(session.user.id, fileName, metadata);
+    const processor = getProcessor(session.user.id, fileName, metadata);
     
     // Process the document and add to knowledge base
     const knowledgeSource = await processor.processDocument(content, fileName, description);
@@ -87,6 +87,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Microsoft integration not found' }, { status: 404 });
     }
     
-    return NextResponse.json({ error: 'Failed to import document: ' + error.message }, { status: 500 });
+    return NextResponse.json({ error: `Failed to import document: ${error.message}` }, { status: 500 });
   }
 }

@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { CodeIcon, FileIcon } from '@/components/icons';
-import { UserActivity as UserActivityType } from '../types';
+import type { UserActivity as UserActivityType } from '../types';
 
 interface UserActivityProps {
   data?: UserActivityType[];
@@ -25,7 +25,7 @@ export function UserActivity({ data }: UserActivityProps) {
         <div className="space-y-4">
           {data && data.length > 0 ? (
             data.map((user, index) => (
-              <div key={index} className="flex items-center justify-between">
+              <div key={`action-${user.email}`} className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="rounded-full size-8 bg-muted flex items-center justify-center">{user.initials}</div>
                   <div>

@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { ActivityDistribution as ActivityDistributionType } from '../types';
+import type { ActivityDistribution as ActivityDistributionType } from '../types';
 import { generateDonutSlice } from '../utils';
 
 interface ActivityDistributionProps {

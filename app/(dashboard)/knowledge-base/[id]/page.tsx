@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Clock, CheckCircle, XCircle, Edit, Trash, MessageSquare } from 'lucide-react';
-import { formatDistance, format } from 'date-fns';
-import { KnowledgeSource, KnowledgeChunk } from '@/lib/db/schema';
+import { ArrowLeft, Clock, CheckCircle, XCircle, Trash, MessageSquare } from 'lucide-react';
+import { formatDistance, } from 'date-fns';
+import type { KnowledgeSource, KnowledgeChunk } from '@/lib/db/schema';
 import { toast } from 'sonner';
 import { ProtectedRoute } from '@/components/protected-route';
 import { 
@@ -131,13 +130,13 @@ function KnowledgeSourceDetailContent({ params }: { params: { id: string } }) {
     return (
       <div className="container mx-auto p-6">
         <div className="animate-pulse">
-          <div className="h-8 bg-muted rounded w-1/4 mb-6"></div>
-          <div className="h-6 bg-muted rounded w-1/2 mb-4"></div>
-          <div className="h-4 bg-muted rounded w-1/3 mb-8"></div>
+          <div className="h-8 bg-muted rounded w-1/4 mb-6" />
+          <div className="h-6 bg-muted rounded w-1/2 mb-4" />
+          <div className="h-4 bg-muted rounded w-1/3 mb-8" />
           
           <div className="grid grid-cols-1 gap-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-32 bg-muted rounded"></div>
+              <div key={i} className="h-32 bg-muted rounded" />
             ))}
           </div>
         </div>

@@ -1,12 +1,10 @@
 'use client';
 
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { PageHeader } from '@/components/page-header';
 import { Spinner } from '@/components/ui/spinner';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -114,7 +112,7 @@ export default function GoogleIntegrationsPage() {
             <Button onClick={() => connectToGoogle()} disabled={isLoading}>
               {isLoading ? (
                 <>
-                  <Spinner className="mr-2 h-4 w-4" />
+                  <Spinner className="mr-2 size-4" />
                   Connecting...
                 </>
               ) : (
@@ -124,7 +122,7 @@ export default function GoogleIntegrationsPage() {
           )}
           {isConnected && (
             <Button variant="outline" onClick={disconnectGoogle} disabled={isLoading}>
-              {isLoading ? <Spinner className="mr-2 h-4 w-4" /> : null}
+              {isLoading ? <Spinner className="mr-2 size-4" /> : null}
               Disconnect
             </Button>
           )}
@@ -159,9 +157,11 @@ export default function GoogleIntegrationsPage() {
                     <p className="text-sm text-muted-foreground">Connected as:</p>
                     <div className="flex items-center gap-2 mt-1">
                       {userInfo.picture && (
-                        <img 
-                          src={userInfo.picture} 
-                          alt={userInfo.name} 
+                        <Image
+                          src={userInfo.picture}
+                          alt={userInfo.name}
+                          width={32}
+                          height={32}
                           className="size-8 rounded-full"
                         />
                       )}
@@ -194,7 +194,7 @@ export default function GoogleIntegrationsPage() {
               <div className="space-y-6">
                 <div className="space-y-4">
                   <div className="flex items-center gap-4 p-4 border rounded-lg">
-                    <div className="w-10 h-10 flex items-center justify-center bg-red-100 text-red-800 rounded-full">
+                    <div className="size-10 flex items-center justify-center bg-red-100 text-red-800 rounded-full">
                       GD
                     </div>
                     <div>
@@ -204,7 +204,7 @@ export default function GoogleIntegrationsPage() {
                   </div>
                   
                   <div className="flex items-center gap-4 p-4 border rounded-lg">
-                    <div className="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-800 rounded-full">
+                    <div className="size-10 flex items-center justify-center bg-blue-100 text-blue-800 rounded-full">
                       GD
                     </div>
                     <div>
@@ -223,7 +223,7 @@ export default function GoogleIntegrationsPage() {
               >
                 {isLoading ? (
                   <>
-                    <Spinner className="mr-2 h-4 w-4" />
+                    <Spinner className="mr-2 size-4" />
                     Connecting...
                   </>
                 ) : (

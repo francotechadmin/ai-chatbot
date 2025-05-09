@@ -6,9 +6,7 @@ import { DataStreamHandler } from '@/components/data-stream-handler';
 import { PageHeader } from '@/components/page-header';
 import { useRouter } from 'next/navigation';
 import { useWindowSize } from 'usehooks-ts';
-import { SidebarToggle } from '@/components/sidebar-toggle';
-import { ModelSelector } from '@/components/model-selector';
-import { VisibilitySelector, VisibilityType } from '@/components/visibility-selector';
+import type { VisibilityType } from '@/components/visibility-selector';
 import { ChatHeaderActions } from '@/components/chat-header-actions';
 import type { UIMessage } from 'ai';
 

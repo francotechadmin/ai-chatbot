@@ -1,4 +1,4 @@
-import { UsageTrend } from './types';
+import type { UsageTrend } from './types';
 
 // Helper function to generate chart path for SVG line charts
 export function generateChartPath(data: UsageTrend[], key: 'queries' | 'captures'): string {

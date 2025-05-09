@@ -11,8 +11,8 @@ import { createKnowledgeChunk } from './db/queries';
  */
 export async function splitTextIntoChunks(
   text: string,
-  chunkSize: number = 1000,
-  overlap: number = 200
+  chunkSize = 1000,
+  overlap = 200
 ): Promise<string[]> {
   if (!text) return [];
   
@@ -122,7 +122,7 @@ export async function processContentForKnowledgeBase(
       const chunk = chunks[i];
       
       // Generate embedding for the chunk
-      let embedding;
+      let embedding: number[] | undefined;
       try {
         embedding = await generateEmbedding(chunk);
       } catch (error) {
@@ -187,8 +187,8 @@ export async function cosineSimilarity(a: number[], b: number[]): Promise<number
  */
 export async function searchKnowledgeBase(
   query: string,
-  limit: number = 5,
-  minSimilarity: number = 0.7
+  limit = 5,
+  minSimilarity = 0.7
 ): Promise<Array<{
   chunk: any,
   source: any,

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/app/(auth)/auth';
 import { searchKnowledgeBase } from '@/lib/embeddings';
 
@@ -25,8 +25,8 @@ export async function GET(req: NextRequest) {
     }
 
     // Parse optional parameters
-    const limit = limitParam ? parseInt(limitParam, 10) : 5;
-    const minSimilarity = minSimilarityParam ? parseFloat(minSimilarityParam) : 0.7;
+    const limit = limitParam ? Number.parseInt(limitParam, 10) : 5;
+    const minSimilarity = minSimilarityParam ? Number.parseFloat(minSimilarityParam) : 0.7;
 
     // Search knowledge base
     const results = await searchKnowledgeBase(query, limit, minSimilarity);

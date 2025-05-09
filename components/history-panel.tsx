@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, } from 'react';
 import { formatDistance, format } from 'date-fns';
 import type { Chat } from '@/lib/db/schema';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
 // import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MoreHorizontalIcon, ShareIcon, TrashIcon, SearchIcon } from '@/components/icons';
 import { 
@@ -173,18 +172,34 @@ export function HistoryPanel({
             {sortedChats.map((chat) => (
               <div key={chat.id} className="p-4 hover:bg-muted/50 transition-colors">
                 <div className="flex justify-between items-start">
-                  <div 
-                    className="flex-1 min-w-0 cursor-pointer" 
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    className="flex-1 min-w-0 cursor-pointer"
                     onClick={() => {
                       if (onSelect) {
                         onSelect(chat.id);
                       } else {
-                        const baseUrl = chat.type === 'query' ? '/query/' : 
-                                       chat.type === 'capture' ? '/capture/' : 
+                        const baseUrl = chat.type === 'query' ? '/query/' :
+                                       chat.type === 'capture' ? '/capture/' :
                                        '/';
                         window.location.href = `${baseUrl}${chat.id}`;
                       }
                       if (onClose) onClose();
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        if (onSelect) {
+                          onSelect(chat.id);
+                        } else {
+                          const baseUrl = chat.type === 'query' ? '/query/' :
+                                         chat.type === 'capture' ? '/capture/' :
+                                         '/';
+                          window.location.href = `${baseUrl}${chat.id}`;
+                        }
+                        if (onClose) onClose();
+                      }
                     }}
                   >
                     <h3 className="font-medium truncate">{chat.title}</h3>

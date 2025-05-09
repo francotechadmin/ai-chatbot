@@ -39,8 +39,8 @@ export default function ToolsPage() {
     }
   };
 
-  // Validate and add files
-  const validateAndAddFiles = (files: File[]) => {
+  // Validate and add files - wrapped in useCallback to prevent recreation on every render
+  const validateAndAddFiles = useCallback((files: File[]) => {
     const validFiles: File[] = [];
     const invalidFiles: { name: string; reason: string }[] = [];
 
@@ -84,7 +84,7 @@ export default function ToolsPage() {
     if (validFiles.length > 0) {
       setSelectedFiles((prev) => [...prev, ...validFiles]);
     }
-  };
+  }, [selectedFiles]);
 
   // Handle drag and drop
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -100,7 +100,7 @@ export default function ToolsPage() {
       const newFiles = Array.from(e.dataTransfer.files);
       validateAndAddFiles(newFiles);
     }
-  }, [selectedFiles]);
+  }, [validateAndAddFiles]);
 
   // Remove a file from selection
   const removeFile = (index: number) => {
@@ -109,9 +109,9 @@ export default function ToolsPage() {
 
   // Format file size for display
   const formatFileSize = (bytes: number): string => {
-    if (bytes < 1024) return bytes + " bytes";
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
-    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+    if (bytes < 1024) return `${bytes} bytes`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
   // Get file type icon based on file extension
@@ -163,7 +163,7 @@ export default function ToolsPage() {
         }
       };
       
-      xhr.onload = function() {
+      xhr.onload = () => {
         if (xhr.status === 200) {
           const result = JSON.parse(xhr.responseText);
           setUploadResults(result.sources || []);
@@ -181,12 +181,12 @@ export default function ToolsPage() {
           setSelectedFiles([]);
         } else {
           console.error('Error uploading files:', xhr.statusText);
-          toast.error('Failed to upload files: ' + xhr.statusText);
+          toast.error(`Failed to upload files: ${xhr.statusText}`);
         }
         setUploading(false);
       };
       
-      xhr.onerror = function() {
+      xhr.onerror = () => {
         console.error('Error uploading files');
         toast.error('Failed to upload files: Network error');
         setUploading(false);
@@ -195,7 +195,7 @@ export default function ToolsPage() {
       xhr.send(formData);
     } catch (error) {
       console.error("Error uploading files:", error);
-      toast.error("Failed to upload files: " + (error as Error).message);
+      toast.error(`Failed to upload files: ${(error as Error).message}`);
       setUploading(false);
     }
   };
@@ -219,6 +219,8 @@ export default function ToolsPage() {
               <div className="space-y-4">
                 {/* Drag and drop area */}
                 <div
+                  role="region"
+                  aria-label="File drop zone"
                   className="border border-dashed rounded-lg p-4 md:p-8 flex flex-col items-center justify-center"
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
@@ -259,7 +261,7 @@ export default function ToolsPage() {
                     <div className="border rounded-md divide-y">
                       {selectedFiles.map((file, index) => (
                         <div
-                          key={index}
+                          key={`file-${file.name}-${file.size}-${index}`}
                           className="flex items-center justify-between p-2"
                         >
                           <div className="flex items-center gap-2">
@@ -316,7 +318,7 @@ export default function ToolsPage() {
                     <h3 className="text-sm font-medium">Upload Results</h3>
                     <div className="border rounded-md divide-y">
                       {uploadResults.map((result, index) => (
-                        <div key={index} className="p-2">
+                        <div key={`result-${result.id || result.fileName}-${index}`} className="p-2">
                           <div className="flex items-center justify-between">
                             <span className="text-sm font-medium">
                               {result.title || result.fileName}
@@ -332,9 +334,9 @@ export default function ToolsPage() {
                             variant="link"
                             size="sm"
                             className="p-0 h-auto text-xs"
-                            onClick={() =>
-                              (window.location.href = `/knowledge-base/${result.id}`)
-                            }
+                            onClick={() => {
+                              window.location.href = `/knowledge-base/${result.id}`;
+                            }}
                           >
                             View Details
                           </Button>

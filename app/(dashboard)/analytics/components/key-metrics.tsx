@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { KeyMetrics as KeyMetricsType } from '../types';
+import type { KeyMetrics as KeyMetricsType } from '../types';
 
 interface KeyMetricsProps {
   data?: KeyMetricsType;

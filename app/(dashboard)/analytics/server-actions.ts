@@ -8,9 +8,9 @@ import {
   getActivityDistribution, 
   getTopActiveUsers, 
   getTopSearches,
-  TimeRange
+  type TimeRange
 } from '@/lib/services/metrics-aggregation';
-import { AnalyticsData } from './types';
+import type { AnalyticsData } from './types';
 
 /**
  * Fetches analytics data for the specified time range
@@ -23,7 +23,7 @@ export async function getAnalyticsData(timeRange: TimeRange = '30d'): Promise<An
   }
 
   // Initialize response data
-  let responseData: AnalyticsData = {};
+  const responseData: AnalyticsData = {};
   
   // Use try/catch for each metric to prevent one failure from breaking the entire response
   try {

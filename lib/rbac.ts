@@ -1,4 +1,4 @@
-import { Session } from 'next-auth';
+import type { Session } from 'next-auth';
 
 export type Role = 'user' | 'admin' | 'superuser';
 

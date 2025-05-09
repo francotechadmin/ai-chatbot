@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
+
 import { auth } from '@/app/(auth)/auth';
-import { hasRole, Role } from '@/lib/rbac';
+import { hasRole, type Role } from '@/lib/rbac';
 import { updateUser } from '@/lib/db/queries';
 
 export async function PATCH(

@@ -2,7 +2,7 @@ import { refreshToken } from './auth';
 import { db } from '@/lib/db/index';
 import { microsoftIntegration } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
-import { MicrosoftCredentials } from './config';
+import type { MicrosoftCredentials } from './config';
 
 /**
  * Client for interacting with Microsoft Graph API

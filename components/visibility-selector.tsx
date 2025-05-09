@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useMemo, useState, useRef, useEffect } from 'react';
+import { type ReactNode, useMemo, useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,

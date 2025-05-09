@@ -10,7 +10,7 @@ import {
 } from '@/lib/services/metrics-service';
 
 import { authConfig } from './auth.config';
-import { Role } from '@/lib/rbac';
+import type { Role } from '@/lib/rbac';
 
 // Store active sessions
 const userSessions = new Map<string, string>();

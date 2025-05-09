@@ -78,19 +78,19 @@ export default function KnowledgeGraphPage() {
                 <div className="space-y-2">
                   <h3 className="text-sm font-medium">Filter by Category</h3>
                   <div className="flex flex-wrap gap-2">
-                    <button className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-medium">
+                    <button type='button' className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-medium">
                       Documents
                     </button>
-                    <button className="px-3 py-1 rounded-full bg-green-100 text-green-800 text-xs font-medium">
+                    <button type='button' className="px-3 py-1 rounded-full bg-green-100 text-green-800 text-xs font-medium">
                       Procedures
                     </button>
-                    <button className="px-3 py-1 rounded-full bg-purple-100 text-purple-800 text-xs font-medium">
+                    <button type='button' className="px-3 py-1 rounded-full bg-purple-100 text-purple-800 text-xs font-medium">
                       People
                     </button>
-                    <button className="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-medium">
+                    <button type='button' className="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-medium">
                       Projects
                     </button>
-                    <button className="px-3 py-1 rounded-full bg-red-100 text-red-800 text-xs font-medium">
+                    <button type='button' className="px-3 py-1 rounded-full bg-red-100 text-red-800 text-xs font-medium">
                       Technical
                     </button>
                   </div>
@@ -110,18 +110,18 @@ export default function KnowledgeGraphPage() {
                 <div className="pt-4 space-y-2">
                   <h3 className="text-sm font-medium">Popular Nodes</h3>
                   <div className="space-y-2">
-                    <button 
+                    <button type='button' 
                       onClick={() => setSelectedNode(mockSelectedNode)}
                       className="text-left w-full px-3 py-2 rounded-md hover:bg-muted flex items-center gap-2"
                     >
                       <span><FileIcon className="size-4" /></span>
                       <span>Product Documentation</span>
                     </button>
-                    <button className="text-left w-full px-3 py-2 rounded-md hover:bg-muted flex items-center gap-2">
+                    <button type='button' className="text-left w-full px-3 py-2 rounded-md hover:bg-muted flex items-center gap-2">
                       <span><FileIcon className="size-4" /></span>
                       <span>Employee Handbook</span>
                     </button>
-                    <button className="text-left w-full px-3 py-2 rounded-md hover:bg-muted flex items-center gap-2">
+                    <button type='button' className="text-left w-full px-3 py-2 rounded-md hover:bg-muted flex items-center gap-2">
                       <span><FileIcon className="size-4" /></span>
                       <span>Technical Specifications</span>
                     </button>
@@ -169,10 +169,10 @@ export default function KnowledgeGraphPage() {
                 </div>
                 
                 <div className="absolute bottom-4 right-4 flex gap-2">
-                  <button className="rounded-full size-8 bg-background border flex items-center justify-center shadow-sm">
+                  <button type='button' className="rounded-full size-8 bg-background border flex items-center justify-center shadow-sm">
                     +
                   </button>
-                  <button className="rounded-full size-8 bg-background border flex items-center justify-center shadow-sm">
+                  <button type='button' className="rounded-full size-8 bg-background border flex items-center justify-center shadow-sm">
                     -
                   </button>
                 </div>

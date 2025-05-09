@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/app/(auth)/auth';
 import { getKnowledgeSourcesByStatus } from '@/lib/db/queries';
 
@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     const status = url.searchParams.get('status') as 'pending' | 'approved' | 'rejected' | null;
 
     // Fetch knowledge sources based on status
-    let sources;
+    let sources: any[];
     if (status) {
       sources = await getKnowledgeSourcesByStatus(status);
     } else {

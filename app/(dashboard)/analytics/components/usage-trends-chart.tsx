@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { UsageTrend } from '../types';
+import type { UsageTrend } from '../types';
 import { generateChartPath } from '../utils';
 
 interface UsageTrendsChartProps {

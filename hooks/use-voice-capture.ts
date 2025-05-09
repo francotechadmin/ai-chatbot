@@ -205,7 +205,7 @@ export function useVoiceCapture({
             console.log("Transcription delta:", data.delta);
             // Add a space before the new text if it's a new sentence
             if (data.delta.trim() && data.delta.match(/^[A-Z]/)) {
-              onTranscription(" " + data.delta);
+              onTranscription(` ${data.delta}`);
             } else {
               onTranscription(data.delta);
             }
@@ -218,7 +218,7 @@ export function useVoiceCapture({
             console.log("Audio transcript delta:", data.delta);
             // Add a space before the new text if it's a new sentence
             if (data.delta.trim() && data.delta.match(/^[A-Z]/)) {
-              onTranscription(" " + data.delta);
+              onTranscription(` ${data.delta}`);
             } else {
               onTranscription(data.delta);
             }

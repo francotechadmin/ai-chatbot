@@ -1,4 +1,4 @@
-import { GoogleDriveClient, GoogleDriveFile } from '../drive';
+import type { GoogleDriveClient, GoogleDriveFile } from '../drive';
 
 /**
  * Base document processor for Google Drive files

@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { LucideIcon, Menu, User } from "lucide-react";
+import { type LucideIcon, Menu, } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -84,10 +84,16 @@ function SidebarContent(props: {
       <div className="flex grow flex-col gap-2 pt-4 overflow-y-auto">
         {props.items.map((item, index) => {
           if (item.type === "separator") {
-            return <Separator key={index} className="my-2" />;
+            // Generate a stable key for separators based on their position in the array
+            // and surrounding items to make it more unique
+            const prevItem = index > 0 ? props.items[index - 1] : null;
+            const nextItem = index < props.items.length - 1 ? props.items[index + 1] : null;
+            const prevName = prevItem && 'name' in prevItem ? String(prevItem.name) : 'start';
+            const nextName = nextItem && 'name' in nextItem ? String(nextItem.name) : 'end';
+            return <Separator key={`separator-between-${prevName}-and-${nextName}`} className="my-2" />;
           } else if (item.type === "item") {
             return (
-              <div key={index} className="flex px-2">
+              <div key={`item-${item.href || item.name}-${index}`} className="flex px-2">
                 <NavItem
                   item={item}
                   onClick={props.onNavigate}
@@ -97,7 +103,7 @@ function SidebarContent(props: {
             );
           } else {
             return (
-              <div key={index} className="flex my-2">
+              <div key={`header-${item.name}-${index}`} className="flex my-2">
                 <div className="grow justify-start text-sm font-medium text-zinc-500 px-2">
                   {item.name}
                 </div>
@@ -169,7 +175,7 @@ function HeaderBreadcrumb(props: { items: SidebarItem[], baseBreadcrumb?: Header
     <Breadcrumb>
       <BreadcrumbList>
         {breadcrumbItems.map((item, index) => (
-          <React.Fragment key={`breadcrumb-${index}`}>
+          <React.Fragment key={`breadcrumb-${item.href || item.title}-${index}`}>
             {index < breadcrumbItems.length - 1 ? (
               <>
                 <BreadcrumbItem>
@@ -192,21 +198,22 @@ function HeaderBreadcrumb(props: { items: SidebarItem[], baseBreadcrumb?: Header
 // Simple UserButton component to replace the one from @stackframe/stack
 function UserButton({ colorModeToggle }: { colorModeToggle: () => void }) {
   return (
-    <button 
+    <button
+      type="button"
       onClick={colorModeToggle}
       className="flex items-center justify-center size-8 rounded-full bg-primary text-primary-foreground"
     >
       <span className="sr-only">Toggle theme</span>
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="4"></circle>
-        <path d="M12 2v2"></path>
-        <path d="M12 20v2"></path>
-        <path d="M4.93 4.93l1.41 1.41"></path>
-        <path d="M17.66 17.66l1.41 1.41"></path>
-        <path d="M2 12h2"></path>
-        <path d="M20 12h2"></path>
-        <path d="M6.34 17.66l-1.41 1.41"></path>
-        <path d="M19.07 4.93l-1.41 1.41"></path>
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2" />
+        <path d="M12 20v2" />
+        <path d="M4.93 4.93l1.41 1.41" />
+        <path d="M17.66 17.66l1.41 1.41" />
+        <path d="M2 12h2" />
+        <path d="M20 12h2" />
+        <path d="M6.34 17.66l-1.41 1.41" />
+        <path d="M19.07 4.93l-1.41 1.41" />
       </svg>
     </button>
   );

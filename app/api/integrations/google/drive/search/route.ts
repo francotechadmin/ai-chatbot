@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { GoogleDriveClient } from '@/lib/integrations/google/drive';
 import { db } from '@/lib/db';
 import { googleIntegration } from '@/lib/db/schema';

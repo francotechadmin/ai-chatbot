@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { memo, useRef } from 'react';
-import { UseChatHelpers } from '@ai-sdk/react';
+import type { UseChatHelpers } from '@ai-sdk/react';
 
 interface SuggestedActionsProps {
   chatId: string;
@@ -98,7 +98,7 @@ function PureSuggestedActions({ chatId, append, chatType = 'general' }: Suggeste
         style={{ touchAction: 'pan-x' }}
       >
         {/* Gradient fade on the right side to indicate scrollable content */}
-        <div className="sticky right-0 inset-y-0 w-8 ml-auto bg-gradient-to-l from-background to-transparent pointer-events-none"></div>
+        <div className="sticky right-0 inset-y-0 w-8 ml-auto bg-gradient-to-l from-background to-transparent pointer-events-none" />
         
         {suggestedActions.map((suggestedAction, index) => (
           <motion.div

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/app/(auth)/auth';
 import { MicrosoftGraphClient } from '@/lib/integrations/microsoft/graph-client';
 import { SharePointClient } from '@/lib/integrations/microsoft/sharepoint';
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     // Initialize the SharePoint client
     const sharepointClient = new SharePointClient(graphClient);
     
-    let documents;
+    let documents: any[];
     
     // If a folder ID is provided, get documents from that folder
     if (folderId) {

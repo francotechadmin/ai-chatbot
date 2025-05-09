@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { KnowledgeCategory } from '../types';
+import type { KnowledgeCategory } from '../types';
 
 interface KnowledgeBaseUsageProps {
   data?: KnowledgeCategory[];
@@ -24,7 +24,7 @@ export function KnowledgeBaseUsage({ data }: KnowledgeBaseUsageProps) {
         <div className="space-y-4">
           {data && data.length > 0 ? (
             data.map((category, index) => (
-              <div key={index} className="space-y-2">
+              <div key={`kb-${category.category}`} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-medium">{category.category}</span>
                   <span className="text-sm text-muted-foreground">{category.percentage}%</span>

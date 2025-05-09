@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useRef } from 'react';
+import { type ReactNode, useRef } from 'react';
 import { ModelSelector } from '@/components/model-selector';
 
 interface PageHeaderProps {

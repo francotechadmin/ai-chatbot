@@ -14,7 +14,7 @@ export default function PendingApprovalPage() {
           <CardDescription>Your account is awaiting administrator approval</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 text-center">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-yellow-100">
+          <div className="mx-auto flex size-20 items-center justify-center rounded-full bg-yellow-100">
             <MessageIcon size={40} />
           </div>
           <div className="space-y-2">

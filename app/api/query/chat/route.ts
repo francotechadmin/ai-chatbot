@@ -6,12 +6,11 @@ import {
   streamText,
 } from 'ai';
 import { auth } from '@/app/(auth)/auth';
-import { systemPrompt, queryPrompt } from '@/lib/ai/prompts';
+import { systemPrompt, } from '@/lib/ai/prompts';
 import { searchKnowledgeBase } from '@/lib/embeddings';
 import {
   deleteChatById,
   getChatById,
-  saveChat,
   saveMessages,
 } from '@/lib/db/queries';
 import {

@@ -1,24 +1,24 @@
-import { DocumentProcessor } from './document-processor';
+import type { DocumentProcessor } from './document-processor';
 import { TextProcessor } from './text-processor';
 import { DocxProcessor } from './docx-processor';
 import { PdfProcessor } from './pdf-processor';
 
 /**
- * Factory for creating document processors based on file type
+ * Functions for creating document processors based on file type
  */
-export class ProcessorFactory {
-  /**
-   * Get the appropriate processor for a file
-   * @param userId The user ID
-   * @param fileName The file name
-   * @param metadata Additional metadata
-   * @returns The appropriate document processor
-   */
-  static getProcessor(
-    userId: string,
-    fileName: string,
-    metadata: Record<string, any> = {}
-  ): DocumentProcessor {
+
+/**
+ * Get the appropriate processor for a file
+ * @param userId The user ID
+ * @param fileName The file name
+ * @param metadata Additional metadata
+ * @returns The appropriate document processor
+ */
+export function getProcessor(
+  userId: string,
+  fileName: string,
+  metadata: Record<string, any> = {}
+): DocumentProcessor {
     // Get file extension
     const extension = fileName.split('.').pop()?.toLowerCase();
     
@@ -41,5 +41,4 @@ export class ProcessorFactory {
       default:
         return new TextProcessor(userId, metadata);
     }
-  }
 }

@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { hasRole } from '@/lib/rbac';
 import type { Role } from '@/lib/rbac';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface RoleGateProps {
   children: ReactNode;

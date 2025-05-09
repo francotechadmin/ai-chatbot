@@ -1,15 +1,12 @@
 import { db } from '@/lib/db';
 import { 
-  dailyMetricAggregate, 
-  weeklyMetricAggregate, 
-  monthlyMetricAggregate,
   queryMetric,
   knowledgeBaseMetric,
   userActivityMetric,
   userSession,
   user
 } from '@/lib/db/schema';
-import { and, eq, gte, lte, count, sum, avg, desc, sql } from 'drizzle-orm';
+import { and, eq, gte, lte, count, avg, desc, sql } from 'drizzle-orm';
 
 /**
  * Metrics Aggregation Service
@@ -246,7 +243,7 @@ export async function getUsageTrends(timeRange: TimeRange) {
   }
   
   // SQL to truncate timestamp to the appropriate interval
-  let truncateExpr;
+  let truncateExpr: ReturnType<typeof sql>;
   if (interval === 'day') {
     truncateExpr = sql`DATE_TRUNC('day', "timestamp")`;
   } else if (interval === 'week') {
@@ -288,9 +285,9 @@ export async function getUsageTrends(timeRange: TimeRange) {
   const trendsMap = new Map();
   
   // Initialize with all dates in the range
-  let currentDate = new Date(startDate);
+  const currentDate = new Date(startDate);
   while (currentDate <= endDate) {
-    let dateKey;
+    let dateKey: string;
     if (interval === 'day') {
       dateKey = currentDate.toISOString().split('T')[0];
     } else if (interval === 'week') {

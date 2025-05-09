@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { FileIcon } from '@/components/icons';
-import { TimeRange } from '@/lib/services/metrics-aggregation';
+import type { TimeRange } from '@/lib/services/metrics-aggregation';
 import { useRouter } from 'next/navigation';
 import { TimeRangeSelector } from './time-range-selector';
 

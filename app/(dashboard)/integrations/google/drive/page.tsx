@@ -14,13 +14,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { PageHeader } from '@/components/page-header';
 import { Spinner } from '@/components/ui/spinner';
 import { ArrowLeftIcon, FileIcon, FolderIcon, RefreshIcon } from '@/components/icons';
@@ -189,7 +182,7 @@ export default function GoogleDrivePage() {
   const formatFileSize = (sizeInBytes?: string): string => {
     if (!sizeInBytes) return 'Unknown';
     
-    const size = parseInt(sizeInBytes, 10);
+    const size = Number.parseInt(sizeInBytes, 10);
     if (size < 1024) return `${size} B`;
     if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
     if (size < 1024 * 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(1)} MB`;
@@ -258,7 +251,7 @@ export default function GoogleDrivePage() {
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                  className="absolute right-2 top-1/2 -translate-y-1/2"
                   onClick={handleSearch}
                 >
                   Search
@@ -272,7 +265,7 @@ export default function GoogleDrivePage() {
                 >
                   {isImporting ? (
                     <>
-                      <Spinner className="mr-2 h-4 w-4" />
+                      <Spinner className="mr-2 size-4" />
                       Importing...
                     </>
                   ) : (
@@ -289,6 +282,7 @@ export default function GoogleDrivePage() {
             <div key={breadcrumb.id} className="flex items-center">
               {index > 0 && <span className="mx-2">/</span>}
               <button
+                type='button'
                 className="hover:text-blue-600 hover:underline"
                 onClick={() => navigateToBreadcrumb(index)}
               >
@@ -345,6 +339,7 @@ export default function GoogleDrivePage() {
                             )}
                             {isFolder(item) ? (
                               <button
+                                type='button'
                                 className="hover:text-blue-600 hover:underline"
                                 onClick={() => navigateToFolder(item)}
                               >

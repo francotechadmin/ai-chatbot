@@ -1,5 +1,5 @@
 import { PageHeader } from '@/components/page-header';
-import { TimeRange } from '@/lib/services/metrics-aggregation';
+import type { TimeRange } from '@/lib/services/metrics-aggregation';
 import { auth } from '@/app/(auth)/auth';
 import { redirect } from 'next/navigation';
 

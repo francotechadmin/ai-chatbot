@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 // Path to the migrations directory
 const migrationsDir = path.join(__dirname, '../lib/db/migrations');
@@ -23,7 +23,7 @@ journal.entries.forEach(entry => {
 migrationFiles.forEach(file => {
   const match = file.match(/^(\d{4})_/);
   if (match) {
-    const index = parseInt(match[1], 10);
+    const index = Number.parseInt(match[1], 10);
     const tag = indexToTag[index];
     
     if (tag) {

@@ -1,6 +1,6 @@
 'use client';
 
-import SidebarLayout, { SidebarItem } from "@/components/sidebar-layout";
+import SidebarLayout, { type SidebarItem } from "@/components/sidebar-layout";
 import Script from 'next/script';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { 

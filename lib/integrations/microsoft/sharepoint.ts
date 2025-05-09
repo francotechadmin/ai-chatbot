@@ -1,4 +1,4 @@
-import { MicrosoftGraphClient } from './graph-client';
+import type { MicrosoftGraphClient } from './graph-client';
 
 /**
  * Client for interacting with SharePoint via Microsoft Graph API

@@ -1,12 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { GoogleDriveClient, GoogleDriveFile } from '@/lib/integrations/google/drive';
-import { GoogleProcessorFactory } from '@/lib/integrations/google/processors/processor-factory';
+import { GoogleDriveClient, } from '@/lib/integrations/google/drive';
+import { createProcessor } from '@/lib/integrations/google/processors/processor-factory';
 import { db } from '@/lib/db';
 import { googleIntegration, knowledgeSource, knowledgeChunk } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
-import { splitTextIntoChunks } from '@/lib/embeddings';
-import { generateEmbedding } from '@/lib/embeddings';
+import { splitTextIntoChunks, generateEmbedding } from '@/lib/embeddings';
 import { auth } from '@/app/(auth)/auth';
 
 // Input validation schema
@@ -45,9 +44,9 @@ export async function POST(req: NextRequest) {
 
     // Check if the access token is expired and refresh if necessary
     if (userIntegration.expiresAt && userIntegration.expiresAt < new Date() && userIntegration.refreshToken) {
-      const { GoogleAuth } = await import('@/lib/integrations/google/auth');
+      const { refreshAccessToken } = await import('@/lib/integrations/google/auth');
       
-      const newTokens = await GoogleAuth.refreshAccessToken(userIntegration.refreshToken);
+      const newTokens = await refreshAccessToken(userIntegration.refreshToken);
       
       // Update the tokens in the database
       await db.update(googleIntegration)
@@ -73,7 +72,7 @@ export async function POST(req: NextRequest) {
           const file = await driveClient.getFile(fileId);
           
           // Create processor for the specific file type
-          const processor = GoogleProcessorFactory.createProcessor(driveClient, file);
+          const processor = createProcessor(driveClient, file);
           
           // Extract text from the file
           const text = await processor.extractText();

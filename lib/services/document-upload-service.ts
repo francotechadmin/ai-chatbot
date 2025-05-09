@@ -1,4 +1,4 @@
-import { ProcessorFactory } from "@/lib/integrations/microsoft/processors/processor-factory";
+import { getProcessor } from "@/lib/integrations/microsoft/processors/processor-factory";
 import { updateKnowledgeSourceStatus } from "@/lib/db/queries";
 
 /**
@@ -17,7 +17,7 @@ export async function processDocument(
 ) {
   try {
     // Get the appropriate processor
-    const processor = ProcessorFactory.getProcessor(userId, fileName, metadata);
+    const processor = getProcessor(userId, fileName, metadata);
 
     // Process the document (this will create a knowledge source and chunks)
     const source = await processor.processDocument(content, fileName);

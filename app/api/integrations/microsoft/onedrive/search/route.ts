@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/app/(auth)/auth';
 import { MicrosoftGraphClient } from '@/lib/integrations/microsoft/graph-client';
 import { OneDriveClient } from '@/lib/integrations/microsoft/onedrive';

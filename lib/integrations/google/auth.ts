@@ -35,14 +35,14 @@ export interface GoogleUserInfo {
 }
 
 /**
- * Authentication handler for Google OAuth
+ * Google OAuth authentication functions
  */
-export class GoogleAuth {
-  /**
-   * Generate the OAuth authorization URL for Google
-   * @returns The URL to redirect users to for authentication
-   */
-  static getAuthorizationUrl(state?: string): string {
+
+/**
+ * Generate the OAuth authorization URL for Google
+ * @returns The URL to redirect users to for authentication
+ */
+export function getAuthorizationUrl(state?: string): string {
     const config = getGoogleConfig();
     
     const params = new URLSearchParams({
@@ -61,10 +61,10 @@ export class GoogleAuth {
     return `${GOOGLE_AUTH_URL}?${params.toString()}`;
   }
 
-  /**
-   * Exchange authorization code for tokens
-   */
-  static async getTokensFromCode(code: string): Promise<GoogleTokens> {
+/**
+ * Exchange authorization code for tokens
+ */
+export async function getTokensFromCode(code: string): Promise<GoogleTokens> {
     const config = getGoogleConfig();
     
     const params = new URLSearchParams({
@@ -91,10 +91,10 @@ export class GoogleAuth {
     return await response.json();
   }
 
-  /**
-   * Refresh access token using refresh token
-   */
-  static async refreshAccessToken(refreshToken: string): Promise<GoogleTokens> {
+/**
+ * Refresh access token using refresh token
+ */
+export async function refreshAccessToken(refreshToken: string): Promise<GoogleTokens> {
     const config = getGoogleConfig();
     
     const params = new URLSearchParams({
@@ -120,10 +120,10 @@ export class GoogleAuth {
     return await response.json();
   }
 
-  /**
-   * Get user information from Google
-   */
-  static async getUserInfo(accessToken: string): Promise<GoogleUserInfo> {
+/**
+ * Get user information from Google
+ */
+export async function getUserInfo(accessToken: string): Promise<GoogleUserInfo> {
     const response = await fetch(GOOGLE_USER_INFO_URL, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -138,23 +138,23 @@ export class GoogleAuth {
     return await response.json();
   }
 
-  /**
-   * Validate access token
-   */
-  static async validateToken(accessToken: string): Promise<boolean> {
-    try {
-      await this.getUserInfo(accessToken);
+/**
+ * Validate access token
+ */
+export async function validateToken(accessToken: string): Promise<boolean> {
+  try {
+    await getUserInfo(accessToken);
       return true;
     } catch (error) {
       return false;
     }
   }
 
-  /**
-   * Revoke the given token
-   * @param token Either an access token or a refresh token
-   */
-  static async revokeToken(token: string): Promise<void> {
+/**
+ * Revoke the given token
+ * @param token Either an access token or a refresh token
+ */
+export async function revokeToken(token: string): Promise<void> {
     const params = new URLSearchParams({
       token,
     });
@@ -171,10 +171,10 @@ export class GoogleAuth {
     }
   }
 
-  /**
-   * Save Google credentials to the database
-   */
-  static async saveCredentials(userId: string, tokens: GoogleTokens, userInfo: GoogleUserInfo) {
+/**
+ * Save Google credentials to the database
+ */
+export async function saveCredentials(userId: string, tokens: GoogleTokens, userInfo: GoogleUserInfo) {
     try {
       const now = new Date();
       const expiresAt = new Date(now.getTime() + tokens.expires_in * 1000);
@@ -221,10 +221,10 @@ export class GoogleAuth {
     }
   }
 
-  /**
-   * Get Google integration for a user
-   */
-  static async getIntegration(userId: string) {
+/**
+ * Get Google integration for a user
+ */
+export async function getIntegration(userId: string) {
     try {
       return await db.query.googleIntegration.findFirst({
         where: eq(googleIntegration.userId, userId),
@@ -235,10 +235,10 @@ export class GoogleAuth {
     }
   }
 
-  /**
-   * Delete Google integration for a user
-   */
-  static async deleteIntegration(userId: string) {
+/**
+ * Delete Google integration for a user
+ */
+export async function deleteIntegration(userId: string) {
     try {
       await db.delete(googleIntegration)
         .where(eq(googleIntegration.userId, userId));
@@ -246,5 +246,4 @@ export class GoogleAuth {
       console.error('Error deleting Google integration:', error);
       throw new Error('Failed to delete Google integration.');
     }
-  }
 }

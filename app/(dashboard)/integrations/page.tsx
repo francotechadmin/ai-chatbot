@@ -244,7 +244,9 @@ export default function IntegrationsPage() {
                     <Button variant="outline" className="flex-1 text-red-500">Disconnect</Button>
                   </div>
                 ) : integration.status === 'available' ? (
-                  <Button className="w-full" onClick={() => window.location.href = integration.route || `/integrations/${integration.id}/connect`}>
+                  <Button className="w-full" onClick={() => {
+                    window.location.href = integration.route || `/integrations/${integration.id}/connect`;
+                  }}>
                     Connect Now
                   </Button>
                 ) : (

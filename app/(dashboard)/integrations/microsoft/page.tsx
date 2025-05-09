@@ -1,13 +1,10 @@
 'use client';
 
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-// import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { PageHeader } from '@/components/page-header';
 import { Spinner } from '@/components/ui/spinner';
 
@@ -105,7 +102,7 @@ export default function MicrosoftIntegrationsPage() {
             <Button onClick={() => connectToMicrosoft()} disabled={isLoading}>
               {isLoading ? (
                 <>
-                  <Spinner className="mr-2 h-4 w-4" />
+                  <Spinner className="mr-2 size-4" />
                   Connecting...
                 </>
               ) : (
@@ -115,7 +112,7 @@ export default function MicrosoftIntegrationsPage() {
           )}
           {isConnected && (
             <Button variant="outline" onClick={disconnectMicrosoft} disabled={isLoading}>
-              {isLoading ? <Spinner className="mr-2 h-4 w-4" /> : null}
+              {isLoading ? <Spinner className="mr-2 size-4" /> : null}
               Disconnect
             </Button>
           )}
@@ -190,7 +187,7 @@ export default function MicrosoftIntegrationsPage() {
               <div className="space-y-6">               
                 <div className="space-y-4">
                   <div className="flex items-center gap-4 p-4 border rounded-lg">
-                    <div className="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-800 rounded-full">
+                    <div className="size-10 flex items-center justify-center bg-blue-100 text-blue-800 rounded-full">
                       SP
                     </div>
                     <div>
@@ -200,7 +197,7 @@ export default function MicrosoftIntegrationsPage() {
                   </div>
                   
                   <div className="flex items-center gap-4 p-4 border rounded-lg">
-                    <div className="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-800 rounded-full">
+                    <div className="size-10 flex items-center justify-center bg-blue-100 text-blue-800 rounded-full">
                       OD
                     </div>
                     <div>
@@ -219,7 +216,7 @@ export default function MicrosoftIntegrationsPage() {
               >
                 {isLoading ? (
                   <>
-                    <Spinner className="mr-2 h-4 w-4" />
+                    <Spinner className="mr-2 size-4" />
                     Connecting...
                   </>
                 ) : (

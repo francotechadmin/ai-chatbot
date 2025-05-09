@@ -1,6 +1,6 @@
 'use client';
 
-import { TimeRange } from '@/lib/services/metrics-aggregation';
+import type { TimeRange } from '@/lib/services/metrics-aggregation';
 
 interface TimeRangeSelectorProps {
   timeRange: TimeRange;

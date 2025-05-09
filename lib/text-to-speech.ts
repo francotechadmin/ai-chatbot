@@ -25,7 +25,7 @@ class AudioManager {
   private static instance: AudioManager;
   private currentAudio: HTMLAudioElement | null = null;
   private currentAudioId: string | null = null;
-  private isPlaying: boolean = false;
+  private isPlaying = false;
   private playQueue: Array<{audio: HTMLAudioElement, id: string}> = [];
 
   private constructor() {}
@@ -227,7 +227,7 @@ export function isSpeaking(): boolean {
 export async function fetchAndPlayAudio(
   text: string,
   voice: string = DEFAULT_VOICE,
-  audioId: string = `tts-${Date.now()}`
+  audioId = `tts-${Date.now()}`
 ): Promise<string> {
   try {
     console.log(`Fetching TTS for text (${text.length} chars): "${text.substring(0, 50)}${text.length > 50 ? '...' : ''}"`);

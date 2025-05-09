@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/app/(auth)/auth';
 import { getKnowledgeSourceById, getKnowledgeChunksBySourceId, deleteKnowledgeSource } from '@/lib/db/queries';
 

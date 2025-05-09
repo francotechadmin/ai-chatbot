@@ -1,218 +1,77 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BookOpen, Plus, Search, Filter, Clock, CheckCircle, XCircle, FileText, FileImage, Video, Globe, Database, MessageSquare } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { formatDistance } from 'date-fns';
-import type { KnowledgeSource } from '@/lib/db/schema';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
-import { ProtectedRoute } from '@/components/protected-route';
+import { Plus } from 'lucide-react';
+import { redirect } from 'next/navigation';
+import { auth } from '@/app/(auth)/auth';
+import { fetchKnowledgeSources } from './actions';
+import { SearchFilter } from './components/search-filter';
+import { StatusTabs } from './components/status-tabs';
+import { KnowledgeSource } from '@/lib/db/schema';
+import { Suspense } from 'react';
+import { KnowledgeSourceSkeleton, ErrorDisplay } from './components/loading-states';
 
-export default function KnowledgeBasePage() {
-  return (
-    <ProtectedRoute requiredRole="admin">
-      <KnowledgeBaseContent />
-    </ProtectedRoute>
-  );
-}
+export default async function KnowledgeBasePage({
+  searchParams,
+}: {
+  searchParams?: { search?: string };
+}) {
+  // Check authentication
+  const session = await auth();
+  if (!session?.user) {
+    redirect('/login');
+  }
 
-function KnowledgeBaseContent() {
-  const [knowledgeSources, setKnowledgeSources] = useState<KnowledgeSource[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('all');
-  const router = useRouter();
+  // Check if user is admin
+  if (session.user.role !== 'admin' && session.user.role !== 'superuser') {
+    redirect('/dashboard');
+  }
 
-  useEffect(() => {
-    const fetchKnowledgeSources = async () => {
-      try {
-        const response = await fetch('/api/knowledge-base');
-        if (response.ok) {
-          const data = await response.json();
-          setKnowledgeSources(data);
-        } else {
-          toast.error('Failed to load knowledge sources');
-        }
-      } catch (error) {
-        console.error('Error fetching knowledge sources:', error);
-        toast.error('Failed to load knowledge sources');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchKnowledgeSources();
-  }, []);
-
-  // Filter knowledge sources based on search query and active tab
-  const filteredSources = knowledgeSources.filter(source => {
-    // Filter by search query
-    const matchesSearch = source.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         (source.description?.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    // Filter by tab
-    if (activeTab === 'all') return matchesSearch;
-    if (activeTab === 'pending') return matchesSearch && source.status === 'pending';
-    if (activeTab === 'approved') return matchesSearch && source.status === 'approved';
-    if (activeTab === 'rejected') return matchesSearch && source.status === 'rejected';
-    
-    return matchesSearch;
-  });
-
-  // Get counts for each status
-  const pendingCount = knowledgeSources.filter(source => source.status === 'pending').length;
-  const approvedCount = knowledgeSources.filter(source => source.status === 'approved').length;
-  const rejectedCount = knowledgeSources.filter(source => source.status === 'rejected').length;
+  // Get search query from URL params
+  const searchQuery = searchParams?.search || '';
 
   return (
     <div className="container mx-auto p-6">
       <PageHeader title="Knowledge Base">
-        <Button onClick={() => router.push('/capture/new')}>
-          <Plus size={16} className="mr-2" />
-          New Capture
+        <Button asChild>
+          <a href="/capture/new">
+            <Plus size={16} className="mr-2" />
+            New Capture
+          </a>
         </Button>
       </PageHeader>
 
       <div className="mb-6">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-            <Input
-              placeholder="Search knowledge base..."
-              className="pl-10"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <Button variant="outline" size="icon">
-            <Filter size={18} />
-          </Button>
-        </div>
-
-        <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-4 mb-8">
-            <TabsTrigger value="all">
-              All ({knowledgeSources.length})
-            </TabsTrigger>
-            <TabsTrigger value="pending">
-              Pending ({pendingCount})
-            </TabsTrigger>
-            <TabsTrigger value="approved">
-              Approved ({approvedCount})
-            </TabsTrigger>
-            <TabsTrigger value="rejected">
-              Rejected ({rejectedCount})
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="all" className="mt-0">
-            <KnowledgeSourceGrid sources={filteredSources} isLoading={isLoading} />
-          </TabsContent>
-          
-          <TabsContent value="pending" className="mt-0">
-            <KnowledgeSourceGrid 
-              sources={filteredSources.filter(source => source.status === 'pending')} 
-              isLoading={isLoading} 
-            />
-          </TabsContent>
-          
-          <TabsContent value="approved" className="mt-0">
-            <KnowledgeSourceGrid 
-              sources={filteredSources.filter(source => source.status === 'approved')} 
-              isLoading={isLoading} 
-            />
-          </TabsContent>
-          
-          <TabsContent value="rejected" className="mt-0">
-            <KnowledgeSourceGrid 
-              sources={filteredSources.filter(source => source.status === 'rejected')} 
-              isLoading={isLoading} 
-            />
-          </TabsContent>
-        </Tabs>
+        <SearchFilter initialQuery={searchQuery} />
+        <Suspense fallback={<KnowledgeSourceSkeleton />}>
+          <KnowledgeBaseContent searchQuery={searchQuery} />
+        </Suspense>
       </div>
     </div>
   );
 }
 
-function KnowledgeSourceGrid({ sources, isLoading }: { sources: KnowledgeSource[], isLoading: boolean }) {
-  const router = useRouter();
+// This component is wrapped in Suspense to handle loading states
+async function KnowledgeBaseContent({ searchQuery }: { searchQuery: string }) {
+  // Fetch knowledge sources
+  let sources: KnowledgeSource[] = [];
+  let error: string | null = null;
   
-  if (isLoading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {[1, 2, 3, 4, 5, 6].map((i) => (
-          <Card key={i} className="animate-pulse">
-            <CardHeader className="pb-2">
-              <div className="h-6 bg-muted rounded w-3/4 mb-2" />
-              <div className="h-4 bg-muted rounded w-1/2" />
-            </CardHeader>
-            <CardContent>
-              <div className="h-4 bg-muted rounded w-full mb-2" />
-              <div className="h-4 bg-muted rounded w-5/6" />
-            </CardContent>
-            <CardFooter>
-              <div className="h-4 bg-muted rounded w-1/3" />
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
-    );
+  try {
+    sources = await fetchKnowledgeSources();
+  } catch (err) {
+    console.error('Error fetching knowledge sources:', err);
+    error = 'Failed to load knowledge sources. Please try again later.';
   }
-  
-  if (sources.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <BookOpen className="mx-auto size-12 text-muted-foreground" />
-        <h3 className="mt-4 text-lg font-semibold">No knowledge sources found</h3>
-        <p className="text-muted-foreground mt-2">
-          Start by capturing knowledge or uploading documents.
-        </p>
-      </div>
-    );
+
+  // Filter sources based on search query
+  const filteredSources = sources.filter(source => {
+    return source.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           (source.description?.toLowerCase().includes(searchQuery.toLowerCase()));
+  });
+
+  if (error) {
+    return <ErrorDisplay message={error} />;
   }
-  
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {sources.map((source) => (
-        <Card 
-          key={source.id} 
-          className="cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => router.push(`/knowledge-base/${source.id}`)}
-        >
-          <CardHeader className="pb-2">
-            <div className="flex justify-between items-start">
-              <CardTitle className="text-lg">{source.title}</CardTitle>
-              {source.status === 'pending' && <Clock size={18} className="text-yellow-500" />}
-              {source.status === 'approved' && <CheckCircle size={18} className="text-green-500" />}
-              {source.status === 'rejected' && <XCircle size={18} className="text-red-500" />}
-            </div>
-            <CardDescription className="flex items-center gap-1">
-              {source.sourceType === 'document' && <FileText size={14} className="text-blue-500" />}
-              {source.sourceType === 'image' && <FileImage size={14} className="text-green-500" />}
-              {source.sourceType === 'video' && <Video size={14} className="text-red-500" />}
-              {source.sourceType === 'webpage' && <Globe size={14} className="text-purple-500" />}
-              {source.sourceType === 'api' && <Database size={14} className="text-orange-500" />}
-              {source.sourceType === 'chat' && <MessageSquare size={14} className="text-teal-500" />}
-              <span>{source.sourceType.charAt(0).toUpperCase() + source.sourceType.slice(1)}</span>
-              {source.status === 'pending' && <span className="ml-2 text-xs bg-yellow-100 text-yellow-800 rounded-full px-2 py-0.5">Pending</span>}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm line-clamp-2">
-              {source.description || 'No description provided'}
-            </p>
-          </CardContent>
-          <CardFooter className="text-xs text-muted-foreground">
-            Added {formatDistance(new Date(source.createdAt), new Date(), { addSuffix: true })}
-          </CardFooter>
-        </Card>
-      ))}
-    </div>
-  );
+
+  return <StatusTabs sources={sources} filteredSources={filteredSources} />;
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -53,9 +53,7 @@ export default function SettingsPage() {
       
       // Save visibility preference to cookie
       await saveDefaultVisibilityAsCookie(defaultVisibility);
-      
-      // Save theme (this happens automatically via next-themes)
-      
+            
       // Show success message
       toast.success('Settings saved successfully');
       setSaved(true);
@@ -174,6 +172,26 @@ export default function SettingsPage() {
                     <option value="public">Public - Anyone with the link can access</option>
                   </select>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* aauth session */}
+          <Card className="md:col-span-3">
+            <CardHeader>
+              <CardTitle>Authentication Session</CardTitle>
+              <CardDescription>Manage your authentication session</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="text-sm text-muted-foreground">
+                {session ? (
+                  <div className="flex flex-col items-start">
+                    You are logged in as {session.user.email}. 
+                    <Button variant="destructive" className="mt-4" onClick={() => signOut()}>Sign Out</Button>
+                  </div>
+                ) : (
+                  'You are not logged in. Please log in to access your account.'
+                )}
               </div>
             </CardContent>
           </Card>

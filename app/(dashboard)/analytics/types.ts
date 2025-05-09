@@ -18,7 +18,7 @@ export interface UsageTrend {
 }
 
 export interface KnowledgeCategory {
-  category: string;
+  category: string | any;
   count: number;
   percentage: number;
 }
@@ -49,7 +49,10 @@ export interface AnalyticsData {
   keyMetrics?: KeyMetrics;
   usageTrends?: UsageTrend[];
   knowledgeBaseUsage?: KnowledgeCategory[];
-  activityDistribution?: ActivityDistribution;
+  activityDistribution?: ActivityDistribution | null;
   topUsers?: UserActivity[];
   topSearches?: TopSearch[];
+  errors?: {
+    [key: string]: string;
+  };
 }

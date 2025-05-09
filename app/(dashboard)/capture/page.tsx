@@ -21,12 +21,9 @@ export default function CapturePage() {
     <div className="container mx-auto p-2 md:p-6 max-w-[100vw] overflow-hidden">
       <div className="flex flex-col gap-6">
         <PageHeader 
-          title="Knowledge Capture"
-          chatId={chatId}
+          title="Capture"
           selectedModelId={DEFAULT_CHAT_MODEL}
-          selectedVisibilityType="private"
           showModelSelector={true}
-          showVisibilitySelector={true}
         >
           <div className="flex items-center gap-2">
             <div className="shrink-0 w-[140px] md:w-auto">

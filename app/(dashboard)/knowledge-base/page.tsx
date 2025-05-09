@@ -82,7 +82,7 @@ function KnowledgeBaseContent() {
       <div className="mb-6">
         <div className="flex items-center gap-4 mb-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
             <Input
               placeholder="Search knowledge base..."
               className="pl-10"
@@ -169,7 +169,7 @@ function KnowledgeSourceGrid({ sources, isLoading }: { sources: KnowledgeSource[
   if (sources.length === 0) {
     return (
       <div className="text-center py-12">
-        <BookOpen className="mx-auto h-12 w-12 text-muted-foreground" />
+        <BookOpen className="mx-auto size-12 text-muted-foreground" />
         <h3 className="mt-4 text-lg font-semibold">No knowledge sources found</h3>
         <p className="text-muted-foreground mt-2">
           Start by capturing knowledge or uploading documents.

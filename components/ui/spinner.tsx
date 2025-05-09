@@ -11,8 +11,8 @@ export function Spinner({ className, size = "md", ...props }: SpinnerProps) {
         "animate-spin rounded-full border-2 border-current border-t-transparent text-primary",
         {
           "h-4 w-4 border-2": size === "sm",
-          "h-6 w-6 border-2": size === "md",
-          "h-8 w-8 border-3": size === "lg",
+          "size-6 border-2": size === "md",
+          "size-8 border-3": size === "lg",
         },
         className
       )}

@@ -275,7 +275,7 @@ export function VoiceConversation({
       {/* User's speech */}
       <div className="mb-4">
         <div className="flex items-center gap-2 mb-2">
-          <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
+          <div className="size-8 rounded-full bg-blue-500 flex items-center justify-center">
             <span className="text-white">You</span>
           </div>
           {isRecording && (
@@ -294,7 +294,7 @@ export function VoiceConversation({
       {aiTranscript && (
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center">
+            <div className="size-8 rounded-full bg-purple-500 flex items-center justify-center">
               <span className="text-white">AI</span>
             </div>
             {isAISpeaking && (

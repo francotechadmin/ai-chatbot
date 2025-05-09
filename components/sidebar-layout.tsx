@@ -56,12 +56,12 @@ function NavItem(props: {
       className={cn(
         buttonVariants({ variant: "ghost", size: "sm" }),
         selected && "bg-muted",
-        "flex-grow justify-start text-md text-zinc-800 dark:text-zinc-300 px-2"
+        "grow justify-start text-md text-zinc-800 dark:text-zinc-300 px-2"
       )}
       onClick={props.onClick}
       prefetch={true}
     >
-      <props.item.icon className="mr-2 h-5 w-5" />
+      <props.item.icon className="mr-2 size-5" />
       {props.item.name}
     </Link>
   );
@@ -78,10 +78,10 @@ function SidebarContent(props: {
 
   return (
     <div className="flex flex-col h-full items-stretch">
-      <div className="h-14 flex items-center px-2 shrink-0 mr-10 md:mr-0 border-b">
+      <div className="h-14 flex items-center px-4 shrink-0 mr-10 md:mr-0 border-b">
         {props.sidebarTop}
       </div>
-      <div className="flex flex-grow flex-col gap-2 pt-4 overflow-y-auto">
+      <div className="flex grow flex-col gap-2 pt-4 overflow-y-auto">
         {props.items.map((item, index) => {
           if (item.type === "separator") {
             return <Separator key={index} className="my-2" />;
@@ -98,7 +98,7 @@ function SidebarContent(props: {
           } else {
             return (
               <div key={index} className="flex my-2">
-                <div className="flex-grow justify-start text-sm font-medium text-zinc-500 px-2">
+                <div className="grow justify-start text-sm font-medium text-zinc-500 px-2">
                   {item.name}
                 </div>
               </div>
@@ -106,7 +106,7 @@ function SidebarContent(props: {
           }
         })}
 
-        <div className="flex-grow" />
+        <div className="grow" />
       </div>
     </div>
   );
@@ -194,7 +194,7 @@ function UserButton({ colorModeToggle }: { colorModeToggle: () => void }) {
   return (
     <button 
       onClick={colorModeToggle}
-      className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground"
+      className="flex items-center justify-center size-8 rounded-full bg-primary text-primary-foreground"
     >
       <span className="sr-only">Toggle theme</span>
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -227,7 +227,7 @@ export default function SidebarLayout(props: {
       <div className="flex-col border-r w-[240px] h-screen sticky top-0 hidden md:flex">
         <SidebarContent items={props.items} sidebarTop={props.sidebarTop} basePath={props.basePath} />
       </div>
-      <div className="flex flex-col flex-grow w-0">
+      <div className="flex flex-col grow w-0">
         <div className="h-14 border-b flex items-center justify-between sticky top-0 bg-white dark:bg-black z-10 px-4 md:px-6">
           <div className="hidden md:flex">
             <HeaderBreadcrumb baseBreadcrumb={props.baseBreadcrumb} basePath={props.basePath} items={props.items} />
@@ -262,7 +262,7 @@ export default function SidebarLayout(props: {
             }
           />
         </div>
-        <div className="flex-grow">{props.children}</div>
+        <div className="grow">{props.children}</div>
       </div>
     </div>
   );

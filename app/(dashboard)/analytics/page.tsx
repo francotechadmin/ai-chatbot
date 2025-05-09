@@ -411,7 +411,7 @@ export default function AnalyticsPage() {
             <CardContent>
               {loading ? (
                 <div className="h-[250px] w-full flex items-center justify-center">
-                  <Skeleton className="h-[180px] w-[180px] rounded-full" />
+                  <Skeleton className="size-[180px] rounded-full" />
                 </div>
               ) : (
                 <>
@@ -490,7 +490,7 @@ export default function AnalyticsPage() {
                   {[...Array(4)].map((_, i) => (
                     <div key={i} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <Skeleton className="h-8 w-8 rounded-full" />
+                        <Skeleton className="size-8 rounded-full" />
                         <div>
                           <Skeleton className="h-5 w-24" />
                           <Skeleton className="h-3 w-16 mt-1" />
@@ -552,7 +552,7 @@ export default function AnalyticsPage() {
                 <div className="space-y-3">
                   {[...Array(6)].map((_, i) => (
                     <div key={i} className="flex items-center gap-2 pb-2 border-b">
-                      <Skeleton className="h-6 w-6 rounded-full" />
+                      <Skeleton className="size-6 rounded-full" />
                       <Skeleton className="h-5 w-full" />
                       <Skeleton className="h-5 w-10" />
                     </div>

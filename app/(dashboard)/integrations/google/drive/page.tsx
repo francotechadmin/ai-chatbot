@@ -300,7 +300,7 @@ export default function GoogleDrivePage() {
 
         {isLoading ? (
           <div className="flex items-center justify-center p-12">
-            <Spinner className="h-8 w-8" />
+            <Spinner className="size-8" />
           </div>
         ) : (
           <>

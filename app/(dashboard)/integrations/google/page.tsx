@@ -162,7 +162,7 @@ export default function GoogleIntegrationsPage() {
                         <img 
                           src={userInfo.picture} 
                           alt={userInfo.name} 
-                          className="w-8 h-8 rounded-full"
+                          className="size-8 rounded-full"
                         />
                       )}
                       <div>

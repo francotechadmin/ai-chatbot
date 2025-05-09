@@ -35,7 +35,7 @@ export function ChatHeaderActions({
       <div className="flex items-center">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon" className="h-8 w-8">
+            <Button variant="outline" size="icon" className="size-8">
               <MoreHorizontalIcon size={16} />
             </Button>
           </DropdownMenuTrigger>

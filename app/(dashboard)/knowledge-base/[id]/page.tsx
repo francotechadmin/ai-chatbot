@@ -238,7 +238,7 @@ function KnowledgeSourceDetailContent({ params }: { params: { id: string } }) {
             <Button 
               variant="outline" 
               size="sm"
-              onClick={() => router.push(`/query/chat/new?sourceId=${source.id}`)}
+              onClick={() => router.push(`/query/new?sourceId=${source.id}`)}
             >
               <MessageSquare size={16} className="mr-2" />
               Query

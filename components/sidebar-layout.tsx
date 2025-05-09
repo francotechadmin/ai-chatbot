@@ -115,25 +115,75 @@ function SidebarContent(props: {
 export type HeaderBreadcrumbItem = { title: string; href: string };
 
 function HeaderBreadcrumb(props: { items: SidebarItem[], baseBreadcrumb?: HeaderBreadcrumbItem[], basePath: string }) {
-  const segment = useSegment(props.basePath);
-  const item = props.items.find((item) => item.type === 'item' && item.href === segment);
-  const title: string | undefined = (item as any)?.name
+  const pathname = usePathname();
+  const relativePath = pathname.startsWith(props.basePath) 
+    ? pathname.slice(props.basePath.length) 
+    : pathname;
+  
+  // Split the path into segments
+  const pathSegments = relativePath.split('/').filter(Boolean);
+  
+  // Find the first level navigation item
+  const firstSegment = pathSegments[0] ? `/${pathSegments[0]}` : '/';
+  const navItem = props.items.find(
+    (item) => item.type === 'item' && item.href === firstSegment
+  ) as Item | undefined;
+  
+  // Build breadcrumb items
+  const breadcrumbItems: HeaderBreadcrumbItem[] = [];
+  
+  // Add base breadcrumb items
+  if (props.baseBreadcrumb && props.baseBreadcrumb.length > 0) {
+    breadcrumbItems.push(...props.baseBreadcrumb);
+  }
+  
+  // Add the first level navigation item if found
+  if (navItem) {
+    breadcrumbItems.push({
+      title: navItem.name as string,
+      href: `${props.basePath}${navItem.href}`
+    });
+    
+    // Add additional path segments as breadcrumb items
+    if (pathSegments.length > 1) {
+      for (let i = 1; i < pathSegments.length; i++) {
+        const segment = pathSegments[i];
+        const href = `${props.basePath}/${pathSegments.slice(0, i + 1).join('/')}`;
+        
+        // Capitalize the first letter of the segment for display
+        const title = segment.charAt(0).toUpperCase() + segment.slice(1);
+        
+        breadcrumbItems.push({
+          title,
+          href
+        });
+      }
+    }
+  }
+
+  if (breadcrumbItems.length === 0) {
+    return null;
+  }
 
   return (
     <Breadcrumb>
       <BreadcrumbList>
-        {props.baseBreadcrumb?.map((item, index) => (
+        {breadcrumbItems.map((item, index) => (
           <React.Fragment key={`breadcrumb-${index}`}>
-            <BreadcrumbItem>
-              <BreadcrumbLink href={item.href}>{item.title}</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
+            {index < breadcrumbItems.length - 1 ? (
+              <>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href={item.href}>{item.title}</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+              </>
+            ) : (
+              <BreadcrumbItem>
+                <BreadcrumbPage>{item.title}</BreadcrumbPage>
+              </BreadcrumbItem>
+            )}
           </React.Fragment>
         ))}
-
-        <BreadcrumbItem>
-          <BreadcrumbPage>{title}</BreadcrumbPage>
-        </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
   );

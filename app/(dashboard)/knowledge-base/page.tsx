@@ -73,7 +73,7 @@ function KnowledgeBaseContent() {
   return (
     <div className="container mx-auto p-6">
       <PageHeader title="Knowledge Base">
-        <Button onClick={() => router.push('/capture/chat/new')}>
+        <Button onClick={() => router.push('/capture/new')}>
           <Plus size={16} className="mr-2" />
           New Capture
         </Button>

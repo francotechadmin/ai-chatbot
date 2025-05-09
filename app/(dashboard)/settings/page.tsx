@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/card';
 import { PageHeader } from '@/components/page-header';
 import { chatModels, DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
-import { saveChatModelAsCookie } from '@/app/(dashboard)/query/(chat)/actions';
+import { saveChatModelAsCookie } from '@/app/(dashboard)/query/actions';
 import { saveDefaultVisibilityAsCookie } from './actions';
 import { toast } from 'sonner';
 

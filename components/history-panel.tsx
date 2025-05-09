@@ -179,9 +179,9 @@ export function HistoryPanel({
                       if (onSelect) {
                         onSelect(chat.id);
                       } else {
-                        const baseUrl = chat.type === 'query' ? '/query/chat/' : 
-                                       chat.type === 'capture' ? '/capture/chat/' : 
-                                       '/chat/';
+                        const baseUrl = chat.type === 'query' ? '/query/' : 
+                                       chat.type === 'capture' ? '/capture/' : 
+                                       '/';
                         window.location.href = `${baseUrl}${chat.id}`;
                       }
                       if (onClose) onClose();
@@ -204,7 +204,7 @@ export function HistoryPanel({
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem asChild>
                         <Link 
-                          href={`/${chat.type === 'query' ? 'query' : chat.type === 'capture' ? 'capture' : ''}/chat/${chat.id}`} 
+                          href={`/${chat.type === 'query' ? 'query' : chat.type === 'capture' ? 'capture' : ''}/${chat.id}`} 
                           className="cursor-pointer"
                           onClick={() => {
                             if (onClose) onClose();

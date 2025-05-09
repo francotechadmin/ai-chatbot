@@ -156,7 +156,7 @@ function PureMultimodalInput({
   const submitForm = useCallback(() => {
     console.log("submitForm called with input:", input);
     
-    // Preserve the current path structure instead of hardcoding to /chat/
+    // Preserve the current path structure instead of hardcoding to /
     const pathname = window.location.pathname;
     
     // If we're on a new chat page, we need to determine the correct path

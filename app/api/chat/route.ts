@@ -24,7 +24,7 @@ import {
   processMessages, 
   validateUserMessage 
 } from '@/lib/chat-utils';
-import { generateTitleFromUserMessage } from '@/app/(dashboard)/query/(chat)/actions';
+import { generateTitleFromUserMessage } from '@/app/(dashboard)/query/actions';
 import { createDocument } from '@/lib/ai/tools/create-document';
 import { updateDocument } from '@/lib/ai/tools/update-document';
 import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';

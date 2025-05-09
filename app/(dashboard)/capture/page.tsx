@@ -41,7 +41,7 @@ export default function CapturePage() {
                   <HistoryPanel 
                     defaultType="capture" 
                     onSelect={(id) => {
-                      router.push(`/capture/chat/${id}`);
+                      router.push(`/capture/${id}`);
                       setHistoryOpen(false);
                     }}
                     onClose={() => setHistoryOpen(false)}
@@ -53,7 +53,7 @@ export default function CapturePage() {
               <Button 
                 variant="outline" 
                 onClick={() => {
-                  router.push('/capture/chat/new');
+                  router.push('/capture/new');
                 }}
                 className="w-full h-[34px] text-sm"
               >

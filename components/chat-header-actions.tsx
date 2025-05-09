@@ -80,7 +80,7 @@ export function ChatHeaderActions({
             <HistoryPanel 
               defaultType={chatType === 'general' ? 'all' : chatType} 
               onSelect={(id) => {
-                const chatPath = chatType === 'general' ? '/chat/' : `/${chatType}/chat/`;
+                const chatPath = chatType === 'general' ? '/' : `/${chatType}/`;
                 router.push(`${chatPath}${id}`);
                 setHistoryOpen(false);
               }}
@@ -106,7 +106,7 @@ export function ChatHeaderActions({
           <HistoryPanel 
             defaultType={chatType === 'general' ? 'all' : chatType} 
             onSelect={(id) => {
-              const chatPath = chatType === 'general' ? '/chat/' : `/${chatType}/chat/`;
+              const chatPath = chatType === 'general' ? '/' : `/${chatType}/`;
               router.push(`${chatPath}${id}`);
               setHistoryOpen(false);
             }}
@@ -119,7 +119,7 @@ export function ChatHeaderActions({
         variant="outline" 
         size="sm"
         onClick={() => {
-          const chatPath = chatType === 'general' ? '/chat/new' : `/${chatType}/chat/new`;
+          const chatPath = chatType === 'general' ? '/new' : `/${chatType}/new`;
           router.push(chatPath);
         }}
       >

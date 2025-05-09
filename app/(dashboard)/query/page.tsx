@@ -41,7 +41,7 @@ export default function QueryPage() {
                   <HistoryPanel 
                     defaultType="query" 
                     onSelect={(id) => {
-                      router.push(`/query/chat/${id}`);
+                      router.push(`/query/${id}`);
                       setHistoryOpen(false);
                     }}
                     onClose={() => setHistoryOpen(false)}
@@ -53,7 +53,7 @@ export default function QueryPage() {
               <Button 
                 variant="outline" 
                 onClick={() => {
-                  router.push('/query/chat/new');
+                  router.push('/query/new');
                 }}
                 className="w-full h-[34px] text-sm"
               >

@@ -27,7 +27,8 @@ export default async function KnowledgeBasePage({
   }
 
   // Get search query from URL params
-  const searchQuery = searchParams?.search || '';
+  const params = await searchParams;
+  const searchQuery = params?.search || '';
 
   return (
     <div className="container mx-auto p-6">

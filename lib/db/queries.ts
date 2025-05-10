@@ -79,10 +79,26 @@ export async function createActiveUser(email: string, password: string, role: 'u
 
 export async function getAllUsers(): Promise<Array<User>> {
   try {
-    return await db.select().from(user);
+    console.log('getAllUsers: Starting database query');
+    
+    // Create a promise that will reject after a timeout
+    const timeoutPromise = new Promise<Array<User>>((_, reject) => {
+      setTimeout(() => {
+        reject(new Error('Database query timed out after 5 seconds'));
+      }, 5000);
+    });
+    
+    // Create the actual query promise
+    const queryPromise = db.select().from(user);
+    
+    // Race the two promises
+    const result = await Promise.race([queryPromise, timeoutPromise]);
+    console.log(`getAllUsers: Successfully retrieved ${result.length} users`);
+    return result;
   } catch (error) {
-    console.error('Failed to get all users from database');
-    throw error;
+    console.error('Failed to get all users from database:', error);
+    // Rethrow with a more specific message
+    throw new Error(`Database query failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 

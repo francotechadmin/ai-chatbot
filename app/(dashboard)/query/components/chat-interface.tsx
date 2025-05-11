@@ -65,7 +65,7 @@ export function ChatInterface({
 
   return (
     <>
-      <div className="flex flex-col min-w-0 h-[calc(100vh-15rem)] md:h-[calc(100vh-8rem)]">
+      <div className="flex flex-col min-w-0 flex-1 justify-between overflow-hidden">
         <Messages
           chatId={id}
           status={status}

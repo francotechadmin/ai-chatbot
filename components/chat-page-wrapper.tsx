@@ -35,15 +35,12 @@ export function ChatPageWrapper({
   const isMobile = width < 640;
   
   return (
-    <div className="container mx-auto p-2 md:p-6 max-w-[100vw] overflow-hidden">
-      <div className="flex flex-col gap-6">
+    <div className="container h-full mx-auto p-2 md:p-6 max-w-[100vw] overflow-hidden">
+      <div className="flex flex-col gap-6 h-full">
         <PageHeader 
           title={title}
-          chatId={id}
           selectedModelId={selectedChatModel}
-          selectedVisibilityType={selectedVisibilityType}
           showModelSelector={!isReadonly}
-          showVisibilitySelector={!isReadonly}
           isReadonly={isReadonly}
         >
           <ChatHeaderActions 

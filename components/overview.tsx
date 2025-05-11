@@ -18,13 +18,6 @@ export const Overview = ({ chatType = 'general' }: OverviewProps) => {
           <p>
             <strong>Knowledge Query Assistant</strong> helps you find and understand information from your knowledge base.
           </p>
-          <p>
-            Try asking questions like:
-          </p>
-          <ul className="list-disc list-inside text-left">
-            <li>Summarize what we know about [subject]</li>
-            <li>What are the key points from [document]</li>
-          </ul>
         </>
       );
     } else if (chatType === 'capture') {

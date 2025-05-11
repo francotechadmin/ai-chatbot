@@ -112,7 +112,7 @@ function SidebarContent(props: {
           }
         })}
 
-        <div className="grow" />
+        <div className="grow min-height-0" />
       </div>
     </div>
   );
@@ -157,7 +157,14 @@ function HeaderBreadcrumb(props: { items: SidebarItem[], baseBreadcrumb?: Header
         const href = `${props.basePath}/${pathSegments.slice(0, i + 1).join('/')}`;
         
         // Capitalize the first letter of the segment for display
-        const title = segment.charAt(0).toUpperCase() + segment.slice(1);
+        let title = segment.charAt(0).toUpperCase() + segment.slice(1);
+
+        //truncate the title if it's too long
+        const maxLength = 10;
+
+        if (title.length > maxLength) {
+          title = title.slice(0, maxLength) + '...';
+        }
         
         breadcrumbItems.push({
           title,
@@ -234,8 +241,8 @@ export default function SidebarLayout(props: {
       <div className="flex-col border-r w-[240px] h-screen sticky top-0 hidden md:flex">
         <SidebarContent items={props.items} sidebarTop={props.sidebarTop} basePath={props.basePath} />
       </div>
-      <div className="flex flex-col grow w-0">
-        <div className="h-14 border-b flex items-center justify-between sticky top-0 bg-white dark:bg-black z-10 px-4 md:px-6">
+      <div className="flex flex-col grow w-0 h-screen">
+        <div className="h-14 border-b flex items-center justify-between sticky top-0 bg-white dark:bg-black z-10 px-4 md:px-6 shrink-0">
           <div className="hidden md:flex">
             <HeaderBreadcrumb baseBreadcrumb={props.baseBreadcrumb} basePath={props.basePath} items={props.items} />
           </div>
@@ -269,7 +276,7 @@ export default function SidebarLayout(props: {
             }
           />
         </div>
-        <div className="grow">{props.children}</div>
+        <div className="grow min-height-0 overflow-scroll">{props.children}</div>
       </div>
     </div>
   );

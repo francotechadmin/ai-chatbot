@@ -29,13 +29,6 @@ export const Overview = ({ chatType = 'general' }: OverviewProps) => {
           <p>
             <strong>Knowledge Capture Assistant</strong> helps you document, organize, and structure your knowledge.
           </p>
-          <p>
-            Try requests like:
-          </p>
-          <ul className="list-disc list-inside text-left">
-            <li>Document my process for [task]</li>
-            <li>Help me organize information about [topic]</li>
-          </ul>
         </>
       );
     } else {

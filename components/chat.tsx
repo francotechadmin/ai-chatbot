@@ -76,7 +76,7 @@ export function Chat({
 
   return (
     <>
-      <div className="flex flex-col min-w-0 grow overflow-hidden">
+      <div className="flex flex-col min-w-0 grow justify-between overflow-hidden">
         <Messages
           chatId={id}
           status={status}

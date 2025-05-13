@@ -1,5 +1,4 @@
 import { Suspense } from 'react';
-// import { cookies } from 'next/headers';
 import { auth } from '@/app/(auth)/auth';
 import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
 import { generateUUID } from '@/lib/utils';
@@ -19,8 +18,6 @@ export default async function QueryPage() {
   const chatId = generateUUID();
   
   // Get the selected model from cookies or use default
-  // const cookieStore = await cookies();
-  // const selectedModel = cookieStore.get('chat-model')?.value || DEFAULT_CHAT_MODEL;
   const selectedModel = DEFAULT_CHAT_MODEL; // For simplicity, using default model directly
   
   // Get the user session
@@ -62,7 +59,8 @@ export default async function QueryPage() {
           </div>
         </PageHeader>
         
-        <Suspense fallback={<LoadingChat />}>
+        {/* Remove Suspense for now to avoid loading state conflicts */}
+        {/* <Suspense fallback={<LoadingChat />}> */}
           <ChatInterface
             key={chatId}
             id={chatId}
@@ -71,7 +69,7 @@ export default async function QueryPage() {
             selectedVisibilityType="private"
             isReadonly={false}
           />
-        </Suspense>
+        {/* </Suspense> */}
         <DataStreamHandler id={chatId} />
       </div>
     </div>

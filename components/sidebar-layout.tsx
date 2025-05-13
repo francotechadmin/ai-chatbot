@@ -276,7 +276,7 @@ export default function SidebarLayout(props: {
             }
           />
         </div>
-        <div className="grow min-height-0 overflow-scroll">{props.children}</div>
+        <div className="grow min-height-0 overflow-auto">{props.children}</div>
       </div>
     </div>
   );

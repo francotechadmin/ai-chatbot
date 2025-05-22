@@ -27,6 +27,8 @@ import { createDocument } from '@/lib/ai/tools/create-document';
 import { updateDocument } from '@/lib/ai/tools/update-document';
 import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
 import { getWeather } from '@/lib/ai/tools/get-weather';
+import { uploadToKnowledgeBase } from '@/lib/ai/tools/upload-to-knowledge-base';
+import { queryKnowledgeBase } from '@/lib/ai/tools/query-knowledge-base';
 import { isProductionEnvironment } from '@/lib/constants';
 import { myProvider } from '@/lib/ai/providers';
 
@@ -82,82 +84,11 @@ export async function POST(request: Request) {
         },
       ],
     });
-
-    // Process messages to ensure they have valid content
-    const processedMessages = processMessages(messages);
-
-    // Extract query text from the user message
-    const queryText = userMessage.parts
-      .filter(part => part.type === 'text')
-      .map(part => part.text)
-      .join(' ');
-
-    // Search knowledge base for relevant chunks
-    let knowledgeContext = '';
-    let knowledgeSourceIds: string[] = [];
-    const searchStartTime = Date.now();
-    
-    try {
-      const searchResults = await searchKnowledgeBase(queryText, 10, 0.4);
-      const searchEndTime = Date.now();
-      
-      if (searchResults.length > 0) {
-        console.log(
-          `Found ${searchResults.length} relevant knowledge chunks for query: "${queryText}"`,
-        );
-        console.log(
-          'Knowledge chunks:',
-          searchResults.map(result => ({
-            id: result.chunk.id,
-            content: result.chunk.content,
-            source: result.source.title,
-            similarity: result.similarity,
-          })),
-        );
-        
-        // Collect source IDs for metrics
-        knowledgeSourceIds = searchResults.map(result => result.source.id);
-        
-        // Record knowledge base search metric - ensure it's non-blocking
-        // void recordQueryMetric({
-        //   chatId: id,
-        //   userId: session.user.id,
-        //   queryText,
-        //   responseTime: searchEndTime - searchStartTime,
-        //   knowledgeBaseUsed: true,
-        //   knowledgeSourceIds,
-        //   metadata: {
-        //     resultCount: searchResults.length,
-        //     operation: 'search',
-        //   }
-        // });
-
-        // Format knowledge chunks for context
-        knowledgeContext = `
-            Relevant information from knowledge base:
-
-            ${searchResults.map((result, index) => {
-              return `[Source ${result.source.title}] [Link: /knowledge-base/${result.source.id}]
-            ${result.chunk.content}
-            `;
-            }).join('\n')}
-
-            Use the above information to help answer the user's query. Cite sources titles when using information from the knowledge base. When citing sources, include the link in the format "/knowledge-base/[source-id]".
-            `;
-      }
-    } catch (error) {
-      console.error('Error searching knowledge base:', error);
-      // Continue without knowledge context if search fails
-    }
-
-    // Create custom system prompt with knowledge context
-    const customSystemPrompt = `${systemPrompt({ selectedChatModel })}\n\n${knowledgeContext}`
-        
-    return createDataStreamResponse({
+        return createDataStreamResponse({
       execute: (dataStream) => {
         const result = streamText({
           model: myProvider.languageModel(selectedChatModel),
-          system: customSystemPrompt,
+          system: systemPrompt({ selectedChatModel }),
           messages,
           maxSteps: 5,
           experimental_activeTools:
@@ -168,6 +99,8 @@ export async function POST(request: Request) {
                   'createDocument',
                   'updateDocument',
                   'requestSuggestions',
+                  'uploadToKnowledgeBase',
+                  'queryKnowledgeBase',
                 ],
           experimental_transform: smoothStream({ chunking: 'word' }),
           experimental_generateMessageId: generateUUID,
@@ -176,6 +109,14 @@ export async function POST(request: Request) {
             createDocument: createDocument({ session, dataStream }),
             updateDocument: updateDocument({ session, dataStream }),
             requestSuggestions: requestSuggestions({
+              session,
+              dataStream,
+            }),
+            uploadToKnowledgeBase: uploadToKnowledgeBase({
+              session,
+              dataStream,
+            }),
+            queryKnowledgeBase: queryKnowledgeBase({
               session,
               dataStream,
             }),

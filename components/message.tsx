@@ -8,6 +8,8 @@ import type { Vote } from '@/lib/db/schema';
 import { DocumentToolCall, DocumentToolResult } from './document';
 import { PencilEditIcon, SparklesIcon } from './icons';
 import { Markdown } from './markdown';
+import { KnowledgeBaseResult } from './knowledge-base-result';
+import { KnowledgeBaseUpload } from './knowledge-base-upload';
 import { MessageActions } from './message-actions';
 import { PreviewAttachment } from './preview-attachment';
 import { Weather } from './weather';
@@ -202,6 +204,16 @@ const PurePreviewMessage = ({
                       ) : toolName === 'requestSuggestions' ? (
                         <DocumentToolResult
                           type="request-suggestions"
+                          result={result}
+                          isReadonly={isReadonly}
+                        />
+                      ) : toolName === 'queryKnowledgeBase' ? (
+                        <KnowledgeBaseResult
+                          result={result}
+                          isReadonly={isReadonly}
+                        />
+                      ) : toolName === 'uploadToKnowledgeBase' ? (
+                        <KnowledgeBaseUpload
                           result={result}
                           isReadonly={isReadonly}
                         />

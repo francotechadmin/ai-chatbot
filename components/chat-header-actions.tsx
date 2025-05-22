@@ -72,7 +72,6 @@ export function ChatHeaderActions({
         <Sheet open={historyOpen} onOpenChange={setHistoryOpen}>
           <SheetContent side="right" className="w-[400px] sm:w-[540px] p-0">
             <HistoryPanel 
-              defaultType={'all'} 
               onSelect={(id) => {
                 router.push(`chat/${id}`);
                 setHistoryOpen(false);
@@ -97,9 +96,8 @@ export function ChatHeaderActions({
         </SheetTrigger>
         <SheetContent side="right" className="w-[400px] sm:w-[540px] p-0">
           <HistoryPanel 
-            defaultType={'all'} 
             onSelect={(id) => {
-              router.push(`chat/${id}`);
+              router.push(`${id}`);
               setHistoryOpen(false);
             }}
             onClose={() => setHistoryOpen(false)}

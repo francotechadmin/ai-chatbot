@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { Session } from 'next-auth';
 import { createKnowledgeSource, getDocumentById } from '@/lib/db/queries';
 import { processContentForKnowledgeBase } from '@/lib/embeddings';
+import type { Document } from '@/lib/db/schema';
 
 interface UploadToKnowledgeBaseProps {
   session: Session;
@@ -30,20 +31,70 @@ export const uploadToKnowledgeBase = ({ session, dataStream }: UploadToKnowledge
             content: `Retrieving document content for ID: ${documentId}...`,
           });
           
-          // Get the document from the database
-          const document = await getDocumentById({ id: documentId });
-          
-          if (!document) {
-            throw new Error(`Document with ID ${documentId} not found.`);
+          try {
+            // Get the document from the database
+            const document = await getDocumentById({ id: documentId });
+            
+            if (!document) {
+              // Log detailed error for debugging
+              console.error(`Document with ID ${documentId} not found in database.`);
+              dataStream.writeData({
+                type: 'status',
+                content: `Warning: Document with ID ${documentId} not found. Will use provided content instead.`,
+              });
+              
+              // Don't throw error, just use the provided content
+              if (content === "A document was created and is now visible to the user.") {
+                throw new Error(`Document with ID ${documentId} not found. Please provide the actual content.`);
+              }
+              
+              // Continue with the provided content
+              dataStream.writeData({
+                type: 'status',
+                content: 'Using provided content instead of document content.',
+              });
+              
+              // Don't modify content, use what was provided
+            } else {
+              // Document found, check if it has content
+              if (!document.content) {
+                console.error(`Document with ID ${documentId} has no content.`);
+                dataStream.writeData({
+                  type: 'status',
+                  content: `Warning: Document with ID ${documentId} has no content. Will use provided content instead.`,
+                });
+                
+                // Don't throw error, just use the provided content
+                if (content === "A document was created and is now visible to the user.") {
+                  throw new Error(`Document with ID ${documentId} has no content. Please provide the actual content.`);
+                }
+              } else {
+                // Document has content, use it
+                // TypeScript fix: access content property with type safety
+                const docContent = (document as Document).content;
+                content = docContent || '';
+                dataStream.writeData({
+                  type: 'status',
+                  content: 'Retrieved document content successfully.',
+                });
+              }
+            }
+          } catch (error) {
+            // Only throw if we can't proceed with the provided content
+            if (content === "A document was created and is now visible to the user.") {
+              console.error('Error retrieving document content:', error);
+              throw new Error(`Failed to retrieve document content: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            }
+            
+            // Otherwise, log the error but continue with provided content
+            console.error('Error retrieving document content, using provided content instead:', error);
+            dataStream.writeData({
+              type: 'status',
+              content: 'Using provided content instead of document content due to retrieval error.',
+            });
           }
-          
-          // Use the actual document content
-          if (!document.content) {
-            throw new Error(`Document with ID ${documentId} has no content.`);
-          }
-          
-          // Override the content with the document content
-          content = document.content;
+          // This line is not needed as we already set content in the try block
+          // Removing to fix TypeScript error
           
           dataStream.writeData({
             type: 'status',

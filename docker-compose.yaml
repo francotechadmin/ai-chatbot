@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  postgres2:
+    image: ramsrib/pgvector
+    container_name: kb2
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: postgres
+    ports:
+      - "5456:5432"
+    volumes:
+      - postgres_data2:/var/lib/postgresql/data
+
+volumes:
+  postgres_data2:
+    driver: local

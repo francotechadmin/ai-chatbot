@@ -15,14 +15,12 @@ function PureChatHeader({
   selectedModelId,
   selectedVisibilityType,
   isReadonly, 
-  chatType,
 }: {
   chatId: string;
   title?: string;
   selectedModelId: string;
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
-  chatType: 'general' | 'query' | 'capture';
 }) {
   const router = useRouter();
   const { open } = useSidebar();
@@ -43,7 +41,6 @@ function PureChatHeader({
       {/* Actions - always visible but responsive */}
       <div className="order-3 md:order-4 ml-auto">
         <ChatHeaderActions 
-          chatType={chatType} 
           chatId={chatId}
           chatTitle={title}
           isMobile={isMobile}

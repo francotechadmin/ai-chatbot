@@ -24,6 +24,10 @@
   - Unified API for generating text, structured objects, and tool calls with LLMs
   - Hooks for building dynamic chat and generative user interfaces
   - Supports xAI (default), OpenAI, Fireworks, and other model providers
+- Chat Interface
+  - Seamlessly switches between knowledge retrieval and documentation modes
+  - Intelligent mode detection based on user queries
+  - Guided documentation process with structured templates
 - [shadcn/ui](https://ui.shadcn.com)
   - Styling with [Tailwind CSS](https://tailwindcss.com)
   - Component primitives from [Radix UI](https://radix-ui.com) for accessibility and flexibility
@@ -59,3 +63,34 @@ pnpm dev
 ```
 
 Your app template should now be running on [localhost:3000](http://localhost:3000/).
+
+## Chat Interface
+
+The unified chat interface combines knowledge retrieval and documentation capabilities into a single, seamless experience. It intelligently detects the user's intent and switches between modes accordingly.
+
+### Features
+
+- **Intelligent Mode Detection**: Automatically determines whether the user is seeking information or documenting knowledge
+- **Seamless Mode Switching**: Transitions smoothly between retrieval and documentation modes
+- **Visual Indicators**: Provides subtle visual cues to indicate the current mode
+- **Guided Documentation**: Helps users capture knowledge with structured templates
+- **Knowledge Base Integration**: Retrieves information from the knowledge base with source attribution
+
+### Usage
+
+1. Navigate to the Chat interface from the sidebar
+2. Start a conversation by asking a question or stating your intent to document something
+3. The interface will automatically detect your intent and respond accordingly:
+   - For questions, it will search the knowledge base and provide answers with sources
+   - For documentation, it will guide you through capturing structured information
+4. You can switch between modes at any time by changing your query type
+
+### Templates
+
+The documentation mode supports several templates to help structure information:
+
+- **Process Documentation**: For workflows and procedures
+- **Technical Guide**: For technical documentation
+- **Best Practice**: For recommended approaches
+- **Problem Solution**: For documenting problems and their solutions
+- **General Knowledge**: For general information capture

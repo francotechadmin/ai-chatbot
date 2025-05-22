@@ -1,12 +1,16 @@
 'use client';
 
-import { useState, } from 'react';
+import { useState, useEffect } from 'react';
 import { formatDistance, format } from 'date-fns';
-import type { Chat } from '@/lib/db/schema';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MoreHorizontalIcon, ShareIcon, TrashIcon, SearchIcon } from '@/components/icons';
+import { 
+  MoreHorizontalIcon, 
+  ShareIcon, 
+  TrashIcon, 
+  SearchIcon 
+} from '@/components/icons';
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -24,41 +28,54 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
-import useSWR from 'swr';
 import { toast } from 'sonner';
-import { fetcher } from '@/lib/utils';
+import type { Chat } from '@/lib/db/schema';
+import { deleteChat } from '../actions';
 
-export function HistoryPanel({ 
-  onSelect,
-  onClose 
-}: { 
+interface HistorySidebarProps {
+  chats: Chat[];
   onSelect?: (chatId: string) => void;
   onClose?: () => void;
-}) {  
+}
+
+export function HistorySidebar({ 
+  chats,
+  onSelect,
+  onClose 
+}: HistorySidebarProps) {
+  const router = useRouter();
+  
   // State for search
   const [searchQuery, setSearchQuery] = useState('');
   
   // State for sorting
   const [sortBy, setSortBy] = useState<'newest' | 'oldest'>('newest');
   
-  // Fetch all chats
-  const { data: allChats, mutate } = useSWR<Array<Chat>>(
-    '/api/history',
-    fetcher,
-    { fallbackData: [] }
-  );
+  // Filtered and sorted chats
+  const [filteredChats, setFilteredChats] = useState<Chat[]>(chats);
   
-  
-  // Sort chats
-  const sortedChats = (allChats ?? [])
-    .filter(chat => chat.title.toLowerCase().includes(searchQuery.toLowerCase()))
-    .sort((a, b) => {
-      const dateA = new Date(a.createdAt);
-      const dateB = new Date(b.createdAt);
-      return sortBy === 'newest' ? dateB.getTime() - dateA.getTime() : dateA.getTime() - dateB.getTime();
+  // Update filtered chats when chats, search query, or sort order changes
+  useEffect(() => {
+    // Filter by search query
+    const filtered = chats.filter(chat => {
+      if (searchQuery && !chat.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+        return false;
+      }
+      return true;
     });
-
-
+    
+    // Sort chats
+    const sorted = [...filtered].sort((a, b) => {
+      if (sortBy === 'newest') {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      } else {
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      }
+    });
+    
+    setFilteredChats(sorted);
+  }, [chats, searchQuery, sortBy]);
+  
   // Delete functionality
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -67,16 +84,11 @@ export function HistoryPanel({
     if (!deleteId) return;
     
     try {
-      const response = await fetch(`/api/chat?id=${deleteId}`, {
-        method: 'DELETE',
-      });
+      await deleteChat(deleteId);
+      toast.success('Conversation deleted successfully');
       
-      if (response.ok) {
-        mutate(allChats?.filter(chat => chat.id !== deleteId));
-        toast.success('Conversation deleted successfully');
-      } else {
-        toast.error('Failed to delete conversation');
-      }
+      // Remove the deleted chat from the filtered list
+      setFilteredChats(prev => prev.filter(chat => chat.id !== deleteId));
     } catch (error) {
       console.error('Error deleting chat:', error);
       toast.error('Failed to delete conversation');
@@ -88,7 +100,7 @@ export function HistoryPanel({
   return (
     <div className="flex flex-col h-full">
       <div className="p-4 border-b">
-        <h2 className="text-lg font-semibold mb-4">Conversation History Comp</h2>
+        <h2 className="text-lg font-semibold mb-4">Conversation History Query Comp</h2>
         
         {/* Search input */}
         <div className="relative mb-4">
@@ -117,13 +129,13 @@ export function HistoryPanel({
       
       {/* Chat list */}
       <div className="flex-1 overflow-y-auto">
-        {sortedChats.length === 0 ? (
+        {filteredChats.length === 0 ? (
           <div className="p-8 text-center text-muted-foreground">
             No conversations found
           </div>
         ) : (
           <div className="divide-y">
-            {sortedChats.map((chat) => (
+            {filteredChats.map((chat) => (
               <div key={chat.id} className="p-4 hover:bg-muted/50 transition-colors">
                 <div className="flex justify-between items-start">
                   <div
@@ -134,7 +146,7 @@ export function HistoryPanel({
                       if (onSelect) {
                         onSelect(chat.id);
                       } else {
-                        window.location.href = `chat/${chat.id}`;
+                        router.push(`/query/${chat.id}`);
                       }
                       if (onClose) onClose();
                     }}
@@ -144,7 +156,7 @@ export function HistoryPanel({
                         if (onSelect) {
                           onSelect(chat.id);
                         } else {
-                          window.location.href = `chat/${chat.id}`;
+                          router.push(`/query/${chat.id}`);
                         }
                         if (onClose) onClose();
                       }
@@ -167,7 +179,7 @@ export function HistoryPanel({
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem asChild>
                         <Link 
-                          href={`chat/${chat.id}`} 
+                          href={`/query/${chat.id}`} 
                           className="cursor-pointer"
                           onClick={() => {
                             if (onClose) onClose();

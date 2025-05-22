@@ -16,7 +16,6 @@ interface ChatPageWrapperProps {
   selectedChatModel: string;
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
-  chatType: 'query' | 'capture';
   title: string;
 }
 
@@ -26,7 +25,6 @@ export function ChatPageWrapper({
   selectedChatModel,
   selectedVisibilityType,
   isReadonly,
-  chatType,
   title
 }: ChatPageWrapperProps) {
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -44,7 +42,6 @@ export function ChatPageWrapper({
           isReadonly={isReadonly}
         >
           <ChatHeaderActions 
-            chatType={chatType} 
             chatId={id}
             chatTitle={title}
             isMobile={isMobile}
@@ -57,7 +54,6 @@ export function ChatPageWrapper({
           selectedChatModel={selectedChatModel}
           selectedVisibilityType={selectedVisibilityType}
           isReadonly={isReadonly}
-          chatType={chatType}
           title={title}
         />
         <DataStreamHandler id={id} />

@@ -9,7 +9,7 @@ import { AccountInfo } from './account-info';
 import { ThemeSelector } from './theme-selector';
 import { ChatDefaults } from './chat-defaults';
 import { AuthSession } from './auth-session';
-import { saveChatModelAsCookie } from '@/app/(dashboard)/query/actions';
+import { saveChatModelAsCookie } from '@/app/(dashboard)/(chat)/chat/actions';
 import { saveDefaultVisibilityAsCookie } from '../actions';
 
 interface SettingsFormProps {

@@ -78,7 +78,7 @@ export async function updateChatVisibility({
  * Get chat history for a user
  * Replaces the /api/history route
  */
-export async function getChatHistory(type?: 'general' | 'query' | 'capture' | null): Promise<Chat[]> {
+export async function getChatHistory(): Promise<Chat[]> {
   const session = await auth();
 
   if (!session || !session.user) {
@@ -89,11 +89,7 @@ export async function getChatHistory(type?: 'general' | 'query' | 'capture' | nu
   const userId = session.user.id!;
   
   try {
-    if (type) {
-      return await getChatsByUserIdAndType({ id: userId, type });
-    } else {
-      return await getChatsByUserId({ id: userId });
-    }
+    return await getChatsByUserId({ id: userId });
   } catch (error) {
     console.error('Failed to get chat history:', error);
     throw new Error('Failed to get chat history');

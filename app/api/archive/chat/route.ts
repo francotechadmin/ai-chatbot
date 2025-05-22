@@ -23,7 +23,7 @@ import {
   processMessages, 
   validateUserMessage 
 } from '@/lib/chat-utils';
-import { generateTitleFromUserMessage } from '@/app/(dashboard)/query/actions';
+import { generateTitleFromUserMessage } from '@/app/(dashboard)/(chat)/chat/actions';
 import { createDocument } from '@/lib/ai/tools/create-document';
 import { updateDocument } from '@/lib/ai/tools/update-document';
 import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
@@ -39,12 +39,10 @@ export async function POST(request: Request) {
       id,
       messages,
       selectedChatModel,
-      chatType = 'general',
     }: {
       id: string;
       messages: Array<UIMessage>;
       selectedChatModel: string;
-      chatType?: 'general' | 'query' | 'capture';
     } = await request.json();
 
     const session = await auth();
@@ -69,7 +67,6 @@ export async function POST(request: Request) {
       id,
       userId: session.user.id,
       userMessage: validUserMessage,
-      chatType,
       generateTitle: generateTitleFromUserMessage
     });
     
@@ -97,7 +94,7 @@ export async function POST(request: Request) {
       execute: (dataStream) => {
         const result = streamText({
           model: myProvider.languageModel(selectedChatModel),
-          system: systemPrompt({ selectedChatModel, chatType }),
+          system: systemPrompt({ selectedChatModel }),
           messages: processedMessages,
           maxSteps: 5,
           temperature: 0,

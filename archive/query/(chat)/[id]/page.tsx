@@ -29,9 +29,12 @@ export default async function QueryChatPage(props: { params: Promise<{ id: strin
     }
   }
 
+  console.log('getting messages for chat', id);
   const messagesFromDb = await getMessagesByChatId({
     id,
   });
+
+  console.log('messages', messagesFromDb);  
 
   function convertToUIMessages(messages: Array<DBMessage>): Array<UIMessage> {
     return messages.map((message) => ({
@@ -57,7 +60,7 @@ export default async function QueryChatPage(props: { params: Promise<{ id: strin
       selectedChatModel={selectedChatModel}
       selectedVisibilityType={chat.visibility}
       isReadonly={isReadonly}
-      chatType="query"
+      // chatType="query"
       title={chat.title || "Knowledge Query"}
     />
   );

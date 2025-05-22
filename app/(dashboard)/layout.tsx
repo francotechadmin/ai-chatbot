@@ -28,17 +28,23 @@ const navigationItems: SidebarItem[] = [
     name: 'Management',
   },
   {
-    name: "Knowledge Capture",
-    href: "/capture",
-    icon: FileText,
+    name: "Chat",
+    href: "/chat",
+    icon: MessageSquare,
     type: "item",
   },
-  {
-    name: "Knowledge Query",
-    href: "/query",
-    icon: Code,
-    type: "item",
-  },
+  // {
+  //   name: "Knowledge Capture",
+  //   href: "/capture",
+  //   icon: FileText,
+  //   type: "item",
+  // },
+  // {
+  //   name: "Knowledge Query",
+  //   href: "/query",
+  //   icon: Code,
+  //   type: "item",
+  // },
   {
     name: "Knowledge Base",
     href: "/knowledge-base",

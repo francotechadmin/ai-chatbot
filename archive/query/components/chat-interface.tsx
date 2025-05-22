@@ -1,36 +1,36 @@
 'use client';
 
-import type { Attachment, UIMessage } from 'ai';
-import { useChat } from '@ai-sdk/react';
 import { useState } from 'react';
-import useSWR, { useSWRConfig } from 'swr';
+import { useChat } from '@ai-sdk/react';
+import { useSWRConfig } from 'swr';
+import type { Attachment, UIMessage } from 'ai';
 import type { Vote } from '@/lib/db/schema';
-import { fetcher, generateUUID } from '@/lib/utils';
-import { Artifact } from './artifact';
-import { MultimodalInput } from './multimodal-input';
-import { Messages } from './messages';
-import type { VisibilityType } from './visibility-selector';
+import { generateUUID } from '@/lib/utils';
+import { MultimodalInput } from '@/components/multimodal-input';
+import { Messages } from '@/components/messages';
+import { Artifact } from '@/components/artifact';
 import { useArtifactSelector } from '@/hooks/use-artifact';
 import { toast } from 'sonner';
 
-export function Chat({
+interface ChatInterfaceProps {
+  id: string;
+  initialMessages: Array<UIMessage>;
+  selectedChatModel: string;
+  selectedVisibilityType: 'private' | 'public';
+  isReadonly: boolean;
+  votes?: Array<Vote>;
+}
+
+export function ChatInterface({
   id,
   initialMessages,
   selectedChatModel,
   selectedVisibilityType,
   isReadonly,
-  chatType = 'general',
-  title,
-}: {
-  id: string;
-  initialMessages: Array<UIMessage>;
-  selectedChatModel: string;
-  selectedVisibilityType: VisibilityType;
-  isReadonly: boolean;
-  chatType?: 'general' | 'query' | 'capture';
-  title?: string;
-}) {
+  votes = [],
+}: ChatInterfaceProps) {
   const { mutate } = useSWRConfig();
+  const apiEndpoint = '/api/query/chat';
 
   const {
     messages,
@@ -44,31 +44,29 @@ export function Chat({
     reload,
   } = useChat({
     id,
-    body: { id, selectedChatModel: selectedChatModel, chatType },
+    body: { id, selectedChatModel, chatType: 'query' },
+    api: apiEndpoint,
     initialMessages,
     experimental_throttle: 100,
     sendExtraMessageFields: true,
     generateId: generateUUID,
     onFinish: () => {
+      // Revalidate chat history after a new message
       mutate('/api/history');
     },
     onError: (error) => {
       console.error('Chat error:', error);
-      toast.error('An error occured, please try again!');
+      toast.error('An error occurred, please try again!');
     },
   });
-
-  const { data: votes } = useSWR<Array<Vote>>(
-    messages.length >= 2 ? `/api/vote?chatId=${id}` : null,
-    fetcher,
-  );
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
   return (
     <>
-      <div className="flex flex-col min-w-0 grow justify-between overflow-hidden">
+      <div className="flex flex-col min-w-0 flex-1 justify-between overflow-hidden">
+        <div></div>
         <Messages
           chatId={id}
           status={status}
@@ -78,7 +76,7 @@ export function Chat({
           reload={reload}
           isReadonly={isReadonly}
           isArtifactVisible={isArtifactVisible}
-          chatType={chatType}
+          chatType="query"
         />
 
         <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">

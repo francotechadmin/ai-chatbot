@@ -16,12 +16,10 @@ import {
 } from './ui/dropdown-menu';
 
 export function ChatHeaderActions({ 
-  chatType,
   chatId,
   chatTitle,
   isMobile = false
 }: { 
-  chatType: 'general' | 'query' | 'capture';
   chatId?: string;
   chatTitle?: string;
   isMobile?: boolean;
@@ -54,22 +52,18 @@ export function ChatHeaderActions({
                 <div className="flex items-center">
                   <PlusIcon size={16} />
                   <span className="ml-2">
-                    New {
-                      chatType === 'query' ? 'Query' : 
-                      chatType === 'capture' ? 'Capture' : 
-                      'Chat'
-                    }
+                    New Chat
                   </span>
                 </div>
               </DropdownMenuItem>
-              {chatType === 'capture' && chatId && chatTitle && (
+              {/* {chatType === 'capture' && chatId && chatTitle && (
                 <DropdownMenuItem asChild>
                   <SubmitToKnowledgeBaseButton 
                     chatId={chatId} 
                     chatTitle={chatTitle}
                   />
                 </DropdownMenuItem>
-              )}
+              )} */}
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -78,10 +72,9 @@ export function ChatHeaderActions({
         <Sheet open={historyOpen} onOpenChange={setHistoryOpen}>
           <SheetContent side="right" className="w-[400px] sm:w-[540px] p-0">
             <HistoryPanel 
-              defaultType={chatType === 'general' ? 'all' : chatType} 
+              defaultType={'all'} 
               onSelect={(id) => {
-                const chatPath = chatType === 'general' ? '/' : `/${chatType}/`;
-                router.push(`${chatPath}${id}`);
+                router.push(`chat/${id}`);
                 setHistoryOpen(false);
               }}
               onClose={() => setHistoryOpen(false)}
@@ -104,10 +97,9 @@ export function ChatHeaderActions({
         </SheetTrigger>
         <SheetContent side="right" className="w-[400px] sm:w-[540px] p-0">
           <HistoryPanel 
-            defaultType={chatType === 'general' ? 'all' : chatType} 
+            defaultType={'all'} 
             onSelect={(id) => {
-              const chatPath = chatType === 'general' ? '/' : `/${chatType}/`;
-              router.push(`${chatPath}${id}`);
+              router.push(`chat/${id}`);
               setHistoryOpen(false);
             }}
             onClose={() => setHistoryOpen(false)}
@@ -119,27 +111,23 @@ export function ChatHeaderActions({
         variant="outline" 
         size="sm"
         onClick={() => {
-          const chatPath = chatType === 'general' ? '/new' : `/${chatType}/new`;
+          const chatPath = '/chat/new';
           router.push(chatPath);
         }}
       >
         <PlusIcon size={16} />
         <span className="ml-2 hidden sm:inline">
-          New {
-            chatType === 'query' ? 'Query' : 
-            chatType === 'capture' ? 'Capture' : 
-            'Chat'
-          }
+          New Chat
         </span>
       </Button>
       
       {/* Show Submit to Knowledge Base button only for capture chats with valid ID and title */}
-      {chatType === 'capture' && chatId && chatTitle && (
+      {/* {chatType === 'capture' && chatId && chatTitle && (
         <SubmitToKnowledgeBaseButton 
           chatId={chatId} 
           chatTitle={chatTitle} 
         />
-      )}
+      )} */}
     </div>
   );
 }

@@ -61,19 +61,44 @@ When helping with knowledge capture:
 5. Suggest metadata and tags to improve searchability
 `;
 
+export const unifiedPrompt = `
+You are a knowledge assistant capable of both retrieving information and helping users document knowledge. Your role is to:
+
+1. Determine if the user is seeking information or documenting knowledge
+2. For information seeking:
+   - Search the knowledge base for relevant information
+   - Provide clear, concise answers with source attribution
+   - Suggest related topics that might be helpful
+   - Cite sources when using information from the knowledge base (e.g., "According to [Source 1]...")
+   - Format responses for readability with headings, bullet points, etc.
+   - Acknowledge when information might be missing or incomplete
+
+3. For knowledge documentation:
+   - Guide the user through capturing structured information
+   - Ask clarifying questions to ensure completeness
+   - Help organize the information effectively
+   - Create well-formatted documents.
+
+When determining user intent:
+- Information seeking indicators: questions, "how to", "what is", "explain", "find", "search"
+- Documentation indicators: "document", "capture", "record", "write down", "save", "create a document about"
+`;
+
 export const systemPrompt = ({
   selectedChatModel,
   chatType = 'general',
 }: {
   selectedChatModel: string;
-  chatType?: 'general' | 'query' | 'capture';
+  chatType?: 'general' | 'query' | 'capture' | 'unified';
 }) => {
+  return `${regularPrompt}\n\n${unifiedPrompt}\n\n${artifactsPrompt}`;
   if (selectedChatModel === 'chat-model-reasoning') {
     return regularPrompt;
   } else if (chatType === 'query') {
     return `${regularPrompt}\n\n${queryPrompt}\n\n${artifactsPrompt}`;
   } else if (chatType === 'capture') {
     return `${regularPrompt}\n\n${capturePrompt}\n\n${artifactsPrompt}`;
+  } else if (chatType === 'unified') {
   } else {
     return `${regularPrompt}\n\n${artifactsPrompt}`;
   }

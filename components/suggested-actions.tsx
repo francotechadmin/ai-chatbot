@@ -8,13 +8,13 @@ import type { UseChatHelpers } from '@ai-sdk/react';
 interface SuggestedActionsProps {
   chatId: string;
   append: UseChatHelpers['append'];
-  chatType?: 'general' | 'query' | 'capture';
+  chatType?: 'general' | 'query' | 'capture' | 'unified';
 }
 
 function PureSuggestedActions({ chatId, append, chatType = 'general' }: SuggestedActionsProps) {
   // Define suggested actions based on chat type
   const getSuggestedActions = () => {
-    if (chatType === 'query') {
+    if (chatType === 'unified' || chatType === 'query') {
       return [
         {
           title: 'Find information about',

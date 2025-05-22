@@ -90,13 +90,11 @@ export async function handleChatAuthorization({
   id,
   userId,
   userMessage,
-  chatType,
   generateTitle
 }: {
   id: string;
   userId: string;
   userMessage: UIMessage;
-  chatType: 'general' | 'query' | 'capture';
   generateTitle: (params: { message: UIMessage }) => Promise<string>;
 }): Promise<{ isAuthorized: boolean; errorMessage?: string }> {
   const chat = await getChatById({ id });
@@ -106,7 +104,7 @@ export async function handleChatAuthorization({
       message: userMessage,
     });
 
-    await saveChat({ id, userId, title, type: chatType });
+    await saveChat({ id, userId, title });
     return { isAuthorized: true };
   } else {
     if (chat.userId !== userId) {

@@ -1,8 +1,7 @@
 'use client';
 
 import { startTransition, useMemo, useOptimistic, useState, useRef, useEffect } from 'react';
-
-import { saveChatModelAsCookie } from '@/app/(dashboard)/(chat)/chat/actions';
+import { saveChatModelAsCookie } from '../actions';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,15 +11,17 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { chatModels } from '@/lib/ai/models';
 import { cn } from '@/lib/utils';
+import { CheckCircleFillIcon, ChevronDownIcon } from '@/components/icons';
 
-import { CheckCircleFillIcon, ChevronDownIcon } from './icons';
+interface ModelSelectorProps {
+  selectedModelId: string;
+  className?: string;
+}
 
 export function ModelSelector({
   selectedModelId,
   className,
-}: {
-  selectedModelId: string;
-} & React.ComponentProps<typeof Button>) {
+}: ModelSelectorProps) {
   const [open, setOpen] = useState(false);
   const [optimisticModelId, setOptimisticModelId] =
     useOptimistic(selectedModelId);

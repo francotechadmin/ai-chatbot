@@ -12,6 +12,7 @@ import { Artifact } from '@/components/artifact';
 import { useArtifactSelector } from '@/hooks/use-artifact';
 import { toast } from 'sonner';
 
+
 interface ChatInterfaceProps {
   id: string;
   initialMessages: Array<UIMessage>;
@@ -30,7 +31,6 @@ export function ChatInterface({
   votes = [],
 }: ChatInterfaceProps) {
   const { mutate } = useSWRConfig();
-  const apiEndpoint = '/api/query/chat';
 
   const {
     messages,
@@ -44,15 +44,15 @@ export function ChatInterface({
     reload,
   } = useChat({
     id,
-    body: { id, selectedChatModel, chatType: 'query' },
-    api: apiEndpoint,
+    body: { id, selectedChatModel },
     initialMessages,
     experimental_throttle: 100,
     sendExtraMessageFields: true,
     generateId: generateUUID,
-    onFinish: () => {
+    onFinish: (message) => {
       // Revalidate chat history after a new message
       mutate('/api/history');
+      
     },
     onError: (error) => {
       console.error('Chat error:', error);
@@ -66,7 +66,6 @@ export function ChatInterface({
   return (
     <>
       <div className="flex flex-col min-w-0 flex-1 justify-between overflow-hidden">
-        <div></div>
         <Messages
           chatId={id}
           status={status}
@@ -76,7 +75,6 @@ export function ChatInterface({
           reload={reload}
           isReadonly={isReadonly}
           isArtifactVisible={isArtifactVisible}
-          chatType="query"
         />
 
         <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
@@ -93,7 +91,7 @@ export function ChatInterface({
               messages={messages as any}
               setMessages={setMessages}
               append={append}
-              chatType="query"
+              // chatType=""
             />
           )}
         </form>

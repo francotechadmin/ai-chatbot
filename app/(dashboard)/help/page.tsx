@@ -59,9 +59,11 @@ const helpArticles: HelpArticle[] = [
 
 // Server component that manages the client components
 export default function HelpPage({
-  searchParams
+  searchParams,
 }: {
-  searchParams: { query?: string }
+  searchParams: Promise<{
+    query?: string;
+  }>;
 }) {
   // Get search query from URL params (server-side)
   const searchQuery = '';

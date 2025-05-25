@@ -13,7 +13,7 @@ import { KnowledgeSourceSkeleton, ErrorDisplay } from './components/loading-stat
 export default async function KnowledgeBasePage({
   searchParams,
 }: {
-  searchParams?: { search?: string };
+  searchParams: Promise<{ search?: string }>;
 }) {
   // Check authentication
   const session = await auth();

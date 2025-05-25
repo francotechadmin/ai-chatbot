@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     const lists = await sharepointClient.getLists(siteId);
     
     // Filter for document libraries (which have a drive property)
-    const documentLibraries = lists.filter(list => list.drive);
+    const documentLibraries = lists.filter((list: any) => list.drive);
     
     return NextResponse.json({ lists: documentLibraries });
   } catch (error: any) {

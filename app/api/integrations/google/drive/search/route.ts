@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { googleIntegration } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { auth } from '@/app/(auth)/auth';
+import { revokeToken, refreshAccessToken } from '@/lib/integrations/google/auth';
 
 /**
  * GET handler to search files in Google Drive
@@ -36,9 +37,8 @@ export async function GET(req: NextRequest) {
 
     // Check if the access token is expired and refresh if necessary
     if (userIntegration.expiresAt && userIntegration.expiresAt < new Date() && userIntegration.refreshToken) {
-      const { GoogleAuth } = await import('@/lib/integrations/google/auth');
       
-      const newTokens = await GoogleAuth.refreshAccessToken(userIntegration.refreshToken);
+      const newTokens = await refreshAccessToken(userIntegration.refreshToken);
       
       // Update the tokens in the database
       await db.update(googleIntegration)

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,8 @@ import { PageHeader } from '@/components/page-header';
 import { Spinner } from '@/components/ui/spinner';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
-export default function GoogleIntegrationsPage() {
+// Client component that uses useSearchParams
+function GoogleIntegrationsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const status = searchParams.get('status');
@@ -235,5 +236,38 @@ export default function GoogleIntegrationsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+// Main page component that wraps the client component with Suspense
+export default function GoogleIntegrationsPage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto p-6">
+        <div className="flex flex-col gap-6">
+          <PageHeader title="Google Drive Integration">
+            <Button disabled>
+              <Spinner className="mr-2 size-4" />
+              Loading...
+            </Button>
+          </PageHeader>
+          <Card>
+            <CardHeader>
+              <CardTitle>Loading...</CardTitle>
+              <CardDescription>
+                Please wait while we load your integration status
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-center py-8">
+                <Spinner className="size-8" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    }>
+      <GoogleIntegrationsContent />
+    </Suspense>
   );
 }

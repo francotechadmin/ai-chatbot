@@ -16,9 +16,9 @@ import {
 } from '../components/loading-states';
 
 export default async function KnowledgeSourceDetailPage({ 
-  params 
-}: { 
-  params: { id: string } 
+  params,
+}: {
+  params: Promise<{ id: string }>;
 }) {
   // Check authentication
   const session = await auth();
@@ -30,6 +30,9 @@ export default async function KnowledgeSourceDetailPage({
   if (session.user.role !== 'admin' && session.user.role !== 'superuser') {
     redirect('/dashboard');
   }
+
+  // Resolve params
+  const resolvedParams = await params;
 
   return (
     <div className="container mx-auto p-6">
@@ -45,7 +48,7 @@ export default async function KnowledgeSourceDetailPage({
       </Button>
       
       <Suspense fallback={<KnowledgeSourceDetailSkeleton />}>
-        <KnowledgeSourceDetail id={params.id} />
+        <KnowledgeSourceDetail id={resolvedParams.id} />
       </Suspense>
     </div>
   );

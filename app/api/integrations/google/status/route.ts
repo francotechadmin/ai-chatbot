@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { GoogleAuth } from '@/lib/integrations/google/auth';
+import { getIntegration, validateToken, refreshAccessToken, getUserInfo, saveCredentials } from '@/lib/integrations/google/auth';
 import { auth } from '@/app/(auth)/auth';
 
 /**
@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Get the Google auth credentials for the user
-    const integration = await GoogleAuth.getIntegration(userId);
+    const integration = await getIntegration(userId);
 
     if (!integration) {
       return NextResponse.json({ connected: false });
@@ -26,17 +26,17 @@ export async function GET(req: NextRequest) {
     let isValid = false;
 
     try {
-      isValid = await GoogleAuth.validateToken(integration.accessToken);
+      isValid = await validateToken(integration.accessToken);
 
       // If the token is expired but we have a refresh token, attempt to refresh it
       if (!isValid && integration.refreshToken) {
-        const newTokens = await GoogleAuth.refreshAccessToken(integration.refreshToken);
+        const newTokens = await refreshAccessToken(integration.refreshToken);
         
         // Get user info to validate the new token
-        const userInfo = await GoogleAuth.getUserInfo(newTokens.access_token);
+        const userInfo = await getUserInfo(newTokens.access_token);
 
         // Update the database with new tokens
-        await GoogleAuth.saveCredentials(
+        await saveCredentials(
           userId,
           newTokens,
           userInfo

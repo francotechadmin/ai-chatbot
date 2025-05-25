@@ -23,3 +23,8 @@ export function getMicrosoftConfig() {
     scopes: DEFAULT_SCOPES
   };
 }
+
+export type MicrosoftCredentials = {
+  clientId: string;
+  clientSecret: string;
+};

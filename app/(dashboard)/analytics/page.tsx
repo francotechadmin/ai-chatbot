@@ -12,13 +12,14 @@ import { UserActivity } from './components/user-activity';
 import { TopSearches } from './components/top-searches';
 import { getAnalyticsData } from './server-actions';
 
-interface AnalyticsPageProps {
-  searchParams?: { 
-    timeRange?: string;
-  };
-}
 
-export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps) {
+export default async function AnalyticsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    timeRange?: string;
+  }>;
+}) {
   // Check authentication
   const session = await auth();
   if (!session || !session.user) {

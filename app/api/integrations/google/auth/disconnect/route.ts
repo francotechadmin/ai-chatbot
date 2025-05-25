@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { GoogleAuth } from '@/lib/integrations/google/auth';
+import { getIntegration, revokeToken, deleteIntegration } from '@/lib/integrations/google/auth';
 import { auth } from '@/app/(auth)/auth';
 
 /**
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Get the stored credentials for this user
-    const integration = await GoogleAuth.getIntegration(userId);
+    const integration = await getIntegration(userId);
 
     if (!integration) {
       return NextResponse.json({ error: 'No Google integration found' }, { status: 404 });
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     // Attempt to revoke the tokens if they exist
     if (integration.accessToken) {
       try {
-        await GoogleAuth.revokeToken(integration.accessToken);
+        await revokeToken(integration.accessToken);
       } catch (e) {
         console.error('Failed to revoke access token:', e);
         // Continue with deletion even if revocation fails
@@ -34,14 +34,14 @@ export async function POST(req: NextRequest) {
 
     if (integration.refreshToken) {
       try {
-        await GoogleAuth.revokeToken(integration.refreshToken);
+        await revokeToken(integration.refreshToken);
       } catch (e) {
         console.error('Failed to revoke refresh token:', e);
       }
     }
 
     // Delete the integration from the database
-    await GoogleAuth.deleteIntegration(userId);
+    await deleteIntegration(userId);
 
     // Optionally, clear any cookies or session data related to Google integration
     await req.cookies.delete('google_oauth_state');

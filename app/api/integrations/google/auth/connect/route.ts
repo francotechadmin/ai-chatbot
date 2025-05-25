@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { GoogleAuth } from '@/lib/integrations/google/auth';
+import { getAuthorizationUrl } from '@/lib/integrations/google/auth';
 import { auth } from '@/app/(auth)/auth';
 
 /**
@@ -44,7 +44,7 @@ async function handleConnect(req: NextRequest, isPost = false) {
     const encodedState = Buffer.from(JSON.stringify({ state })).toString('base64');
 
     // Get the OAuth URL from Google
-    const authUrl = GoogleAuth.getAuthorizationUrl(encodedState);
+    const authUrl = getAuthorizationUrl(encodedState);
 
     // Create a response with the state cookie and redirect
     const response = isPost

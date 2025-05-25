@@ -17,9 +17,10 @@ export class GooglePdfProcessor extends GoogleDocumentProcessor {
       const pdfData = await pdfParse(Buffer.from(contentBuffer));
       
       return pdfData.text.trim();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error extracting text from PDF:', error);
-      throw new Error(`Failed to extract text from PDF: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to extract text from PDF: ${errorMessage}`);
     }
   }
 }

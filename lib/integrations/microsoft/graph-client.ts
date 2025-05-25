@@ -1,7 +1,7 @@
 import { refreshToken } from './auth';
 import { db } from '@/lib/db/index';
 import { microsoftIntegration } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, SQL } from 'drizzle-orm';
 import type { MicrosoftCredentials } from './config';
 
 /**
@@ -9,9 +9,9 @@ import type { MicrosoftCredentials } from './config';
  */
 export class MicrosoftGraphClient {
   private userId: string;
-  private accessToken: string | null = null;
+  private accessToken: string | SQL<unknown> | undefined = undefined;
   private tokenExpiresAt: Date | null = null;
-  private refreshToken: string | null = null;
+  private refreshToken: string | SQL<unknown> | undefined = undefined;
   private credentials: MicrosoftCredentials | null = null;
 
   constructor(userId: string) {
@@ -69,7 +69,7 @@ export class MicrosoftGraphClient {
 
     try {
       // Use user-provided credentials if available
-      const tokenResponse = await refreshToken(this.refreshToken, this.credentials);
+      const tokenResponse = await refreshToken(this.refreshToken as string)
       
       if (tokenResponse.error) {
         throw new Error(`Token refresh error: ${tokenResponse.error_description}`);

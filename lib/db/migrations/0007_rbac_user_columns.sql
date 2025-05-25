@@ -6,14 +6,16 @@ BEGIN
     SELECT FROM information_schema.columns 
     WHERE table_schema = 'public' AND table_name = 'User' AND column_name = 'role'
   ) THEN
-    ALTER TABLE "User" ADD COLUMN "role" VARCHAR(10) NOT NULL DEFAULT 'user';
+    -- Match the schema.ts definition: varchar('role', { enum: ['user', 'admin', 'superuser'] })
+    ALTER TABLE "User" ADD COLUMN "role" VARCHAR CHECK ("role" IN ('user', 'admin', 'superuser')) NOT NULL DEFAULT 'user';
   END IF;
 
   IF NOT EXISTS (
     SELECT FROM information_schema.columns 
     WHERE table_schema = 'public' AND table_name = 'User' AND column_name = 'status'
   ) THEN
-    ALTER TABLE "User" ADD COLUMN "status" VARCHAR(10) NOT NULL DEFAULT 'active';
+    -- Match the schema.ts definition: varchar('status', { enum: ['active', 'inactive', 'pending'] })
+    ALTER TABLE "User" ADD COLUMN "status" VARCHAR CHECK ("status" IN ('active', 'inactive', 'pending')) NOT NULL DEFAULT 'active';
   END IF;
 
   IF NOT EXISTS (

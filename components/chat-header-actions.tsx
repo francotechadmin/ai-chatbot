@@ -25,63 +25,7 @@ export function ChatHeaderActions({
 }) {
   const [historyOpen, setHistoryOpen] = useState(false);
   const router = useRouter();
-  
-  // For very small screens, use a dropdown menu
-  if (isMobile) {
-    return (
-      <div className="flex items-center">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon" className="size-8">
-              <MoreHorizontalIcon size={16} />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuGroup>
-              <DropdownMenuItem 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setHistoryOpen(true);
-                }}
-              >
-                <div className="flex items-center">
-                  <ClockRewind size={16} />
-                  <span className="ml-2">History</span>
-                </div>
-                <div className="flex items-center">
-                  <PlusIcon size={16} />
-                  <span className="ml-2">
-                    New Chat
-                  </span>
-                </div>
-              </DropdownMenuItem>
-              {/* {chatType === 'capture' && chatId && chatTitle && (
-                <DropdownMenuItem asChild>
-                  <SubmitToKnowledgeBaseButton 
-                    chatId={chatId} 
-                    chatTitle={chatTitle}
-                  />
-                </DropdownMenuItem>
-              )} */}
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        
-        {/* History panel is outside the dropdown but triggered by it */}
-        <Sheet open={historyOpen} onOpenChange={setHistoryOpen}>
-          <SheetContent side="right" className="w-[400px] sm:w-[540px] p-0">
-            <HistoryPanel 
-              onSelect={(id) => {
-                router.push(`chat/${id}`);
-                setHistoryOpen(false);
-              }}
-              onClose={() => setHistoryOpen(false)}
-            />
-          </SheetContent>
-        </Sheet>
-      </div>
-    );
-  }
+
   
   // For larger screens, show all buttons
   return (

@@ -27,6 +27,7 @@ import Link from 'next/link';
 import useSWR from 'swr';
 import { toast } from 'sonner';
 import { fetcher } from '@/lib/utils';
+import { redirect } from 'next/navigation'
 
 export function HistoryPanel({ 
   onSelect,
@@ -88,7 +89,7 @@ export function HistoryPanel({
   return (
     <div className="flex flex-col h-full">
       <div className="p-4 border-b">
-        <h2 className="text-lg font-semibold mb-4">Conversation History Comp</h2>
+        <h2 className="text-lg font-semibold mb-4">Conversation History</h2>
         
         {/* Search input */}
         <div className="relative mb-4">
@@ -134,7 +135,7 @@ export function HistoryPanel({
                       if (onSelect) {
                         onSelect(chat.id);
                       } else {
-                        window.location.href = `chat/${chat.id}`;
+                        redirect(`/chat/${chat.id}`);
                       }
                       if (onClose) onClose();
                     }}
@@ -144,7 +145,7 @@ export function HistoryPanel({
                         if (onSelect) {
                           onSelect(chat.id);
                         } else {
-                          window.location.href = `chat/${chat.id}`;
+                          redirect(`/chat/${chat.id}`);
                         }
                         if (onClose) onClose();
                       }

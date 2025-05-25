@@ -69,6 +69,7 @@ export function Chat({
   return (
     <>
       <div className="flex flex-col min-w-0 grow justify-between overflow-hidden">
+        {messages.length === 0 && <div></div>}
         <Messages
           chatId={id}
           status={status}

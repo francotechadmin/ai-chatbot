@@ -1,5 +1,21 @@
--- Set default role for all users that don't have a role
-UPDATE "User" SET role = 'user' WHERE role IS NULL;
+-- Set default values for role and status columns with error handling
+DO $$ 
+BEGIN
+  -- Check if the role column exists before trying to update it
+  IF EXISTS (
+    SELECT FROM information_schema.columns 
+    WHERE table_schema = 'public' AND table_name = 'User' AND column_name = 'role'
+  ) THEN
+    -- Only run the update if the column exists
+    UPDATE "User" SET role = 'user' WHERE role IS NULL;
+  END IF;
 
--- Set default status for all users that don't have a status
-UPDATE "User" SET status = 'active' WHERE status IS NULL;
+  -- Check if the status column exists before trying to update it
+  IF EXISTS (
+    SELECT FROM information_schema.columns 
+    WHERE table_schema = 'public' AND table_name = 'User' AND column_name = 'status'
+  ) THEN
+    -- Only run the update if the column exists
+    UPDATE "User" SET status = 'active' WHERE status IS NULL;
+  END IF;
+END $$;

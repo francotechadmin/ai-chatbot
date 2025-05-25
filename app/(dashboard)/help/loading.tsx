@@ -25,7 +25,8 @@ export default function HelpLoading() {
         {/* Categories Skeleton */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i}>
+            // biome-ignore lint: reason
+            <Card key={`category-skeleton-${i}`} className="flex flex-col items-center">
               <CardContent className="pt-6 flex flex-col items-center text-center">
                 <Skeleton className="size-12 rounded-full mb-3" />
                 <Skeleton className="h-5 w-20 mb-1" />
@@ -44,7 +45,8 @@ export default function HelpLoading() {
           <CardContent>
             <div className="space-y-4">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="border rounded-lg p-4">
+                // biome-ignore lint: reason
+                <div key={`article-skeleton-${i}`} className="border rounded-lg p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="w-full">
                       <Skeleton className="h-5 w-3/4 mb-2" />
@@ -70,7 +72,8 @@ export default function HelpLoading() {
           <CardContent>
             <div className="space-y-4">
               {Array.from({ length: 2 }).map((_, i) => (
-                <div key={i} className="border-b pb-4">
+                // biome-ignore lint: reason
+                <div key={`faq-skeleton-${i}`} className="border rounded-lg p-4">
                   <Skeleton className="h-5 w-3/4 mb-2" />
                   <Skeleton className="h-4 w-full mb-1" />
                   <Skeleton className="h-4 w-full mb-1" />

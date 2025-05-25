@@ -1,7 +1,5 @@
 'use client';
 
-import { Markdown } from './markdown';
-
 // Define types for our UI results
 interface KnowledgeBaseItem {
   title: string;
@@ -33,7 +31,7 @@ export function KnowledgeBaseResult({ result, isReadonly }: KnowledgeBaseResultP
   }
 
   // Handle the new response format with uiResults property
-  if (result && result.uiResults) {
+  if (result?.uiResults) {
     const uiResults = result.uiResults;
     
     if (uiResults.length === 0) {
@@ -48,7 +46,7 @@ export function KnowledgeBaseResult({ result, isReadonly }: KnowledgeBaseResultP
         
         <div className="flex flex-col gap-2">
           {uiResults.map((item: KnowledgeBaseItem, index: number) => (
-            <div key={index} className="flex items-center justify-between">
+            <div key={`kb-${item.title}`} className="flex items-center justify-between">
               <a
                 href={item.sourceLink}
                 className="text-primary hover:underline flex items-center gap-2"
@@ -90,7 +88,7 @@ export function KnowledgeBaseResult({ result, isReadonly }: KnowledgeBaseResultP
         
         <div className="flex flex-col gap-2">
           {result.map((item, index) => (
-            <div key={index} className="flex items-center justify-between">
+            <div key={`kb-result-${item.title}`} className="flex items-center justify-between">
               <a
                 href={item.sourceLink}
                 className="text-primary hover:underline flex items-center gap-2"

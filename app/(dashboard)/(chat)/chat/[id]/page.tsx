@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { redirect, notFound } from 'next/navigation';
+import { redirect, } from 'next/navigation';
 import { auth } from '@/app/(auth)/auth';
 import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
 import { ChatPageWrapper } from '@/components/chat-page-wrapper';

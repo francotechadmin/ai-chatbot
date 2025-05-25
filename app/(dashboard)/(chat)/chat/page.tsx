@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { NewChatButton } from './components/new-chat-button';
 import { ModelSelector } from './components/model-selector';
-import { LoadingChat } from './components/loading-chat';
 import type { Chat } from '@/lib/db/schema';
 import { ClockRewind } from '@/components/icons';
 import { HistoryPanel } from './components/history-panel';

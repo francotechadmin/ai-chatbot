@@ -19,7 +19,7 @@ export function KnowledgeBaseUpload({ result, isReadonly }: KnowledgeBaseUploadP
   }
 
   // If the result has a title and sourceId
-  if (result && result.title && result.sourceId) {
+  if (result?.title && result.sourceId) {
     return (
       <div className="flex flex-col gap-2 border rounded-md p-4 bg-muted/30">
         <div className="flex items-center gap-2 text-green-600 dark:text-green-500">

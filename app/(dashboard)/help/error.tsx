@@ -46,7 +46,7 @@ export default function HelpError({
           <Button onClick={() => reset()} variant="default">
             Try again
           </Button>
-          <Button onClick={() => window.location.href = '/'} variant="outline">
+          <Button onClick={() => window.location.reload()} variant="outline">
             Go to Home
           </Button>
         </CardFooter>

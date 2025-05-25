@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { Session } from 'next-auth';
+import { useState, } from 'react';
+import type { Session } from 'next-auth';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/page-header';
 import { toast } from 'sonner';

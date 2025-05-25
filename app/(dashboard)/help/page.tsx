@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/card';
 import { PageHeader } from '@/components/page-header';
 import { HelpSearchWrapper } from './components/help-search-wrapper';
-import { HelpContent, HelpArticle } from './components/help-content';
+import { HelpContent, type HelpArticle } from './components/help-content';
 
 // Mock data for help articles - now on the server component
 const helpArticles: HelpArticle[] = [

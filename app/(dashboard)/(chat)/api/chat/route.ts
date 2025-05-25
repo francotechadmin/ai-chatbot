@@ -7,7 +7,6 @@ import {
 } from 'ai';
 import { auth } from '@/app/(auth)/auth';
 import { systemPrompt } from '@/lib/ai/prompts';
-import { searchKnowledgeBase } from '@/lib/embeddings';
 import {
   deleteChatById,
   getChatById,
@@ -19,9 +18,6 @@ import {
   getMostRecentUserMessage,
   getTrailingMessageId,
 } from '@/lib/utils';
-import {
-  processMessages,
-} from '@/lib/chat-utils';
 import { generateTitleFromUserMessage } from '../../chat/actions';
 import { createDocument } from '@/lib/ai/tools/create-document';
 import { updateDocument } from '@/lib/ai/tools/update-document';

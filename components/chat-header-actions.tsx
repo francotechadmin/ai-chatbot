@@ -6,7 +6,6 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { HistoryPanel } from '@/components/history-panel';
 import { ClockRewind, PlusIcon, MoreHorizontalIcon } from '@/components/icons';
 import { useRouter } from 'next/navigation';
-import { SubmitToKnowledgeBaseButton } from './submit-to-kb-button';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 

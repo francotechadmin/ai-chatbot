@@ -8,10 +8,6 @@ import {
   getMessageById,
   updateChatVisiblityById,
   getChatsByUserId,
-  getChatsByUserIdAndType,
-  getChatById,
-  getMessagesByChatId,
-  deleteChatById
 } from '@/lib/db/queries';
 import type { VisibilityType } from '@/components/visibility-selector';
 import { myProvider } from '@/lib/ai/providers';

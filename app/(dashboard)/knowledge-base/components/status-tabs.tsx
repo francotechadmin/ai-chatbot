@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { KnowledgeSource } from '@/lib/db/schema';
+import type { KnowledgeSource } from '@/lib/db/schema';
 import { KnowledgeSourceGrid } from './knowledge-source-grid';
 
 interface StatusTabsProps {

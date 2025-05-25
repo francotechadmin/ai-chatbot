@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
-import { User } from '../actions';
+import type { User } from '../actions';
 
 interface UserFiltersProps {
   users: User[];
@@ -22,7 +22,7 @@ export function UserFilters({ users, onFiltered }: UserFiltersProps) {
     });
     
     onFiltered(filtered);
-  }, [searchQuery, selectedRole, users]);
+  }, [searchQuery, selectedRole, users, onFiltered]);
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-6">

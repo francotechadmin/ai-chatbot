@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { PlusIcon, FileIcon } from '@/components/icons';
 import { hasRole } from '@/lib/rbac';
-import { User } from '../actions';
+import type { User } from '../actions';
 import { UserFilters } from './user-filters';
 import { UserTable } from './user-table';
 import { EditUserDialog } from './edit-user-dialog';
@@ -24,9 +24,13 @@ export function UserManagement({ initialUsers }: UserManagementProps) {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
 
   // Handle filtering
-  const handleFiltered = (filtered: User[]) => {
+  // const handleFiltered = (filtered: User[]) => {
+  //   setFilteredUsers(filtered);
+  // };
+
+  const handleFiltered = useCallback((filtered: User[]) => {
     setFilteredUsers(filtered);
-  };
+  }, []);
 
   // Handle edit user
   const handleEditUser = (user: User) => {
@@ -37,7 +41,7 @@ export function UserManagement({ initialUsers }: UserManagementProps) {
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-        <div></div> {/* Empty div for flex spacing */}
+        <div /> {/* Empty div for flex spacing */}
         <div className="flex gap-2">
           <Button variant="outline">
             <FileIcon size={16} />

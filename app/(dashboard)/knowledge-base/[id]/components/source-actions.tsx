@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { CheckCircle, XCircle, Trash, MessageSquare } from 'lucide-react';
 import { updateSourceStatus, deleteSource } from '../../actions';
-import { KnowledgeSource } from '@/lib/db/schema';
+import type { KnowledgeSource } from '@/lib/db/schema';
 import {
   AlertDialog,
   AlertDialogAction,

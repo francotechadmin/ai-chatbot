@@ -6,7 +6,7 @@ import { auth } from '@/app/(auth)/auth';
 import { fetchKnowledgeSources } from './actions';
 import { SearchFilter } from './components/search-filter';
 import { StatusTabs } from './components/status-tabs';
-import { KnowledgeSource } from '@/lib/db/schema';
+import type { KnowledgeSource } from '@/lib/db/schema';
 import { Suspense } from 'react';
 import { KnowledgeSourceSkeleton, ErrorDisplay } from './components/loading-states';
 

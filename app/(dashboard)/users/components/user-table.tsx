@@ -1,9 +1,7 @@
 'use client';
-
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { User, updateUser as updateUserAction } from '../actions';
+import { type User, updateUser as updateUserAction } from '../actions';
 
 interface UserTableProps {
   users: User[];

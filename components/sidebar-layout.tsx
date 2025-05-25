@@ -163,7 +163,7 @@ function HeaderBreadcrumb(props: { items: SidebarItem[], baseBreadcrumb?: Header
         const maxLength = 10;
 
         if (title.length > maxLength) {
-          title = title.slice(0, maxLength) + '...';
+          title = `${title.slice(0, maxLength)}...`;
         }
         
         breadcrumbItems.push({

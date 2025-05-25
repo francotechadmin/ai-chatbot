@@ -34,15 +34,15 @@ export default function ToolsLoading() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <Skeleton className="h-4 w-40" />
-                      <Skeleton className="h-4 w-4 rounded" />
+                      <Skeleton className="size-4 rounded" />
                     </div>
                     <div className="flex items-center justify-between">
                       <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-4 w-4 rounded" />
+                      <Skeleton className="size-4 rounded" />
                     </div>
                     <div className="flex items-center justify-between">
                       <Skeleton className="h-4 w-36" />
-                      <Skeleton className="h-4 w-4 rounded" />
+                      <Skeleton className="size-4 rounded" />
                     </div>
                   </div>
                 </div>
@@ -76,15 +76,15 @@ export default function ToolsLoading() {
                 <Skeleton className="h-5 w-40 mb-2" />
                 <div className="space-y-2">
                   <div className="flex items-center">
-                    <Skeleton className="h-4 w-4 mr-2 rounded-full" />
+                    <Skeleton className="size-4 mr-2 rounded-full" />
                     <Skeleton className="h-4 w-40" />
                   </div>
                   <div className="flex items-center">
-                    <Skeleton className="h-4 w-4 mr-2 rounded-full" />
+                    <Skeleton className="size-4 mr-2 rounded-full" />
                     <Skeleton className="h-4 w-48" />
                   </div>
                   <div className="flex items-center">
-                    <Skeleton className="h-4 w-4 mr-2 rounded-full" />
+                    <Skeleton className="size-4 mr-2 rounded-full" />
                     <Skeleton className="h-4 w-32" />
                   </div>
                 </div>
@@ -96,11 +96,11 @@ export default function ToolsLoading() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <Skeleton className="h-4 w-32" />
-                    <Skeleton className="h-4 w-4 rounded" />
+                    <Skeleton className="size-4 rounded" />
                   </div>
                   <div className="flex items-center justify-between">
                     <Skeleton className="h-4 w-48" />
-                    <Skeleton className="h-4 w-4 rounded" />
+                    <Skeleton className="size-4 rounded" />
                   </div>
                 </div>
               </div>
@@ -114,7 +114,8 @@ export default function ToolsLoading() {
         {/* Additional Tools Skeleton */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i}>
+            // biome-ignore lint: reason
+            <Card key={`tool-skeleton-${i}`} className="flex flex-col">
               <CardHeader className="p-4 md:p-6">
                 <Skeleton className="h-6 w-40 mb-1" />
                 <Skeleton className="h-4 w-48" />
@@ -144,7 +145,8 @@ export default function ToolsLoading() {
             </div>
             <div className="md:hidden space-y-4">
               {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-24 w-full" />
+                // biome-ignore lint: reason
+                <Skeleton key={`stat-skeleton-${i}`} className="h-10 w-full" />
               ))}
             </div>
             <div className="flex justify-end mt-4">

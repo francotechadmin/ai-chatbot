@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/app/(auth)/auth';
 import { fetchKnowledgeSourceById } from '../actions';
 import { SourceActions } from './components/source-actions';
-import { KnowledgeSource, KnowledgeChunk } from '@/lib/db/schema';
+import type { KnowledgeSource, KnowledgeChunk } from '@/lib/db/schema';
 import { Suspense } from 'react';
 import {
   KnowledgeSourceDetailSkeleton,

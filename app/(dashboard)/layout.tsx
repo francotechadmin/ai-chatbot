@@ -7,8 +7,6 @@ import {
   Settings, 
   BarChart4, 
   Globe, 
-  FileText,
-  Code,
   Upload,
   Terminal,
   MessageSquare,

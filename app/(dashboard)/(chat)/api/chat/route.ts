@@ -27,41 +27,57 @@ import { uploadToKnowledgeBase } from '@/lib/ai/tools/upload-to-knowledge-base';
 import { queryKnowledgeBase } from '@/lib/ai/tools/query-knowledge-base';
 import { isProductionEnvironment } from '@/lib/constants';
 import { myProvider } from '@/lib/ai/providers';
+import { logger } from '@/lib/logger'; // Assuming a shared logger utility
 
 export const maxDuration = 60;
 
 export async function POST(request: Request) {
+  let id: string | undefined;
+  let session: any; // Use 'any' for now, or import the correct Session type if available
+  
   try {
-    const {
-      id,
-      messages,
-      selectedChatModel,
-    }: {
+    const body: {
       id: string;
       messages: Array<UIMessage>;
       selectedChatModel: string;
     } = await request.json();
 
-    const session = await auth();
+    id = body.id!; // Assert that id is a string
+    const messageList = body.messages;
+    logger.info({ messageListLength: messageList.length }, 'Message list received');
+
+    const messages = messageList.filter(
+      (message) => message.content.length >= 0,
+    )
+    logger.info({ messagesLength: messages.length }, 'Filtered message list');
+    
+    const selectedChatModel = body.selectedChatModel;
+
+    session = await auth();
 
     if (!session || !session.user || !session.user.id) {
       return new Response('Unauthorized', { status: 401 });
     }
+    logger.info({ session: session?.user?.id }, 'Session information');
 
     const userMessage = getMostRecentUserMessage(messages);
-
+    
     if (!userMessage) {
       return new Response('No user message found', { status: 400 });
     }
-
+    logger.info({ userMessageId: userMessage.id }, 'User message received');
+    
     const chat = await getChatById({ id });
+    logger.info({ chatId: id, chatExists: !!chat }, 'Chat information');
 
     if (!chat) {
       const title = await generateTitleFromUserMessage({
         message: userMessage,
       });
+      logger.info({ title }, 'Title generated');
 
       await saveChat({ id, userId: session.user.id, title });
+      logger.info({ chatId: id }, 'Chat created');
     } else {
       if (chat.userId !== session.user.id) {
         return new Response('Unauthorized', { status: 401 });
@@ -80,8 +96,11 @@ export async function POST(request: Request) {
         },
       ],
     });
-        return createDataStreamResponse({
+    logger.info({ chatId: id }, 'User message saved');
+    
+    return createDataStreamResponse({
       execute: (dataStream) => {
+        logger.info({ chatId: id }, 'Chat started');
         const result = streamText({
           model: myProvider.languageModel(selectedChatModel),
           system: systemPrompt({ selectedChatModel }),
@@ -139,7 +158,7 @@ export async function POST(request: Request) {
                   messages: [
                     {
                       id: assistantId,
-                      chatId: id,
+                      chatId: id as string, // Assert id as string
                       role: assistantMessage.role,
                       parts: assistantMessage.parts,
                       attachments:
@@ -148,8 +167,8 @@ export async function POST(request: Request) {
                     },
                   ],
                 });
-              } catch (_) {
-                console.error('Failed to save chat');
+              } catch (error: any) {
+                logger.error({ chatId: id, userId: session?.user?.id, error: error.message, stack: error.stack }, 'Failed to save chat');
               }
             }
           },
@@ -165,44 +184,60 @@ export async function POST(request: Request) {
           sendReasoning: true,
         });
       },
-      onError: () => {
-        return 'Oops, an error occured!';
+      onError: (error: unknown) => {
+        logger.error({ chatId: id, userId: session?.user?.id, error: error }, 'An error occurred in POST handler');
+        return 'Oops, an error occured!'; // Still return a generic message to the client
       },
     });
-  } catch (error) {
+  } catch (error: any) {
+    logger.error({ chatId: id, userId: session?.user?.id, error: error.message, stack: error.stack }, 'An error occurred in POST handler');
     return new Response('An error occurred while processing your request!', {
-      status: 404,
+      status: 500, // Changed status to 500 for internal server error
     });
   }
 }
 
 export async function DELETE(request: Request) {
+  logger.info('DELETE request received');
   const { searchParams } = new URL(request.url);
+  logger.info({ searchParams }, 'Search parameters');
   const id = searchParams.get('id');
 
   if (!id) {
+    logger.error('Missing id', 'DELETE handler');
     return new Response('Not Found', { status: 404 });
   }
+
+  logger.info({ id }, 'Chat ID');
 
   const session = await auth();
 
   if (!session || !session.user) {
+    logger.error('Unauthorized', 'DELETE handler');
     return new Response('Unauthorized', { status: 401 });
   }
+
+  logger.info({ userId: session.user.id }, 'User ID');
 
   try {
     const chat = await getChatById({ id });
 
     if (chat.userId !== session.user.id) {
+      logger.error('Unauthorized', 'DELETE handler');
       return new Response('Unauthorized', { status: 401 });
     }
 
+    logger.info({ chatId: id }, 'Chat found');
+
     await deleteChatById({ id });
+    logger.info({ chatId: id }, 'Chat deleted');
 
     return new Response('Chat deleted', { status: 200 });
-  } catch (error) {
+  } catch (error: any) {
+    logger.error({ chatId: id, userId: session?.user?.id, error: error.message, stack: error.stack }, 'An error occurred in DELETE handler');
     return new Response('An error occurred while processing your request!', {
       status: 500,
     });
   }
 }
+

@@ -2,6 +2,7 @@ import { type DataStreamWriter, tool } from 'ai';
 import { z } from 'zod';
 import type { Session } from 'next-auth';
 import { searchKnowledgeBase } from '@/lib/embeddings';
+import { logger } from '@/lib/logger';
 
 interface QueryKnowledgeBaseProps {
   session: Session;
@@ -18,15 +19,19 @@ export const queryKnowledgeBase = ({ session, dataStream }: QueryKnowledgeBasePr
       minSimilarity: z.number().min(0).max(1).default(0.4).describe('Minimum similarity score (0-1) for results'),
     }),
     execute: async ({ query, limit, minSimilarity }) => {
+      logger.info({ query, limit, minSimilarity }, 'Executing queryKnowledgeBase tool');
       try {
         dataStream.writeData({
           type: 'status',
           content: 'Searching knowledge base...',
         });
 
+        logger.info({ query, limit, minSimilarity }, 'Searching knowledge base');
         const searchResults = await searchKnowledgeBase(query, limit, minSimilarity);
-        
+        logger.info({ query, resultCount: searchResults.length }, 'Knowledge base search completed');
+
         if (searchResults.length === 0) {
+          logger.info({ query }, 'No relevant information found in knowledge base');
           dataStream.writeData({
             type: 'status',
             content: 'No relevant information found in knowledge base',
@@ -106,7 +111,7 @@ export const queryKnowledgeBase = ({ session, dataStream }: QueryKnowledgeBasePr
         });
         
         // Return a special object that includes both UI results and content
-        return {
+        const result = {
           uiResults: uiResults,
           contentResults: contentForAI,
           // This is what will be displayed in the UI component
@@ -114,9 +119,11 @@ export const queryKnowledgeBase = ({ session, dataStream }: QueryKnowledgeBasePr
           // Include a summary for the AI to use
           summary: `Found ${uniqueSources.length} relevant documents in the knowledge base. The documents contain information about: ${contentForAI.map(doc => doc.title).join(', ')}. The content of these documents is available in the contentResults property.`
         };
-      } catch (error) {
-        console.error('Error querying knowledge base:', error);
-        throw new Error(`Failed to query knowledge base: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        logger.info({ query, resultSummary: result.summary }, 'queryKnowledgeBase tool executed successfully');
+        return result;
+      } catch (error: any) {
+        logger.error({ query, error: error.message, stack: error.stack }, 'Error executing queryKnowledgeBase tool');
+        throw new Error(`Failed to query knowledge base: ${error.message}`);
       }
     },
   });

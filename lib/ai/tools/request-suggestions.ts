@@ -5,6 +5,7 @@ import { getDocumentById, saveSuggestions } from '@/lib/db/queries';
 import type { Suggestion } from '@/lib/db/schema';
 import { generateUUID } from '@/lib/utils';
 import { myProvider } from '../providers';
+import { logger } from '@/lib/logger';
 
 interface RequestSuggestionsProps {
   session: Session;
@@ -23,9 +24,13 @@ export const requestSuggestions = ({
         .describe('The ID of the document to request edits'),
     }),
     execute: async ({ documentId }) => {
-      const document = await getDocumentById({ id: documentId });
+      logger.info({ documentId }, 'Executing requestSuggestions tool');
+      try {
+        const document = await getDocumentById({ id: documentId });
+        logger.info({ documentId, documentFound: !!document }, 'Document fetched');
 
-      if (!document || !document.content) {
+        if (!document || !document.content) {
+          logger.warn({ documentId }, 'Document not found or has no content');
         return {
           error: 'Document not found',
         };
@@ -35,6 +40,7 @@ export const requestSuggestions = ({
         Omit<Suggestion, 'userId' | 'createdAt' | 'documentCreatedAt'>
       > = [];
 
+      logger.info({ documentId }, 'Requesting suggestions from AI model');
       const { elementStream } = streamObject({
         model: myProvider.languageModel('artifact-model'),
         system:
@@ -49,6 +55,7 @@ export const requestSuggestions = ({
       });
 
       for await (const element of elementStream) {
+        logger.info({ documentId, suggestion: element }, 'Received suggestion from stream');
         const suggestion = {
           originalText: element.originalSentence,
           suggestedText: element.suggestedSentence,
@@ -69,6 +76,7 @@ export const requestSuggestions = ({
       if (session.user?.id) {
         const userId = session.user.id;
 
+        logger.info({ documentId, suggestionCount: suggestions.length }, 'Saving suggestions');
         await saveSuggestions({
           suggestions: suggestions.map((suggestion) => ({
             ...suggestion,
@@ -79,11 +87,19 @@ export const requestSuggestions = ({
         });
       }
 
-      return {
+      logger.info({ documentId, suggestionCount: suggestions.length }, 'Suggestions saved successfully');
+
+      const result = {
         id: documentId,
         title: document.title,
         kind: document.kind,
         message: 'Suggestions have been added to the document',
       };
+      logger.info({ documentId, result }, 'requestSuggestions tool executed successfully');
+      return result;
+      } catch (error: any) {
+        logger.error({ documentId, error: error.message, stack: error.stack }, 'Error executing requestSuggestions tool');
+        throw error; // Re-throw the error
+      }
     },
   });

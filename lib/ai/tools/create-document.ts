@@ -6,6 +6,7 @@ import {
   artifactKinds,
   documentHandlersByArtifactKind,
 } from '@/lib/artifacts/server';
+import { logger } from '@/lib/logger';
 
 interface CreateDocumentProps {
   session: Session;
@@ -21,10 +22,12 @@ export const createDocument = ({ session, dataStream }: CreateDocumentProps) =>
       kind: z.enum(artifactKinds),
     }),
     execute: async ({ title, kind }) => {
-      const id = generateUUID();
+      logger.info({ title, kind }, 'Executing createDocument tool');
+      try {
+       const id = generateUUID();
 
-      dataStream.writeData({
-        type: 'kind',
+       dataStream.writeData({
+         type: 'kind',
         content: kind,
       });
 
@@ -49,9 +52,11 @@ export const createDocument = ({ session, dataStream }: CreateDocumentProps) =>
       );
 
       if (!documentHandler) {
+        logger.error({ kind }, 'No document handler found for kind');
         throw new Error(`No document handler found for kind: ${kind}`);
       }
 
+      logger.info({ id, kind }, 'Document handler found, creating document');
       await documentHandler.onCreateDocument({
         id,
         title,
@@ -59,6 +64,7 @@ export const createDocument = ({ session, dataStream }: CreateDocumentProps) =>
         session,
       });
 
+      logger.info({ id, kind }, 'Document created successfully');
       dataStream.writeData({ type: 'finish', content: '' });
 
       return {
@@ -67,5 +73,9 @@ export const createDocument = ({ session, dataStream }: CreateDocumentProps) =>
         kind,
         content: 'A document was created and is now visible to the user.',
       };
+     } catch (error: any) {
+       logger.error({ title, kind, error: error.message, stack: error.stack }, 'Error executing createDocument tool');
+       throw error; // Re-throw the error so the AI framework can handle it
+     }
     },
   });

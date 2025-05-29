@@ -12,7 +12,7 @@ export const getWeather = tool({
     logger.info({ latitude, longitude }, 'Executing getWeather tool');
     try {
       logger.info({ latitude, longitude }, 'Fetching weather data');
-      let response; // Declare response here
+      let response: Response;
       response = await fetch(
         `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m&hourly=temperature_2m&daily=sunrise,sunset&timezone=auto`,
       );

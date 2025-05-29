@@ -3,7 +3,6 @@ import { z } from 'zod';
 import type { Session } from 'next-auth';
 import { createKnowledgeSource, getDocumentById } from '@/lib/db/queries';
 import { processContentForKnowledgeBase } from '@/lib/embeddings';
-import type { Document } from '@/lib/db/schema';
 import { logger } from '@/lib/logger';
 
 interface UploadToKnowledgeBaseProps {

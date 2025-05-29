@@ -32,7 +32,7 @@ import { logger } from '@/lib/logger'; // Assuming a shared logger utility
 export const maxDuration = 60;
 
 export async function POST(request: Request) {
-  let id: string | undefined;
+  let id = '';
   let session: any; // Use 'any' for now, or import the correct Session type if available
   
   try {
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       selectedChatModel: string;
     } = await request.json();
 
-    id = body.id!; // Assert that id is a string
+    id = body.id;
     const messageList = body.messages;
     logger.info({ messageListLength: messageList.length }, 'Message list received');
 

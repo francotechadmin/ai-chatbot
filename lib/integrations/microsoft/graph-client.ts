@@ -1,7 +1,7 @@
 import { refreshToken } from './auth';
 import { db } from '@/lib/db/index';
 import { microsoftIntegration } from '@/lib/db/schema';
-import { eq, SQL } from 'drizzle-orm';
+import { eq, type SQL } from 'drizzle-orm';
 import type { MicrosoftCredentials } from './config';
 
 /**

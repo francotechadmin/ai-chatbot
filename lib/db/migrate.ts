@@ -13,7 +13,7 @@ const runMigrate = async () => {
     throw new Error('POSTGRES_URL is not defined');
   }
 
-  let connection;
+  let connection: any;
   try {
     // Create a connection with a timeout and better error handling
     connection = postgres(process.env.POSTGRES_URL, { 
@@ -49,10 +49,10 @@ const runMigrate = async () => {
           WHERE table_schema = 'public' AND table_name = 'User'
         `;
         
-        console.log('📊 Current User table columns:', userColumns.map(c => `${c.column_name} (${c.data_type})`).join(', '));
+        console.log('📊 Current User table columns:', userColumns.map((c: any) => `${c.column_name} (${c.data_type})`).join(', '));
         
         // Check specifically for role column
-        const roleExists = userColumns.some(col => col.column_name === 'role');
+        const roleExists = userColumns.some((col: any) => col.column_name === 'role');
         console.log(`${roleExists ? '✅' : '❌'} Role column ${roleExists ? 'exists' : 'does not exist'}`);
       } else {
         console.log('❌ User table does not exist yet');
@@ -63,7 +63,7 @@ const runMigrate = async () => {
         const appliedMigrations = await connection`
           SELECT migration_name FROM drizzle.__drizzle_migrations ORDER BY id
         `;
-        console.log('📜 Applied migrations:', appliedMigrations.map(m => m.migration_name).join(', '));
+        console.log('📜 Applied migrations:', appliedMigrations.map((m: any) => m.migration_name).join(', '));
       } catch (e: any) {
         console.log('ℹ️ No migrations table found yet');
       }
@@ -102,7 +102,7 @@ const runMigrate = async () => {
       console.error(migrateError);
       
       // Try to determine which migration failed
-      if (migrateError.message && migrateError.message.includes('role')) {
+      if (migrateError.message?.includes('role')) {
         console.log('🔄 Attempting to fix User table role column issue...');
         
         // Try to manually apply the fix for the role column
@@ -168,7 +168,7 @@ const runMigrate = async () => {
         FROM information_schema.columns 
         WHERE table_schema = 'public' AND table_name = 'User'
       `;
-      console.log('✅ User table columns after migration:', userColumns.map(c => `${c.column_name} (${c.data_type})`).join(', '));
+      console.log('✅ User table columns after migration:', userColumns.map((c: any) => `${c.column_name} (${c.data_type})`).join(', '));
     } catch (verifyError: any) {
       console.log('⚠️ Could not verify User table structure:', verifyError.message);
     }

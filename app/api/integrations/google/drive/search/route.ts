@@ -4,7 +4,7 @@ import { db } from '@/lib/db';
 import { googleIntegration } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { auth } from '@/app/(auth)/auth';
-import { revokeToken, refreshAccessToken } from '@/lib/integrations/google/auth';
+import { refreshAccessToken } from '@/lib/integrations/google/auth';
 
 /**
  * GET handler to search files in Google Drive

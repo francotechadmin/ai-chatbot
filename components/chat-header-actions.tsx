@@ -4,15 +4,8 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { HistoryPanel } from '@/components/history-panel';
-import { ClockRewind, PlusIcon, MoreHorizontalIcon } from '@/components/icons';
+import { ClockRewind, PlusIcon, } from '@/components/icons';
 import { useRouter } from 'next/navigation';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuTrigger,
-  DropdownMenuGroup,
-  DropdownMenuItem
-} from './ui/dropdown-menu';
 
 export function ChatHeaderActions({ 
   chatId,

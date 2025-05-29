@@ -67,8 +67,7 @@ This is a guide for using knowledge base tools: \`uploadToKnowledgeBase\` and \`
 - Provide a specific query to get relevant results:
   queryKnowledgeBase({
     query: "Specific search query",
-    limit: 5,
-    minSimilarity: 0.7
+    limit: 5
   })
 - Use the returned information to answer the user's question
 - Cite sources when using information from the knowledge base
@@ -117,7 +116,6 @@ For searching the knowledge base:
 queryKnowledgeBase({
   query: "Specific search query related to user's question",
   limit: 5,
-  minSimilarity: 0.7
 })
 \`\`\`
 

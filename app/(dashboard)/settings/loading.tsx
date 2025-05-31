@@ -1,5 +1,5 @@
-import { Skeleton } from "@/components/ui/skeleton";
-import { PageHeader } from "@/components/page-header";
+import { Skeleton } from '@/components/ui/skeleton';
+import { PageHeader } from '@/components/page-header';
 import {
   Card,
   CardContent,
@@ -29,12 +29,12 @@ export default function SettingsLoading() {
                   <div className="text-sm font-medium">Email</div>
                   <Skeleton className="h-5 w-64" />
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="text-sm font-medium">Role</div>
                   <Skeleton className="h-5 w-32" />
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="text-sm font-medium">Account Status</div>
                   <Skeleton className="h-5 w-32" />
@@ -61,32 +61,13 @@ export default function SettingsLoading() {
             </CardContent>
           </Card>
 
-          {/* Chat Defaults Skeleton */}
-          <Card className="md:col-span-3">
-            <CardHeader>
-              <CardTitle>Chat Defaults</CardTitle>
-              <CardDescription>Configure default settings for new chats</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <div className="text-sm font-medium">Default AI Model</div>
-                  <Skeleton className="h-10 w-full" />
-                </div>
-                
-                <div className="space-y-2">
-                  <div className="text-sm font-medium">Default Content Visibility</div>
-                  <Skeleton className="h-10 w-full" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Auth Session Skeleton */}
           <Card className="md:col-span-3">
             <CardHeader>
               <CardTitle>Authentication Session</CardTitle>
-              <CardDescription>Manage your authentication session</CardDescription>
+              <CardDescription>
+                Manage your authentication session
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <Skeleton className="h-5 w-64" />

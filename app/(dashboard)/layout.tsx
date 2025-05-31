@@ -1,35 +1,35 @@
 'use client';
 
-import SidebarLayout, { type SidebarItem } from "@/components/sidebar-layout";
+import SidebarLayout, { type SidebarItem } from '@/components/sidebar-layout';
 import Script from 'next/script';
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { 
-  Settings, 
-  BarChart4, 
-  Globe, 
+import {
+  Settings,
+  BarChart4,
+  Globe,
   Upload,
   Terminal,
   MessageSquare,
   Network,
-  Users
-} from "lucide-react";
+  Users,
+} from 'lucide-react';
 
 const navigationItems: SidebarItem[] = [
   {
-    name: "Dashboard",
-    href: "/dashboard",
+    name: 'Dashboard',
+    href: '/dashboard',
     icon: Globe,
-    type: "item",
+    type: 'item',
   },
   {
     type: 'label',
     name: 'Management',
   },
   {
-    name: "Chat",
-    href: "/chat",
+    name: 'Chat',
+    href: '/chat',
     icon: MessageSquare,
-    type: "item",
+    type: 'item',
   },
   // {
   //   name: "Knowledge Capture",
@@ -44,54 +44,54 @@ const navigationItems: SidebarItem[] = [
   //   type: "item",
   // },
   {
-    name: "Knowledge Base",
-    href: "/knowledge-base",
+    name: 'Knowledge Base',
+    href: '/knowledge-base',
     icon: Globe,
-    type: "item",
+    type: 'item',
   },
   {
     type: 'label',
     name: 'Tools',
   },
   {
-    name: "Import/Export",
-    href: "/tools",
+    name: 'Import Tool',
+    href: '/tools',
     icon: Upload,
-    type: "item",
+    type: 'item',
   },
   {
-    name: "Analytics",
-    href: "/analytics",
+    name: 'Analytics',
+    href: '/analytics',
     icon: BarChart4,
-    type: "item",
+    type: 'item',
   },
   {
-    name: "Integrations",
-    href: "/integrations",
+    name: 'Integrations',
+    href: '/integrations',
     icon: Terminal,
-    type: "item",
+    type: 'item',
   },
   {
     type: 'label',
     name: 'Administration',
   },
   {
-    name: "User Management",
-    href: "/users",
+    name: 'User Management',
+    href: '/users',
     icon: Users,
-    type: "item",
+    type: 'item',
   },
   {
-    name: "Settings",
-    href: "/settings",
+    name: 'Settings',
+    href: '/settings',
     icon: Settings,
-    type: "item",
+    type: 'item',
   },
   {
-    name: "Help & Docs",
-    href: "/help",
+    name: 'Help & Docs',
+    href: '/help',
     icon: MessageSquare,
-    type: "item",
+    type: 'item',
   },
 ];
 
@@ -110,7 +110,7 @@ export default function Layout({
       />
       {/* Keep the original SidebarProvider for components that depend on it */}
       <SidebarProvider defaultOpen={true}>
-        <SidebarLayout 
+        <SidebarLayout
           items={navigationItems}
           basePath=""
           sidebarTop={

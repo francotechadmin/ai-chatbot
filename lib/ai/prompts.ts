@@ -44,6 +44,12 @@ updateDocument({
 Do not update document right after creating it. Wait for user feedback or request to update it.
 `;
 
+// - For direct content uploads, provide the full content:
+//   uploadToKnowledgeBase({
+//     title: "Document Title",
+//     content: "Full document content here...",
+//     sourceType: "document"
+//   })
 export const knowledgeBasePrompt = `
 This is a guide for using knowledge base tools: \`uploadToKnowledgeBase\` and \`queryKnowledgeBase\`.
 
@@ -55,12 +61,8 @@ This is a guide for using knowledge base tools: \`uploadToKnowledgeBase\` and \`
     documentId: "document-id-from-createDocument",
     sourceType: "document"
   })
-- For direct content uploads, provide the full content:
-  uploadToKnowledgeBase({
-    title: "Document Title",
-    content: "Full document content here...",
-    sourceType: "document"
-  })
+- Only upload documents created with \`createDocument\`
+- For other types of documents, instruct usere to use the import page
 
 **Using \`queryKnowledgeBase\`:**
 - Use this tool to search for information in the knowledge base
@@ -85,7 +87,6 @@ The XML-style syntax will not work properly and will appear as text in the chat.
 
 export const regularPrompt =
   'You are a friendly assistant! Keep your responses concise and helpful.';
-
 
 export const chatPrompt = `
 You are a knowledge assistant capable of both retrieving information and helping users document knowledge. Your role is to:

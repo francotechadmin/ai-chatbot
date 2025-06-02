@@ -195,7 +195,7 @@ export function EnhancedSearchResults({
       </div>
 
       {/* Results List */}
-      <div className="space-y-3">
+      <div className="flex flex-col gap-3">
         {results.map((result) => (
           <SearchResultCard
             key={result.article.slug}

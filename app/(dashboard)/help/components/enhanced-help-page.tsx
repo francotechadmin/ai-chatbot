@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
@@ -136,22 +136,34 @@ export function EnhancedHelpPage({ initialArticles }: EnhancedHelpPageProps) {
         onValueChange={setActiveTab}
         className="space-y-6"
       >
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="search" className="flex items-center gap-2">
-            <Search className="size-4" />
-            Search & Browse
+        <TabsList className="flex w-full flex-wrap overflow-hidden px-2 h-12">
+          <TabsTrigger
+            value="search"
+            className="flex-1 min-w-0 flex items-center justify-center gap-1 py-2 px-1"
+          >
+            <Search className="size-4 flex-shrink-0" />
+            <span className="hidden sm:inline truncate">Search & Browse</span>
           </TabsTrigger>
-          <TabsTrigger value="categories" className="flex items-center gap-2">
-            <Grid3X3 className="size-4" />
-            Categories
+          <TabsTrigger
+            value="categories"
+            className="flex-1 min-w-0 flex items-center justify-center gap-1 py-2 px-1"
+          >
+            <Grid3X3 className="size-4 flex-shrink-0" />
+            <span className="hidden sm:inline truncate">Categories</span>
           </TabsTrigger>
-          <TabsTrigger value="faq" className="flex items-center gap-2">
-            <MessageCircle className="size-4" />
-            FAQ
+          <TabsTrigger
+            value="faq"
+            className="flex-1 min-w-0 flex items-center justify-center gap-1 py-2 px-1"
+          >
+            <MessageCircle className="size-4 flex-shrink-0" />
+            <span className="hidden sm:inline truncate">FAQ</span>
           </TabsTrigger>
-          <TabsTrigger value="support" className="flex items-center gap-2">
-            <Mail className="size-4" />
-            Contact Support
+          <TabsTrigger
+            value="support"
+            className="flex-1 min-w-0 flex items-center justify-center gap-1 py-2 px-1"
+          >
+            <Mail className="size-4 flex-shrink-0" />
+            <span className="hidden sm:inline truncate">Support</span>
           </TabsTrigger>
         </TabsList>
 

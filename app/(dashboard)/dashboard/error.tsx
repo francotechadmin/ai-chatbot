@@ -28,7 +28,7 @@ export default function ErrorPage({ error, reset }: ErrorProps) {
       <Card className="w-full max-w-md">
         <CardHeader>
           <div className="flex items-center space-x-2">
-            <AlertCircle className="h-6 w-6 text-destructive" />
+            <AlertCircle className="size-6 text-destructive" />
             <CardTitle>Dashboard Error</CardTitle>
           </div>
           <CardDescription>

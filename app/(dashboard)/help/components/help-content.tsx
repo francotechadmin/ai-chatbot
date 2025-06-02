@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import {
   Card,
   CardContent,
@@ -22,9 +23,10 @@ interface HelpContentProps {
 }
 
 export function HelpContent({ articles, searchQuery }: HelpContentProps) {
-  const filteredArticles = articles.filter(article => 
-    article.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    article.summary.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredArticles = articles.filter(
+    (article) =>
+      article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      article.summary.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -40,7 +42,7 @@ export function HelpContent({ articles, searchQuery }: HelpContentProps) {
             <CardDescription>Getting started guides</CardDescription>
           </CardContent>
         </Card>
-        
+
         <Card className="hover:border-primary cursor-pointer transition-colors">
           <CardContent className="pt-6 flex flex-col items-center text-center">
             <div className="size-12 rounded-full bg-green-100 flex items-center justify-center mb-3">
@@ -50,7 +52,7 @@ export function HelpContent({ articles, searchQuery }: HelpContentProps) {
             <CardDescription>Step-by-step tutorials</CardDescription>
           </CardContent>
         </Card>
-        
+
         <Card className="hover:border-primary cursor-pointer transition-colors">
           <CardContent className="pt-6 flex flex-col items-center text-center">
             <div className="size-12 rounded-full bg-purple-100 flex items-center justify-center mb-3">
@@ -60,7 +62,7 @@ export function HelpContent({ articles, searchQuery }: HelpContentProps) {
             <CardDescription>Integration documentation</CardDescription>
           </CardContent>
         </Card>
-        
+
         <Card className="hover:border-primary cursor-pointer transition-colors">
           <CardContent className="pt-6 flex flex-col items-center text-center">
             <div className="size-12 rounded-full bg-amber-100 flex items-center justify-center mb-3">
@@ -77,29 +79,35 @@ export function HelpContent({ articles, searchQuery }: HelpContentProps) {
         <CardHeader>
           <CardTitle>Documentation</CardTitle>
           <CardDescription>
-            {searchQuery ? `Search results for "${searchQuery}"` : 'Popular articles and guides'}
+            {searchQuery
+              ? `Search results for "${searchQuery}"`
+              : 'Popular articles and guides'}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {filteredArticles.length > 0 ? (
-              filteredArticles.map(article => (
-                <div key={article.id} className="border rounded-lg p-4 hover:bg-muted/50 cursor-pointer transition-colors">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="font-medium mb-1">{article.title}</h3>
-                      <p className="text-sm text-muted-foreground">{article.summary}</p>
+              filteredArticles.map((article) => (
+                <Link key={article.id} href={`/help/${article.id}`}>
+                  <div className="border rounded-lg p-4 hover:bg-muted/50 cursor-pointer transition-colors">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="font-medium mb-1">{article.title}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {article.summary}
+                        </p>
+                      </div>
+                      <span className="text-xs bg-muted py-1 px-2 rounded-full whitespace-nowrap shrink-0">
+                        {article.readTime}
+                      </span>
                     </div>
-                    <span className="text-xs bg-muted py-1 px-2 rounded-full whitespace-nowrap shrink-0">
-                      {article.readTime}
-                    </span>
+                    <div className="flex items-center mt-2">
+                      <span className="text-xs text-muted-foreground capitalize">
+                        {article.category}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center mt-2">
-                    <span className="text-xs text-muted-foreground capitalize">
-                      {article.category}
-                    </span>
-                  </div>
-                </div>
+                </Link>
               ))
             ) : (
               <div className="text-center py-12">
@@ -108,7 +116,8 @@ export function HelpContent({ articles, searchQuery }: HelpContentProps) {
                 </span>
                 <h3 className="text-lg font-medium mb-1">No articles found</h3>
                 <p className="text-muted-foreground">
-                  We couldn&apos;t find any articles matching &quot;{searchQuery}&quot;
+                  We couldn&apos;t find any articles matching &quot;
+                  {searchQuery}&quot;
                 </p>
               </div>
             )}
